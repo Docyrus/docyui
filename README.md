@@ -108,37 +108,6 @@ pnpm dlx @docyui/vue add button
   }
 }
 ```
-
-## Development
-
-### Setup
-```bash
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm build
-
-# Development mode
-pnpm dev
-```
-
-### Package Structure
-```
-packages/
-├── shared/             # @docyui/shared (private)
-├── cli-latest/         # @docyui/latest
-├── cli-react/          # @docyui/react  
-├── cli-vue/            # @docyui/vue
-└── registry/           # Component definitions
-```
-
-### Key Features
-- **Clean Code**: DRY principles with shared utilities
-- **Framework Consistency**: Unified installation logic across React/Vue
-- **No Code Duplication**: Common logic centralized in `@docyui/shared`
-- **Type Safety**: Full TypeScript support across all packages
-
 ## Why CLI-First?
 
 - ✅ **Full Control**: Components copied to your project

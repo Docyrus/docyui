@@ -2,7 +2,7 @@ import { Command } from 'commander'
 import chalk from 'chalk'
 import ora from 'ora'
 import prompts from 'prompts'
-import { saveConfig, injectCSS, loadConfig, type DocyrusConfig } from '@docyui/shared'
+import { saveConfig, injectCSS, loadConfig, getColorChoices, type DocyrusConfig } from '@docyui/shared'
 
 export const initCommand = new Command()
   .name('init')
@@ -68,9 +68,7 @@ export const initCommand = new Command()
         type: 'select',
         name: 'baseColor',
         message: 'Which color would you like to use as base color?',
-        choices: [
-          { title: 'Slate', value: 'slate' }
-        ],
+        choices: getColorChoices(),
         initial: 0
       },
       {
