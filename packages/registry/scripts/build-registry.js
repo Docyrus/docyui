@@ -8,7 +8,10 @@ const __dirname = path.dirname(__filename)
 
 async function buildRegistry() {
   const componentsDir = path.join(__dirname, '../components')
-  const componentFiles = await glob('*.json', { cwd: componentsDir })
+  const componentFiles = await glob('*.json', { 
+    cwd: componentsDir,
+    ignore: ['index.json'] // Exclude the index file to prevent recursive nesting
+  })
   
   const registry = {}
   

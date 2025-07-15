@@ -18,50 +18,15 @@ export const addCommand = new Command()
     try {
       config = await loadConfig(cwd)
     } catch {
-      // If config doesn't exist, create a default Vue config
-      config = {
-        $schema: 'https://ui.docyrus.dev/schema.json',
-        framework: 'vue',
-        rsc: false,
-        tsx: false,
-        componentsPath: './src/components/ui',
-        tailwind: {
-          css: '',
-          baseColor: 'slate',
-          cssVariables: true,
-          cssVersion: '0.0.1'
-        },
-        icons: {
-          library: 'lucide',
-          size: 20,
-          strokeWidth: 1.5
-        },
-        aliases: {
-          components: '@/components',
-          utils: '@/lib/utils'
-        }
-      }
-      
-      console.log(chalk.yellow('No configuration found. Using default Vue configuration.'))
-      console.log(chalk.gray('Run "npx @docyui/latest init" to create a configuration file.'))
       console.log()
-      
-      // Prompt for CSS file path if not configured
-      if (!config.tailwind.css) {
-        const cssResponse = await prompts({
-          type: 'text',
-          name: 'cssPath',
-          message: 'Where is your global CSS file?',
-          initial: './src/styles/globals.css'
-        })
-        
-        if (!cssResponse.cssPath) {
-          console.log(chalk.red('CSS file path is required for component installation.'))
-          process.exit(1)
-        }
-        
-        config.tailwind.css = cssResponse.cssPath
-      }
+      console.log(chalk.red('DocyUI configuration not found!'))
+      console.log(chalk.gray('Please run the following command first:'))
+      console.log(chalk.cyan('  npx @docyui/latest init'))
+      console.log()
+      console.log(chalk.gray('This will create the necessary configuration file (docyui.json)'))
+      console.log(chalk.gray('with your CSS path, aliases, and other settings.'))
+      console.log()
+      process.exit(1)
     }
     
     // Override framework to Vue
