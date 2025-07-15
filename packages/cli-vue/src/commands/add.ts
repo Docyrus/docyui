@@ -26,7 +26,7 @@ export const addCommand = new Command()
         tsx: false,
         componentsPath: './src/components/ui',
         tailwind: {
-          css: './src/app/globals.css',
+          css: '',
           baseColor: 'slate',
           cssVariables: true,
           cssVersion: '0.0.1'
@@ -45,6 +45,23 @@ export const addCommand = new Command()
       console.log(chalk.yellow('No configuration found. Using default Vue configuration.'))
       console.log(chalk.gray('Run "npx @docyui/latest init" to create a configuration file.'))
       console.log()
+      
+      // Prompt for CSS file path if not configured
+      if (!config.tailwind.css) {
+        const cssResponse = await prompts({
+          type: 'text',
+          name: 'cssPath',
+          message: 'Where is your global CSS file?',
+          initial: './src/styles/globals.css'
+        })
+        
+        if (!cssResponse.cssPath) {
+          console.log(chalk.red('CSS file path is required for component installation.'))
+          process.exit(1)
+        }
+        
+        config.tailwind.css = cssResponse.cssPath
+      }
     }
     
     // Override framework to Vue

@@ -81,7 +81,7 @@ export const initCommand = new Command()
         type: 'text',
         name: 'tailwindCss',
         message: 'Where is your global CSS file?',
-        initial: './src/app/globals.css'
+        initial: (_prev, values) => values.framework === 'react' ? './src/app/globals.css' : './src/styles/globals.css'
       },
       {
         type: 'text',

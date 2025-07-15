@@ -528,11 +528,19 @@ body {
 }
 
 export async function injectCSS(cssFilePath: string, baseColor: string = 'slate', forceUpdate: boolean = false): Promise<void> {
+  if (!cssFilePath) {
+    throw new Error('CSS file path is required for CSS injection')
+  }
+
   const cssVars = getColorVars(baseColor)
   
   let existingContent = ''
-  if (await fs.pathExists(cssFilePath)) {
-    existingContent = await fs.readFile(cssFilePath, 'utf-8')
+  try {
+    if (await fs.pathExists(cssFilePath)) {
+      existingContent = await fs.readFile(cssFilePath, 'utf-8')
+    }
+  } catch (error) {
+    throw new Error(`Failed to read CSS file at ${cssFilePath}: ${error}`)
   }
   
   const hasDocyUICSS = existingContent.includes('@theme') && existingContent.includes('--color-background: hsl(var(--background))')
@@ -606,7 +614,12 @@ body {
   // Add our blocks to the end of the file
   newContent += `\n\n${themeBlock}\n\n${rootBlock}\n\n${darkBlock}\n\n${baseStyles}`
   
-  await fs.writeFile(cssFilePath, newContent)
+  try {
+    await fs.writeFile(cssFilePath, newContent)
+    console.log(`CSS variables injected successfully to ${cssFilePath}`)
+  } catch (error) {
+    throw new Error(`Failed to write CSS file at ${cssFilePath}: ${error}`)
+  }
 }
 
 function removeExistingDocyUICSS(content: string): string {
