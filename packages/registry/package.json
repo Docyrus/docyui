@@ -1,0 +1,17 @@
+{
+  "name": "@docyui/registry",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Component registry for DocyUI",
+  "scripts": {
+    "build": "node scripts/build-registry.js",
+    "lint": "eslint . --config ../../eslint.config.mjs",
+    "lint:fix": "eslint . --config ../../eslint.config.mjs --fix"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.14",
+    "fs-extra": "11.3.0",
+    "glob": "11.0.3"
+  }
+}

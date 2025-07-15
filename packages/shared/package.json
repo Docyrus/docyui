@@ -1,0 +1,27 @@
+{
+  "name": "@docyui/shared",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Internal shared utilities for DocyUI CLI packages",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint . --config ../../eslint.config.mjs",
+    "lint:fix": "eslint . --config ../../eslint.config.mjs --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chalk": "5.4.1",
+    "fs-extra": "11.3.0",
+    "prettier": "3.6.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "11.0.4",
+    "@types/node": "24.0.14",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3"
+  }
+}

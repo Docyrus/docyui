@@ -1,0 +1,12 @@
+{
+  "name": "button",
+  "description": "A customizable button component with multiple variants",
+  "framework": "vue",
+  "dependencies": ["class-variance-authority", "clsx", "tailwind-merge"],
+  "files": [
+    {
+      "name": "Button.vue",
+      "content": "<template>\n  <component\n    :is=\"asChild ? 'slot' : as\"\n    :class=\"cn(buttonVariants({ variant, size }), className)\"\n    :disabled=\"disabled\"\n    v-bind=\"$attrs\"\n  >\n    <slot />\n  </component>\n</template>\n\n<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\n\nconst buttonVariants = cva(\n  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',\n  {\n    variants: {\n      variant: {\n        default: 'bg-primary text-primary-foreground hover:bg-primary/90',\n        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',\n        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',\n        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',\n        ghost: 'hover:bg-accent hover:text-accent-foreground',\n        link: 'text-primary underline-offset-4 hover:underline',\n      },\n      size: {\n        default: 'h-10 px-4 py-2',\n        sm: 'h-9 rounded-md px-3',\n        lg: 'h-11 rounded-md px-8',\n        icon: 'h-10 w-10',\n      },\n    },\n    defaultVariants: {\n      variant: 'default',\n      size: 'default',\n    },\n  }\n)\n\nexport interface ButtonProps extends VariantProps<typeof buttonVariants> {\n  as?: string\n  asChild?: boolean\n  className?: string\n  disabled?: boolean\n}\n\nconst props = withDefaults(defineProps<ButtonProps>(), {\n  as: 'button',\n  asChild: false,\n  variant: 'default',\n  size: 'default',\n})\n</script>"
+    }
+  ]
+}
