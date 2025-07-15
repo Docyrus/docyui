@@ -115,6 +115,11 @@ export const initCommand = new Command()
         cssVariables: response.cssVariables,
         cssVersion: CLI_VERSION
       },
+      icons: {
+        library: 'lucide',
+        size: 20,
+        strokeWidth: 1.5
+      },
       aliases: {
         components: response.componentsAlias,
         utils: response.utilsAlias

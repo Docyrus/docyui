@@ -31,6 +31,11 @@ export const addCommand = new Command()
           cssVariables: true,
           cssVersion: '0.0.1'
         },
+        icons: {
+          library: 'lucide',
+          size: 20,
+          strokeWidth: 1.5
+        },
         aliases: {
           components: '@/components',
           utils: '@/lib/utils'

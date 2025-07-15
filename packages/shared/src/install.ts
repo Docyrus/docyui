@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import chalk from 'chalk'
 import prettier from 'prettier'
-import { fetchComponent, type DocyrusConfig } from './index.js'
+import { fetchComponent, type DocyrusConfig, processIconImports, addIconProps, getIconLibrary } from './index.js'
 
 export async function installComponent(
   componentName: string,
@@ -27,10 +27,14 @@ export async function installComponent(
     
     await fs.ensureDir(path.dirname(filePath))
     
-    // Process import paths
+    // Process import paths and icon configurations
     let processedContent = file.content
     processedContent = processedContent.replace(/@\/components/g, config.aliases.components)
     processedContent = processedContent.replace(/@\/lib\/utils/g, config.aliases.utils)
+    
+    // Configure icon properties based on framework and config
+    processedContent = processIconImports(processedContent, framework)
+    processedContent = addIconProps(processedContent, config.icons, framework)
     
     // Format the content with prettier
     const parser = file.name.endsWith('.vue') ? 'vue' : 
@@ -46,9 +50,18 @@ export async function installComponent(
     await fs.writeFile(filePath, formatted)
   }
   
+  // Add lucide icon dependency based on framework
+  const iconDependency = getIconLibrary(framework)
+  const allDependencies = [...(component.dependencies || [])]
+  
+  // Add icon dependency if not already present
+  if (!allDependencies.includes(iconDependency)) {
+    allDependencies.push(iconDependency)
+  }
+  
   // Log dependencies to install
-  if (component.dependencies?.length) {
-    console.log(chalk.blue(`  Dependencies to install: ${component.dependencies.join(', ')}`))
+  if (allDependencies.length) {
+    console.log(chalk.blue(`  Dependencies to install: ${allDependencies.join(', ')}`))
   }
   
   if (component.devDependencies?.length) {

@@ -20,6 +20,7 @@
     "@docyui/shared": "workspace:*",
     "chalk": "5.4.1",
     "commander": "14.0.0",
+    "lucide-react": "^0.525.0",
     "ora": "8.2.0",
     "prompts": "2.4.2"
   },

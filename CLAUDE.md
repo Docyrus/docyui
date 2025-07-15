@@ -24,6 +24,16 @@ DocyUI is a component library monorepo built with TypeScript, React, and Tailwin
 - Color selection during init with dynamic CSS generation
 - Both light and dark mode support required
 
+## Icon System
+- Use Lucide icons exclusively for all components
+- React components: Import from 'lucide-react'
+- Vue components: Import from 'lucide-vue-next'
+- Default icon properties:
+  - Size: 20px
+  - Stroke width: 1.5px
+- Icons are automatically configured during component installation
+- External libraries (lucide-react/lucide-vue-next) are included as dependencies
+
 ## Code Quality Standards
 - Always run `pnpm lint` and `pnpm typecheck` after making changes
 - Follow TypeScript best practices

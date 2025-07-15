@@ -13,6 +13,11 @@ export type DocyrusConfig = {
     cssVariables: boolean
     cssVersion: string
   }
+  icons: {
+    library: 'lucide'
+    size: number
+    strokeWidth: number
+  }
   aliases: {
     components: string
     utils: string
