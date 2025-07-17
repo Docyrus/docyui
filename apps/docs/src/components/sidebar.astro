@@ -45,10 +45,6 @@ const currentPath = Astro.url.pathname;
 function isActive(href: string): boolean {
   return currentPath === href;
 }
-
-function isSectionActive(items: SidebarItem[]): boolean {
-  return items.some(item => item.href && isActive(item.href));
-}
 ---
 
 <aside class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">

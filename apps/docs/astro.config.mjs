@@ -22,10 +22,5 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
-    resolve: {
-      alias: {
-        '@/content': new URL('./.velite', import.meta.url).pathname,
-      },
-    },
   },
 });

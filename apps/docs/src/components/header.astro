@@ -98,8 +98,8 @@ import ThemeToggle from './theme-toggle.astro';
   
   function updateFrameworkButtons() {
     const frameworkBtns = document.querySelectorAll('.framework-btn');
-    frameworkBtns.forEach(btn => {
-      if (btn.dataset.framework === currentFramework) {
+    frameworkBtns.forEach((btn: Element) => {
+      if ((btn as HTMLElement).dataset.framework === currentFramework) {
         btn.classList.add('bg-background', 'shadow-sm');
         btn.classList.remove('bg-transparent');
       } else {
@@ -111,8 +111,8 @@ import ThemeToggle from './theme-toggle.astro';
   
   function updateFrameworkContent() {
     const frameworkContents = document.querySelectorAll('.framework-content');
-    frameworkContents.forEach(content => {
-      if (content.dataset.framework === currentFramework) {
+    frameworkContents.forEach((content: Element) => {
+      if ((content as HTMLElement).dataset.framework === currentFramework) {
         content.classList.remove('hidden');
       } else {
         content.classList.add('hidden');
@@ -127,9 +127,9 @@ import ThemeToggle from './theme-toggle.astro';
     
     // Add click handlers
     const frameworkBtns = document.querySelectorAll('.framework-btn');
-    frameworkBtns.forEach(btn => {
+    frameworkBtns.forEach((btn: Element) => {
       btn.addEventListener('click', () => {
-        currentFramework = btn.dataset.framework;
+        currentFramework = (btn as HTMLElement).dataset.framework!;
         localStorage.setItem('selectedFramework', currentFramework);
         document.documentElement.dataset.framework = currentFramework;
         updateFrameworkButtons();

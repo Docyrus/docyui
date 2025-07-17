@@ -75,7 +75,11 @@ const colorPalettes = [
 
 <script>
   class ColorPicker {
-    constructor(element) {
+    element: HTMLElement;
+    colorOptions: NodeListOf<Element>;
+    currentColor: string;
+    
+    constructor(element: HTMLElement) {
       this.element = element;
       this.colorOptions = element.querySelectorAll('.color-option');
       this.currentColor = this.loadStoredColor() || 'slate';
@@ -83,7 +87,7 @@ const colorPalettes = [
       this.init();
     }
     
-    loadStoredColor() {
+    loadStoredColor(): string | null {
       try {
         return localStorage.getItem('docyui-color-palette');
       } catch (e) {
@@ -91,7 +95,7 @@ const colorPalettes = [
       }
     }
     
-    init() {
+    init(): void {
       // Apply stored color on initialization
       if (this.currentColor !== 'slate') {
         this.applyColorPalette(this.currentColor);
@@ -99,13 +103,17 @@ const colorPalettes = [
       }
       
       this.colorOptions.forEach(option => {
-        option.addEventListener('click', (e) => {
-          this.selectColor(e.currentTarget.dataset.color);
+        option.addEventListener('click', (e: Event) => {
+          const target = e.currentTarget as HTMLElement;
+          const colorName = target?.dataset?.color;
+          if (colorName) {
+            this.selectColor(colorName);
+          }
         });
       });
     }
     
-    selectColor(colorName) {
+    selectColor(colorName: string): void {
       if (colorName === this.currentColor) return;
       
       // Apply color palette to document
@@ -131,7 +139,7 @@ const colorPalettes = [
       this.showFeedback(colorName);
     }
     
-    applyColorPalette(colorName) {
+    applyColorPalette(colorName: string): void {
       const root = document.documentElement;
       
       // Define color palettes based on ShadCN color system
@@ -281,7 +289,7 @@ const colorPalettes = [
         },
       };
       
-      const palette = palettes[colorName];
+      const palette = palettes[colorName as keyof typeof palettes];
       if (palette) {
         Object.entries(palette).forEach(([property, value]) => {
           root.style.setProperty(property, value);
@@ -289,7 +297,7 @@ const colorPalettes = [
       }
     }
     
-    updateSelection(colorName) {
+    updateSelection(colorName: string): void {
       // Remove previous selection
       this.colorOptions.forEach(option => {
         option.classList.remove('border-ring', 'ring-2', 'ring-ring', 'ring-offset-2', 'ring-offset-background');
@@ -299,7 +307,7 @@ const colorPalettes = [
       });
       
       // Add new selection
-      const selectedOption = this.element.querySelector(`[data-color="${colorName}"]`);
+      const selectedOption = this.element.querySelector(`[data-color="${colorName}"]`) as HTMLElement;
       if (selectedOption) {
         selectedOption.classList.remove('border-border');
         selectedOption.classList.add('border-ring', 'ring-2', 'ring-ring', 'ring-offset-2', 'ring-offset-background');
@@ -316,13 +324,13 @@ const colorPalettes = [
       }
       
       // Update selected text
-      const selectedText = this.element.querySelector('.text-foreground.capitalize');
+      const selectedText = this.element.querySelector('.text-foreground.capitalize') as HTMLElement;
       if (selectedText) {
         selectedText.textContent = colorName;
       }
     }
     
-    showFeedback(colorName) {
+    showFeedback(colorName: string): void {
       // Create temporary feedback element
       const feedback = document.createElement('div');
       feedback.className = 'fixed top-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full';
@@ -348,11 +356,12 @@ const colorPalettes = [
   }
   
   // Auto-initialize color pickers
-  function initColorPickers() {
+  function initColorPickers(): void {
     const pickers = document.querySelectorAll('.color-picker:not([data-initialized])');
     pickers.forEach(picker => {
-      picker.dataset.initialized = 'true';
-      new ColorPicker(picker);
+      const element = picker as HTMLElement;
+      element.dataset.initialized = 'true';
+      new ColorPicker(element);
     });
   }
   

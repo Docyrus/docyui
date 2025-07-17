@@ -150,7 +150,13 @@ const packageTabs = [
 
 <script>
   class CodeBlock {
-    constructor(container) {
+    container: HTMLElement;
+    codeBlocks: NodeListOf<Element>;
+    copyButtons: NodeListOf<Element>;
+    tabButtons: NodeListOf<Element>;
+    tabContents: NodeListOf<Element>;
+    
+    constructor(container: HTMLElement) {
       this.container = container;
       this.codeBlocks = container.querySelectorAll('.code-block');
       this.copyButtons = container.querySelectorAll('.copy-button');
@@ -160,20 +166,22 @@ const packageTabs = [
       this.init();
     }
     
-    init() {
+    init(): void {
       // Initialize copy functionality
       this.copyButtons.forEach(button => {
         button.addEventListener('click', async () => {
-          const text = button.dataset.copyText || this.getCodeContent(button);
+          const buttonEl = button as HTMLElement;
+          const text = buttonEl.dataset.copyText || this.getCodeContent(buttonEl);
           await this.copyToClipboard(text);
-          this.showCopyFeedback(button);
+          this.showCopyFeedback(buttonEl);
         });
       });
       
       // Initialize tab switching for package managers
       this.tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-          this.switchTab(button.dataset.tab);
+          const buttonEl = button as HTMLElement;
+          this.switchTab(buttonEl.dataset.tab || '');
         });
       });
       
@@ -181,28 +189,31 @@ const packageTabs = [
       this.initFrameworkSwitching();
     }
     
-    switchTab(tabId) {
+    switchTab(tabId: string): void {
       // Update buttons
       this.tabButtons.forEach(button => {
-        const isActive = button.dataset.tab === tabId;
-        button.classList.toggle('text-foreground', isActive);
-        button.classList.toggle('border-primary', isActive);
-        button.classList.toggle('text-muted-foreground', !isActive);
-        button.classList.toggle('border-transparent', !isActive);
+        const buttonEl = button as HTMLElement;
+        const isActive = buttonEl.dataset.tab === tabId;
+        buttonEl.classList.toggle('text-foreground', isActive);
+        buttonEl.classList.toggle('border-primary', isActive);
+        buttonEl.classList.toggle('text-muted-foreground', !isActive);
+        buttonEl.classList.toggle('border-transparent', !isActive);
       });
       
       // Update content
       this.tabContents.forEach(content => {
-        const isActive = content.dataset.tabContent === tabId;
-        content.classList.toggle('block', isActive);
-        content.classList.toggle('hidden', !isActive);
+        const contentEl = content as HTMLElement;
+        const isActive = contentEl.dataset.tabContent === tabId;
+        contentEl.classList.toggle('block', isActive);
+        contentEl.classList.toggle('hidden', !isActive);
       });
     }
     
-    initFrameworkSwitching() {
+    initFrameworkSwitching(): void {
       // Listen for framework changes
-      document.addEventListener('frameworkchange', (event) => {
-        const framework = event.detail.framework;
+      document.addEventListener('frameworkchange', (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const framework = customEvent.detail.framework;
         this.switchFramework(framework);
       });
       
@@ -211,22 +222,23 @@ const packageTabs = [
       this.switchFramework(currentFramework);
     }
     
-    switchFramework(framework) {
+    switchFramework(framework: string): void {
       this.codeBlocks.forEach(block => {
-        const blockFramework = block.dataset.framework;
+        const blockEl = block as HTMLElement;
+        const blockFramework = blockEl.dataset.framework;
         if (blockFramework) {
-          block.classList.toggle('hidden', blockFramework !== framework);
+          blockEl.classList.toggle('hidden', blockFramework !== framework);
         }
       });
     }
     
-    getCodeContent(button) {
+    getCodeContent(button: HTMLElement): string {
       const container = button.closest('.code-block-container, .package-manager-tabs');
-      const visibleCode = container.querySelector('.code-block:not(.hidden) code, .tab-content:not(.hidden) code');
-      return visibleCode ? visibleCode.textContent : '';
+      const visibleCode = container?.querySelector('.code-block:not(.hidden) code, .tab-content:not(.hidden) code') as HTMLElement;
+      return visibleCode ? visibleCode.textContent || '' : '';
     }
     
-    async copyToClipboard(text) {
+    async copyToClipboard(text: string): Promise<void> {
       try {
         await navigator.clipboard.writeText(text);
       } catch (err) {
@@ -234,7 +246,7 @@ const packageTabs = [
       }
     }
     
-    showCopyFeedback(button) {
+    showCopyFeedback(button: HTMLElement): void {
       const originalIcon = button.innerHTML;
       button.innerHTML = `
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -250,11 +262,12 @@ const packageTabs = [
   }
   
   // Auto-initialize code blocks
-  function initCodeBlocks() {
+  function initCodeBlocks(): void {
     const containers = document.querySelectorAll('.code-block-container:not([data-initialized]), .package-manager-tabs:not([data-initialized])');
     containers.forEach(container => {
-      container.dataset.initialized = 'true';
-      new CodeBlock(container);
+      const containerEl = container as HTMLElement;
+      containerEl.dataset.initialized = 'true';
+      new CodeBlock(containerEl);
     });
   }
   

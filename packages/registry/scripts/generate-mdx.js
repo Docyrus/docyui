@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 // Generate MDX content for components
 async function generateComponentMDX() {
   const registryDir = path.join(__dirname, '..')
-  const docsContentDir = path.join(__dirname, '../../apps/docs/content/components')
+  const docsContentDir = path.join(__dirname, '../../../apps/docs/src/content/components')
   
   // Ensure content directory exists
   await fs.ensureDir(docsContentDir)
@@ -33,12 +33,21 @@ async function generateComponentMDX() {
 function generateMDXContent(componentName, data) {
   const title = componentName.charAt(0).toUpperCase() + componentName.slice(1)
   
-  const examples = data.variants?.variant?.map(variant => {
-    return `## ${variant.key.charAt(0).toUpperCase() + variant.key.slice(1)}
+  // Use examples if available, otherwise generate from variants
+  const examples = data.examples ? 
+    Object.keys(data.examples).map(exampleKey => {
+      const exampleName = exampleKey.charAt(0).toUpperCase() + exampleKey.slice(1).replace(/[-_]/g, ' ');
+      return `### ${exampleName}
+
+<ComponentPreview name="${componentName}" variant="${exampleKey}" />
+`;
+    }).join('\n') :
+    data.variants?.variant?.map(variant => {
+      return `### ${variant.key.charAt(0).toUpperCase() + variant.key.slice(1)}
 
 <ComponentPreview name="${componentName}" variant="${variant.key}" />
-`
-  }).join('\n') || ''
+`;
+    }).join('\n') || ''
   
   const propsTable = data.props?.map(prop => {
     const defaultValue = prop.default || (prop.optional ? 'undefined' : '-')
@@ -49,8 +58,6 @@ function generateMDXContent(componentName, data) {
 title: ${title}
 description: ${data.description || `${title} component for DocyUI`}
 ---
-
-import ComponentPreview from '@/components/component-preview.astro'
 
 # ${title}
 
@@ -90,6 +97,16 @@ ${propsTable}
 
 ${data.variants?.variant?.map(variant => `- **${variant.key}**: \`${variant.value}\``).join('\n') || 'No variants available.'}
 `
+}
+
+// Run the function if this script is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  generateComponentMDX().then(() => {
+    console.log('✅ Component MDX files generated successfully!')
+  }).catch(error => {
+    console.error('❌ Error generating MDX files:', error)
+    process.exit(1)
+  })
 }
 
 export { generateComponentMDX }

@@ -1,82 +1,54 @@
 ---
 import DocsLayout from '../../layouts/docs-layout.astro';
-import { getDocBySlug, getAllDocs } from '../../lib/content';
+import { getAllDocs } from '../../lib/content';
+import CodeBlock from '../../components/code-block.astro';
+import ComponentPreview from '../../components/component-preview.astro';
+import PackageManagerTabs from '../../components/package-manager-tabs.astro';
+import ColorPicker from '../../components/color-picker.astro';
 import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
 
-export const getStaticPaths: GetStaticPaths = () => {
-  const docs = getAllDocs();
+export const getStaticPaths: GetStaticPaths = async () => {
+  const docs = await getAllDocs();
   return docs.map((doc) => ({
     params: { slug: doc.slug },
-    props: { doc },
+    props: { entry: doc },
   }));
 };
 
-const { doc } = Astro.props;
-
-// Generate MDX content HTML - simplified approach
-let mdxContent = '';
-if (doc?.code) {
-  // For now, just show the actual MDX content properly formatted
-  mdxContent = `
-    <div class="space-y-6">
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 class="font-semibold mb-2 text-blue-800">✅ ${doc.title}</h3>
-        <p class="text-sm text-blue-600">
-          Real MDX content loaded successfully from: ${doc.slug}.mdx
-        </p>
-        <p class="text-sm text-blue-600 mt-2">
-          Content includes: ${doc.toc?.length || 0} sections with proper MDX formatting
-        </p>
-      </div>
-      
-      <div class="prose prose-slate dark:prose-invert max-w-none">
-        <p class="text-lg text-muted-foreground mb-6">
-          ${doc.description || 'Documentation content'}
-        </p>
-        
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-          <p class="text-green-800 font-medium">✅ Content Available</p>
-          <p class="text-sm text-green-600 mt-1">
-            This page contains ${doc.toc?.length || 0} sections of documentation content.
-          </p>
-        </div>
-        
-        <div class="space-y-4">
-          ${doc.toc?.map((item: any) => `
-            <div class="border rounded-lg p-4">
-              <h3 class="font-semibold text-lg mb-2">${item.title}</h3>
-              <p class="text-sm text-muted-foreground">Section: ${item.url}</p>
-              ${item.items?.length ? `<ul class="mt-2 space-y-1">${item.items.map((subItem: any) => `<li class="text-sm">• ${subItem.title}</li>`).join('')}</ul>` : ''}
-            </div>
-          `).join('') || ''}
-        </div>
-      </div>
-    </div>
-  `;
-} else {
-  mdxContent = `<div class="bg-muted/50 border border-dashed border-muted-foreground/50 rounded-lg p-6">
-    <p class="text-muted-foreground">No content available</p>
-  </div>`;
+interface Props {
+  entry: CollectionEntry<'docs'>;
 }
+
+const { entry } = Astro.props as Props;
+const { Content } = await entry.render();
+
+// Component registry for MDX
+const components = {
+  CodeBlock,
+  ComponentPreview,
+  PackageManagerTabs,
+  ColorPicker,
+};
 ---
 
-<DocsLayout title={`${doc.title} - DocyUI`} description={doc.description}>
+<DocsLayout title={`${entry.data.title} - DocyUI`} description={entry.data.description}>
   <div class="pb-12 pt-8">
     <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
       <div class="flex-1 space-y-4">
         <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
-          <span class="docyui-gradient-text">{doc.title}</span>
+          <span class="docyui-gradient-text">{entry.data.title}</span>
         </h1>
-        {doc.description && (
+        {entry.data.description && (
           <p class="text-xl text-muted-foreground leading-relaxed">
-            {doc.description}
+            {entry.data.description}
           </p>
         )}
       </div>
     </div>
   </div>
 
-  <div class="prose prose-slate dark:prose-invert max-w-none" set:html={mdxContent} />
+  <Content components={components} />
 </DocsLayout>
 
 <style>

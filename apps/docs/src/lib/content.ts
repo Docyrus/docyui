@@ -1,37 +1,42 @@
-// Content utilities for Velite
-import { docs, components } from '@/content'
+// Content utilities for Astro Content Collections
+import { getCollection, type CollectionEntry } from 'astro:content';
 
-export function getDocBySlug(slug: string) {
-  return docs.find((doc) => doc.slug === slug)
+export async function getDocBySlug(slug: string): Promise<CollectionEntry<'docs'> | undefined> {
+  const docs = await getCollection('docs');
+  return docs.find((doc) => doc.slug === slug);
 }
 
-export function getComponentBySlug(slug: string) {
-  return components.find((component) => component.slug === slug)
+export async function getComponentBySlug(slug: string): Promise<CollectionEntry<'components'> | undefined> {
+  const components = await getCollection('components');
+  return components.find((component) => component.slug === slug);
 }
 
-export function getAllDocs() {
-  return docs.filter((doc) => doc.published)
+export async function getAllDocs(): Promise<CollectionEntry<'docs'>[]> {
+  const docs = await getCollection('docs');
+  return docs.filter((doc) => doc.data.published);
 }
 
-export function getAllComponents() {
-  return components.filter((component) => component.published)
+export async function getAllComponents(): Promise<CollectionEntry<'components'>[]> {
+  const components = await getCollection('components');
+  return components.filter((component) => component.data.published);
 }
 
-export function getDocsNav() {
-  const docsList = getAllDocs()
+export async function getDocsNav() {
+  const docsList = await getAllDocs();
+  const componentsList = await getAllComponents();
   
   return [
     {
       title: "Getting Started",
       items: docsList.map(doc => ({
-        title: doc.title,
+        title: doc.data.title,
         href: `/docs/${doc.slug}`,
       }))
     },
     {
       title: "Components",
-      items: getAllComponents().map(component => ({
-        title: component.title,
+      items: componentsList.map(component => ({
+        title: component.data.title,
         href: `/docs/components/${component.slug}`,
       }))
     }

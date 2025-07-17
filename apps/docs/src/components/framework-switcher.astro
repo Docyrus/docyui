@@ -35,7 +35,12 @@ const { defaultFramework = 'react', className = '' } = Astro.props;
 
 <script>
   class FrameworkSwitcher {
-    constructor(element) {
+    element: HTMLElement;
+    tabs: NodeListOf<Element>;
+    defaultFramework: string;
+    currentFramework: string;
+    
+    constructor(element: HTMLElement) {
       this.element = element;
       this.tabs = element.querySelectorAll('.framework-tab');
       this.defaultFramework = element.dataset.defaultFramework || 'react';
@@ -44,15 +49,18 @@ const { defaultFramework = 'react', className = '' } = Astro.props;
       this.init();
     }
     
-    init() {
+    init(): void {
       // Set initial active state
       this.setActiveTab(this.defaultFramework);
       
       // Add click listeners
       this.tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-          const framework = e.currentTarget.dataset.framework;
-          this.switchFramework(framework);
+        tab.addEventListener('click', (e: Event) => {
+          const target = e.currentTarget as HTMLElement;
+          const framework = target.dataset.framework;
+          if (framework) {
+            this.switchFramework(framework);
+          }
         });
       });
       
@@ -60,22 +68,23 @@ const { defaultFramework = 'react', className = '' } = Astro.props;
       this.dispatchFrameworkChange(this.defaultFramework);
     }
     
-    setActiveTab(framework) {
+    setActiveTab(framework: string): void {
       this.tabs.forEach(tab => {
-        const isActive = tab.dataset.framework === framework;
-        tab.dataset.state = isActive ? 'active' : 'inactive';
+        const tabEl = tab as HTMLElement;
+        const isActive = tabEl.dataset.framework === framework;
+        tabEl.dataset.state = isActive ? 'active' : 'inactive';
       });
       this.currentFramework = framework;
     }
     
-    switchFramework(framework) {
+    switchFramework(framework: string): void {
       if (framework === this.currentFramework) return;
       
       this.setActiveTab(framework);
       this.dispatchFrameworkChange(framework);
     }
     
-    dispatchFrameworkChange(framework) {
+    dispatchFrameworkChange(framework: string): void {
       // Dispatch custom event for other components to listen
       const event = new CustomEvent('frameworkchange', {
         detail: { framework },
@@ -91,7 +100,7 @@ const { defaultFramework = 'react', className = '' } = Astro.props;
   // Auto-initialize all framework switchers
   document.addEventListener('DOMContentLoaded', () => {
     const switchers = document.querySelectorAll('.framework-switcher');
-    switchers.forEach(switcher => new FrameworkSwitcher(switcher));
+    switchers.forEach(switcher => new FrameworkSwitcher(switcher as HTMLElement));
   });
   
   // For components that load after DOMContentLoaded
@@ -101,11 +110,12 @@ const { defaultFramework = 'react', className = '' } = Astro.props;
     initSwitchers();
   }
   
-  function initSwitchers() {
+  function initSwitchers(): void {
     const switchers = document.querySelectorAll('.framework-switcher:not([data-initialized])');
     switchers.forEach(switcher => {
-      switcher.dataset.initialized = 'true';
-      new FrameworkSwitcher(switcher);
+      const switcherEl = switcher as HTMLElement;
+      switcherEl.dataset.initialized = 'true';
+      new FrameworkSwitcher(switcherEl);
     });
   }
 </script>

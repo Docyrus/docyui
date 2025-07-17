@@ -21,17 +21,18 @@ if (!reactComponent && !vueComponent) {
 }
 
 // Get examples from registry or use single variant
-let componentExamples = [];
+let componentExamples: Array<{name: string; variant: string; description: string; size?: string}> = [];
 if (variant !== 'default') {
   // Single variant mode
   componentExamples = [{ name: variant, variant, description: `${variant} variant` }];
 } else {
   // All variants mode - get from registry
   const variants = reactComponent?.variants?.variant || vueComponent?.variants?.variant || [];
-  componentExamples = variants.map(v => ({
+  componentExamples = variants.map((v: any) => ({
     name: v.key,
     variant: v.key,
-    description: `${v.key} variant`
+    description: `${v.key} variant`,
+    size: v.size
   }));
 }
 
@@ -46,20 +47,20 @@ const reactCode = `${reactImport}
 
 export default function Component() {
   return (
-    ${reactUsage.split('\n').map(line => line ? `    ${line}` : line).join('\n')}
+    ${reactUsage.split('\n').map((line: string) => line ? `    ${line}` : line).join('\n')}
   )
-}`
+}`;
 
 const vueCode = `<template>
-  ${vueUsage.split('\n').map(line => line ? `  ${line}` : line).join('\n')}
+  ${vueUsage.split('\n').map((line: string) => line ? `  ${line}` : line).join('\n')}
 </template>
 
 <script setup>
 ${vueImport}
-</script>`
+</script>`;
 
 // HTML escape function
-const escapeHtml = (text) => {
+const escapeHtml = (text: string) => {
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -154,7 +155,16 @@ const escapeHtml = (text) => {
 
 <script>
   class ComponentPreview {
-    constructor(element) {
+    element: HTMLElement;
+    previewContents: NodeListOf<Element>;
+    frameworkContents: NodeListOf<Element>;
+    previewTabs: NodeListOf<Element>;
+    previewContentAreas: NodeListOf<Element>;
+    copyButtons: NodeListOf<Element>;
+    currentFramework: string;
+    currentTab: string;
+    
+    constructor(element: HTMLElement) {
       this.element = element;
       this.previewContents = element.querySelectorAll('.preview-content');
       this.frameworkContents = element.querySelectorAll('.framework-content');
@@ -167,10 +177,11 @@ const escapeHtml = (text) => {
       this.init();
     }
     
-    init() {
+    init(): void {
       // Listen for framework changes
-      document.addEventListener('frameworkchange', (e) => {
-        this.switchFramework(e.detail.framework);
+      document.addEventListener('frameworkchange', (e: Event) => {
+        const customEvent = e as CustomEvent;
+        this.switchFramework(customEvent.detail.framework);
       });
       
       // Set initial framework
@@ -179,70 +190,75 @@ const escapeHtml = (text) => {
       // Add tab functionality
       this.previewTabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          this.switchTab(tab.dataset.tab);
+          const tabEl = tab as HTMLElement;
+          this.switchTab(tabEl.dataset.tab || '');
         });
       });
       
       // Add copy functionality
       this.copyButtons.forEach(button => {
         button.addEventListener('click', () => {
-          this.copyCode(button);
+          this.copyCode(button as HTMLElement);
         });
       });
     }
     
-    switchFramework(framework) {
+    switchFramework(framework: string): void {
       this.currentFramework = framework;
       
       // Switch preview content
       this.previewContents.forEach(content => {
-        const contentFramework = content.dataset.framework;
+        const contentEl = content as HTMLElement;
+        const contentFramework = contentEl.dataset.framework;
         if (contentFramework === framework) {
-          content.classList.remove('hidden');
+          contentEl.classList.remove('hidden');
         } else {
-          content.classList.add('hidden');
+          contentEl.classList.add('hidden');
         }
       });
       
       // Switch framework content
       this.frameworkContents.forEach(content => {
-        const contentFramework = content.dataset.framework;
+        const contentEl = content as HTMLElement;
+        const contentFramework = contentEl.dataset.framework;
         if (contentFramework === framework) {
-          content.classList.remove('hidden');
+          contentEl.classList.remove('hidden');
         } else {
-          content.classList.add('hidden');
+          contentEl.classList.add('hidden');
         }
       });
     }
     
-    switchTab(tab) {
+    switchTab(tab: string): void {
       this.currentTab = tab;
       
       // Update tab buttons
       this.previewTabs.forEach(tabBtn => {
-        if (tabBtn.dataset.tab === tab) {
-          tabBtn.classList.add('text-foreground', 'bg-background', 'border-b-2', 'border-primary');
-          tabBtn.classList.remove('text-muted-foreground');
+        const tabBtnEl = tabBtn as HTMLElement;
+        if (tabBtnEl.dataset.tab === tab) {
+          tabBtnEl.classList.add('text-foreground', 'bg-background', 'border-b-2', 'border-primary');
+          tabBtnEl.classList.remove('text-muted-foreground');
         } else {
-          tabBtn.classList.remove('text-foreground', 'bg-background', 'border-b-2', 'border-primary');
-          tabBtn.classList.add('text-muted-foreground');
+          tabBtnEl.classList.remove('text-foreground', 'bg-background', 'border-b-2', 'border-primary');
+          tabBtnEl.classList.add('text-muted-foreground');
         }
       });
       
       // Update content areas
       this.previewContentAreas.forEach(area => {
-        if (area.dataset.tab === tab) {
-          area.classList.remove('hidden');
+        const areaEl = area as HTMLElement;
+        if (areaEl.dataset.tab === tab) {
+          areaEl.classList.remove('hidden');
         } else {
-          area.classList.add('hidden');
+          areaEl.classList.add('hidden');
         }
       });
     }
     
-    copyCode(button) {
-      const codeBlock = button.parentElement.querySelector('code');
+    copyCode(button: HTMLElement): void {
+      const codeBlock = button.parentElement?.querySelector('code') as HTMLElement;
       if (codeBlock) {
-        const text = codeBlock.textContent;
+        const text = codeBlock.textContent || '';
         navigator.clipboard.writeText(text).then(() => {
           // Show success feedback
           const originalContent = button.innerHTML;
@@ -263,11 +279,12 @@ const escapeHtml = (text) => {
   }
   
   // Auto-initialize component previews
-  function initComponentPreviews() {
+  function initComponentPreviews(): void {
     const previews = document.querySelectorAll('.component-preview:not([data-initialized])');
     previews.forEach(preview => {
-      preview.dataset.initialized = 'true';
-      new ComponentPreview(preview);
+      const previewEl = preview as HTMLElement;
+      previewEl.dataset.initialized = 'true';
+      new ComponentPreview(previewEl);
     });
   }
   

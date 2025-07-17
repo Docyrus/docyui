@@ -19,7 +19,7 @@ if (!component) {
 }
 
 // Generate component classes from registry data
-const generateComponentClasses = (name: string, variant: string, size: string) => {
+const generateComponentClasses = (variant: string, size: string) => {
   if (!component) return '';
   
   const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
@@ -33,9 +33,14 @@ const generateComponentClasses = (name: string, variant: string, size: string) =
   return `${baseClasses} ${variantClasses} ${sizeClasses} ${className}`;
 };
 
-const componentClasses = generateComponentClasses(name, variant, size);
+const componentClasses = generateComponentClasses(variant, size);
 const componentText = size === 'icon' ? '' : (variant.charAt(0).toUpperCase() + variant.slice(1));
 const isIconButton = size === 'icon';
+
+// TypeScript variable declarations for script block
+const scriptComponent = component;
+const scriptFramework = framework;
+const scriptName = name;
 ---
 
 {name === 'button' && (
@@ -54,7 +59,7 @@ const isIconButton = size === 'icon';
   </div>
 )}
 
-<script define:vars={{ component, framework, name }}>
+<script define:vars={{ component: scriptComponent, framework: scriptFramework, name: scriptName }}>
   // This script block runs on the client
   // Here we could dynamically compile and render the component
   // For now, we'll just log the component data

@@ -23,14 +23,17 @@ const { className = '' } = Astro.props;
 
 <script>
   class ThemeToggle {
-    constructor(element) {
+    element: HTMLElement;
+    currentTheme: string;
+    
+    constructor(element: HTMLElement) {
       this.element = element;
       this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
       
       this.init();
     }
     
-    init() {
+    init(): void {
       // Apply initial theme
       this.applyTheme(this.currentTheme);
       
@@ -47,25 +50,25 @@ const { className = '' } = Astro.props;
       });
     }
     
-    getSystemTheme() {
+    getSystemTheme(): string {
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     
-    getStoredTheme() {
+    getStoredTheme(): string | null {
       return localStorage.getItem('theme');
     }
     
-    storeTheme(theme) {
+    storeTheme(theme: string): void {
       localStorage.setItem('theme', theme);
     }
     
-    toggleTheme() {
+    toggleTheme(): void {
       const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
       this.applyTheme(newTheme);
       this.storeTheme(newTheme);
     }
     
-    applyTheme(theme) {
+    applyTheme(theme: string): void {
       this.currentTheme = theme;
       
       // Update document class
@@ -83,12 +86,12 @@ const { className = '' } = Astro.props;
       document.dispatchEvent(event);
     }
     
-    updateButtonState(theme) {
+    updateButtonState(theme: string): void {
       // Update button title
       this.element.title = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
       
       // Update ARIA label
-      const srText = this.element.querySelector('.sr-only');
+      const srText = this.element.querySelector('.sr-only') as HTMLElement;
       if (srText) {
         srText.textContent = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
       }
@@ -96,11 +99,12 @@ const { className = '' } = Astro.props;
   }
   
   // Auto-initialize theme toggles
-  function initThemeToggles() {
+  function initThemeToggles(): void {
     const toggles = document.querySelectorAll('.theme-toggle:not([data-initialized])');
     toggles.forEach(toggle => {
-      toggle.dataset.initialized = 'true';
-      new ThemeToggle(toggle);
+      const toggleEl = toggle as HTMLElement;
+      toggleEl.dataset.initialized = 'true';
+      new ThemeToggle(toggleEl);
     });
   }
   

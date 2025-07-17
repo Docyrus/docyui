@@ -1,77 +1,159 @@
 ---
-import ComponentPreview from './component-preview.astro';
-import Tabs from './tabs.astro';
-import TabsList from './tabs-list.astro';
-import TabsTrigger from './tabs-trigger.astro';
-import TabsContent from './tabs-content.astro';
-
 export interface Props {
-  code: string;
-  components?: any;
+  code?: string;
 }
 
-const { code, components = {} } = Astro.props;
+const { code } = Astro.props;
 
-// MDX component mappings
-const defaultComponents = {
-  ComponentPreview,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-  Table: 'table',
-  TableHeader: 'thead',
-  TableBody: 'tbody',
-  TableRow: 'tr',
-  TableHead: 'th',
-  TableCell: 'td',
-  Steps: 'div',
-  Step: 'div',
-  ...components
-};
-
-// Render MDX content
 let renderedContent = '';
-try {
-  // Execute the MDX function with components
-  const mdxFunction = new Function('components', `
-    const { Fragment, jsx, jsxs } = arguments[0];
-    ${code}
-    return _createMdxContent(components);
-  `);
-  
-  // Mock JSX runtime
-  const jsxRuntime = {
-    Fragment: ({ children }) => children,
-    jsx: (type, props) => {
-      if (typeof type === 'string') {
-        const attrs = Object.entries(props || {})
-          .filter(([key]) => key !== 'children')
-          .map(([key, value]) => `${key}="${value}"`)
-          .join(' ');
-        return `<${type} ${attrs}>${props?.children || ''}</${type}>`;
+
+if (code) {
+  try {
+    // Mock the import function to prevent dynamic imports
+    const originalImport = globalThis.import;
+    globalThis.import = async (specifier: string) => {
+      // Mock component imports
+      if (specifier.includes('code-block.astro')) {
+        return { 
+          default: (props: any) => `<div class="component-placeholder" data-component="CodeBlock">
+            <strong>CodeBlock</strong> component
+            ${props?.title ? ` - ${props.title}` : ''}
+          </div>`
+        };
       }
-      return props?.children || '';
-    },
-    jsxs: (type, props) => {
-      if (typeof type === 'string') {
-        const attrs = Object.entries(props || {})
-          .filter(([key]) => key !== 'children')
-          .map(([key, value]) => `${key}="${value}"`)
-          .join(' ');
-        return `<${type} ${attrs}>${Array.isArray(props?.children) ? props.children.join('') : props?.children || ''}</${type}>`;
+      if (specifier.includes('component-preview.astro')) {
+        return { 
+          default: (props: any) => `<div class="component-placeholder" data-component="ComponentPreview">
+            <strong>ComponentPreview</strong> component
+            ${props?.name ? ` (${props.name})` : ''}
+          </div>`
+        };
       }
-      return Array.isArray(props?.children) ? props.children.join('') : props?.children || '';
+      if (specifier.includes('package-manager-tabs.astro')) {
+        return { 
+          default: (props: any) => `<div class="component-placeholder" data-component="PackageManagerTabs">
+            <strong>PackageManagerTabs</strong> component
+          </div>`
+        };
+      }
+      if (specifier.includes('color-picker.astro')) {
+        return { 
+          default: (props: any) => `<div class="component-placeholder" data-component="ColorPicker">
+            <strong>ColorPicker</strong> component
+            ${props?.selectedColor ? ` (${props.selectedColor})` : ''}
+          </div>`
+        };
+      }
+      
+      // Return empty default for unknown imports
+      return { default: () => '' };
+    };
+    
+    // Create an async function to handle await calls in the MDX code
+    const asyncMdxFunction = new Function('arguments', `
+      return (async () => {
+        ${code}
+        return _createMdxContent;
+      })();
+    `);
+    
+    // Mock the JSX runtime and component imports
+    const mockArguments = [{
+      Fragment: (props: any) => props.children || '','
+      jsx: (type: string | Function, props?: any) => {
+        if (typeof type === 'string') {
+          // Handle HTML elements
+          const attrs = props ? Object.entries(props)
+            .filter(([key]) => key !== 'children')
+            .map(([key, value]) => {
+              if (key === 'className') return `class="${value}"`;
+              return `${key}="${value}"`;
+            })
+            .join(' ') : '';
+          
+          const content = props?.children || '';
+          return `<${type}${attrs ? ' ' + attrs : ''}>${content}</${type}>`;
+        }
+        
+        // Handle component functions
+        if (typeof type === 'function') {
+          return type(props);
+        }
+        
+        // Handle component placeholders for unknown types
+        const componentName = type.name || 'Unknown';
+        return `<div class="component-placeholder" data-component="${componentName}">
+          <strong>${componentName}</strong> component
+          ${props?.name ? ` (${props.name})` : ''}
+        </div>`;
+      },
+      jsxs: (type: string | Function, props?: any) => {
+        if (typeof type === 'string') {
+          const attrs = props ? Object.entries(props)
+            .filter(([key]) => key !== 'children')
+            .map(([key, value]) => {
+              if (key === 'className') return `class="${value}"`;
+              return `${key}="${value}"`;
+            })
+            .join(' ') : '';
+          
+          const content = Array.isArray(props?.children) 
+            ? props.children.join('') 
+            : props?.children || '';
+          return `<${type}${attrs ? ' ' + attrs : ''}>${content}</${type}>`;
+        }
+        
+        // Handle component functions
+        if (typeof type === 'function') {
+          return type(props);
+        }
+        
+        const componentName = type.name || 'Unknown';
+        return `<div class="component-placeholder" data-component="${componentName}">
+          <strong>${componentName}</strong> component
+        </div>`;
+      },
+      baseUrl: import.meta.url
+    }];
+    
+    try {
+      // Execute the MDX function and wait for it
+      const createMdxContent = await asyncMdxFunction(mockArguments);
+      
+      if (createMdxContent && typeof createMdxContent === 'function') {
+        renderedContent = createMdxContent({});
+      } else {
+        renderedContent = createMdxContent || '';
+      }
+    } finally {
+      // Restore original import function
+      globalThis.import = originalImport;
     }
-  };
-  
-  renderedContent = mdxFunction(jsxRuntime, defaultComponents);
-} catch (error) {
-  console.error('MDX rendering error:', error);
-  renderedContent = `<div class="bg-red-50 border border-red-200 rounded-lg p-4">
-    <p class="text-red-800">Error rendering MDX content: ${error.message}</p>
+    
+  } catch (error) {
+    console.error('MDX rendering error:', error);
+    renderedContent = `<div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <p class="text-red-800 font-medium">Error rendering MDX content</p>
+      <p class="text-sm text-red-600 mt-1">${String(error)}</p>
+    </div>`;
+  }
+} else {
+  renderedContent = `<div class="bg-muted/50 border border-dashed border-muted-foreground/50 rounded-lg p-6">
+    <p class="text-muted-foreground">No content available</p>
   </div>`;
 }
 ---
 
 <div class="prose prose-slate dark:prose-invert max-w-none" set:html={renderedContent} />
+
+<style>
+  @reference '../styles/global.css';
+
+  .component-placeholder {
+    @apply bg-blue-50 border border-blue-200 rounded-lg p-4 my-4;
+  }
+  
+  .component-placeholder strong {
+    @apply text-blue-800;
+  }
+</style>

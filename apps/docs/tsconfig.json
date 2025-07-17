@@ -2,18 +2,18 @@
   "extends": "astro/tsconfigs/strict",
   "include": [
     ".astro/types.d.ts",
-    "**/*",
-    ".velite/**/*",
-    "velite.config.ts"
+    "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "node_modules"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "@/content": [ "./.velite" ],
       "@/*": [ "./src/*" ]
     }
   }

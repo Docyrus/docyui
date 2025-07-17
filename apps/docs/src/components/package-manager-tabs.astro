@@ -16,7 +16,7 @@ const reactSourceCode = reactComponent?.files?.[0]?.content || '';
 const vueSourceCode = vueComponent?.files?.[0]?.content || '';
 
 // HTML escape the source code
-const escapeHtml = (text) => {
+const escapeHtml = (text: string) => {
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -203,30 +203,30 @@ const escapeHtml = (text) => {
     // Set initial active tab
     const firstTab = tabButtons[0];
     if (firstTab) {
-      switchTab(firstTab.dataset.tab);
+      switchTab((firstTab as HTMLElement).dataset.tab!);
     }
     
     // Add click handlers
-    tabButtons.forEach(button => {
+    tabButtons.forEach((button: Element) => {
       button.addEventListener('click', () => {
-        switchTab(button.dataset.tab);
+        switchTab((button as HTMLElement).dataset.tab!);
       });
     });
     
     // Package manager tabs
     const pmButtons = document.querySelectorAll('.pm-btn');
-    pmButtons.forEach(button => {
+    pmButtons.forEach((button: Element) => {
       button.addEventListener('click', () => {
-        const pm = button.dataset.pm;
-        const parentCliTabs = button.closest('.cli-tabs');
-        switchPackageManager(parentCliTabs, pm);
+        const pm = (button as HTMLElement).dataset.pm!;
+        const parentCliTabs = button.closest('.cli-tabs')!;
+        switchPackageManager(parentCliTabs as HTMLElement, pm);
       });
     });
     
-    function switchTab(activeTab) {
+    function switchTab(activeTab: string) {
       // Update buttons
-      tabButtons.forEach(btn => {
-        if (btn.dataset.tab === activeTab) {
+      tabButtons.forEach((btn: Element) => {
+        if ((btn as HTMLElement).dataset.tab === activeTab) {
           btn.classList.add('text-foreground', 'border-b-2', 'border-primary');
           btn.classList.remove('text-muted-foreground', 'border-b-2', 'border-transparent');
         } else {
@@ -236,8 +236,8 @@ const escapeHtml = (text) => {
       });
       
       // Update content
-      tabContents.forEach(content => {
-        if (content.dataset.tab === activeTab) {
+      tabContents.forEach((content: Element) => {
+        if ((content as HTMLElement).dataset.tab === activeTab) {
           content.classList.remove('hidden');
         } else {
           content.classList.add('hidden');
@@ -245,11 +245,11 @@ const escapeHtml = (text) => {
       });
     }
     
-    function switchPackageManager(cliTabs, pm) {
+    function switchPackageManager(cliTabs: HTMLElement, pm: string) {
       // Update buttons within this specific cli-tabs container
       const buttons = cliTabs.querySelectorAll('.pm-btn');
-      buttons.forEach(btn => {
-        if (btn.dataset.pm === pm) {
+      buttons.forEach((btn: Element) => {
+        if ((btn as HTMLElement).dataset.pm === pm) {
           btn.classList.add('bg-background', 'active');
           btn.classList.remove('bg-transparent');
         } else {
@@ -260,8 +260,8 @@ const escapeHtml = (text) => {
       
       // Update content within this specific cli-tabs container
       const contents = cliTabs.querySelectorAll('.pm-content');
-      contents.forEach(content => {
-        if (content.dataset.pm === pm) {
+      contents.forEach((content: Element) => {
+        if ((content as HTMLElement).dataset.pm === pm) {
           content.classList.remove('hidden');
         } else {
           content.classList.add('hidden');

@@ -1,111 +1,52 @@
 ---
 import DocsLayout from '../../../layouts/docs-layout.astro';
+import { getAllComponents } from '../../../lib/content';
+import CodeBlock from '../../../components/code-block.astro';
 import ComponentPreview from '../../../components/component-preview.astro';
 import PackageManagerTabs from '../../../components/package-manager-tabs.astro';
-import { getComponent, getComponentNames } from '../../../lib/registry';
+import ColorPicker from '../../../components/color-picker.astro';
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
 
-export async function getStaticPaths() {
-  const componentNames = getComponentNames();
-  return componentNames.map(name => ({
-    params: { slug: name }
+export const getStaticPaths: GetStaticPaths = async () => {
+  const componentEntries = await getAllComponents();
+  return componentEntries.map((component) => ({
+    params: { slug: component.slug },
+    props: { entry: component },
   }));
+};
+
+interface Props {
+  entry: CollectionEntry<'components'>;
 }
 
-const { slug } = Astro.params;
-const componentName = slug as string;
+const { entry } = Astro.props as Props;
+const { Content } = await entry.render();
 
-// Get component metadata from registry
-const reactComponent = getComponent(componentName, 'react');
-const vueComponent = getComponent(componentName, 'vue');
-
-if (!reactComponent && !vueComponent) {
-  return Astro.redirect('/404');
-}
-
-// Use React component as primary source, fallback to Vue
-const component = reactComponent || vueComponent;
-const title = component.name.charAt(0).toUpperCase() + component.name.slice(1);
-const description = component.description || `${title} component`;
-
-// Get all variants for examples
-const variants = component.variants?.variant || [];
+// Component registry for MDX
+const components = {
+  CodeBlock,
+  ComponentPreview,
+  PackageManagerTabs,
+  ColorPicker,
+};
 ---
 
-<DocsLayout title={title} description={description}>
+<DocsLayout title={`${entry.data.title} - DocyUI`} description={entry.data.description}>
   <div class="pb-12 pt-8">
-    <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
-      {title}
-    </h1>
-    <p class="text-xl text-muted-foreground mt-2">
-      {description}
-    </p>
-  </div>
-
-  <ComponentPreview name={componentName} />
-
-  <div class="mt-12">
-    <h2 class="font-heading text-2xl font-semibold tracking-tight mt-8 mb-4">Installation</h2>
-    <PackageManagerTabs component={componentName} />
-  </div>
-
-  <div class="mt-12">
-    <h2 class="font-heading text-2xl font-semibold tracking-tight mt-8 mb-4">Usage</h2>
-    <div class="framework-content" data-framework="react">
-      <div class="bg-muted rounded-lg p-4">
-        <pre class="text-sm"><code>{component.usage?.import || `import { ${title} } from "@/components/ui/${componentName}"`}</code></pre>
-      </div>
-      <div class="bg-muted rounded-lg p-4 mt-4">
-        <pre class="text-sm"><code>{component.usage?.basic || `<${title}>${title}</${title}>`}</code></pre>
-      </div>
-    </div>
-    <div class="framework-content hidden" data-framework="vue">
-      <div class="bg-muted rounded-lg p-4">
-        <pre class="text-sm"><code>{vueComponent?.usage?.import || `import ${title} from "@/components/ui/${title}.vue"`}</code></pre>
-      </div>
-      <div class="bg-muted rounded-lg p-4 mt-4">
-        <pre class="text-sm"><code>{vueComponent?.usage?.basic || `<${title}>${title}</${title}>`}</code></pre>
+    <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+      <div class="flex-1 space-y-4">
+        <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
+          <span class="docyui-gradient-text">{entry.data.title}</span>
+        </h1>
+        {entry.data.description && (
+          <p class="text-xl text-muted-foreground leading-relaxed">
+            {entry.data.description}
+          </p>
+        )}
       </div>
     </div>
   </div>
 
-  {variants.length > 0 && (
-    <div class="mt-12">
-      <h2 class="font-heading text-2xl font-semibold tracking-tight mt-8 mb-4">Examples</h2>
-      
-      {variants.map((variant) => (
-        <div class="mt-8">
-          <h3 class="font-heading text-lg font-semibold mt-6 mb-4">{variant.key.charAt(0).toUpperCase() + variant.key.slice(1)}</h3>
-          <ComponentPreview name={componentName} variant={variant.key} />
-        </div>
-      ))}
-    </div>
-  )}
-
-  <div class="mt-12">
-    <h2 class="font-heading text-2xl font-semibold tracking-tight mt-8 mb-4">API Reference</h2>
-    
-    <h3 class="font-heading text-lg font-semibold mt-6 mb-4">Props</h3>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b">
-            <th class="text-left p-2">Prop</th>
-            <th class="text-left p-2">Type</th>
-            <th class="text-left p-2">Default</th>
-            <th class="text-left p-2">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {component.props?.map((prop) => (
-            <tr class="border-b">
-              <td class="p-2"><code>{prop.name}</code></td>
-              <td class="p-2"><code>{prop.type}</code></td>
-              <td class="p-2"><code>{prop.default || (prop.optional ? 'undefined' : '-')}</code></td>
-              <td class="p-2">{prop.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <Content components={components} />
 </DocsLayout>

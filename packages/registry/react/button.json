@@ -104,25 +104,41 @@
       "code": "<Button variant=\"default\">Button</Button>",
       "preview": "<button class=\"bg-primary text-primary-foreground hover:bg-primary/90\">Button</button>"
     },
+    "primary": {
+      "code": "<Button variant=\"default\">Primary</Button>",
+      "preview": "<button class=\"bg-primary text-primary-foreground hover:bg-primary/90\">Primary</button>"
+    },
     "destructive": {
-      "code": "<Button variant=\"destructive\">Button</Button>",
-      "preview": "<button class=\"bg-destructive text-destructive-foreground hover:bg-destructive/90\">Button</button>"
+      "code": "<Button variant=\"destructive\">Destructive</Button>",
+      "preview": "<button class=\"bg-destructive text-destructive-foreground hover:bg-destructive/90\">Destructive</button>"
     },
     "outline": {
-      "code": "<Button variant=\"outline\">Button</Button>",
-      "preview": "<button class=\"border border-input bg-background hover:bg-accent hover:text-accent-foreground\">Button</button>"
+      "code": "<Button variant=\"outline\">Outline</Button>",
+      "preview": "<button class=\"border border-input bg-background hover:bg-accent hover:text-accent-foreground\">Outline</button>"
     },
     "secondary": {
-      "code": "<Button variant=\"secondary\">Button</Button>",
-      "preview": "<button class=\"bg-secondary text-secondary-foreground hover:bg-secondary/80\">Button</button>"
+      "code": "<Button variant=\"secondary\">Secondary</Button>",
+      "preview": "<button class=\"bg-secondary text-secondary-foreground hover:bg-secondary/80\">Secondary</button>"
     },
     "ghost": {
-      "code": "<Button variant=\"ghost\">Button</Button>",
-      "preview": "<button class=\"hover:bg-accent hover:text-accent-foreground\">Button</button>"
+      "code": "<Button variant=\"ghost\">Ghost</Button>",
+      "preview": "<button class=\"hover:bg-accent hover:text-accent-foreground\">Ghost</button>"
     },
     "link": {
-      "code": "<Button variant=\"link\">Button</Button>",
-      "preview": "<button class=\"text-primary underline-offset-4 hover:underline\">Button</button>"
+      "code": "<Button variant=\"link\">Link</Button>",
+      "preview": "<button class=\"text-primary underline-offset-4 hover:underline\">Link</button>"
+    },
+    "icon": {
+      "code": "<Button variant=\"outline\" size=\"icon\"><ChevronRightIcon className=\"h-4 w-4\" /></Button>",
+      "preview": "<button class=\"h-10 w-10 border border-input bg-background hover:bg-accent hover:text-accent-foreground\">→</button>"
+    },
+    "loading": {
+      "code": "<Button disabled><Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />Please wait</Button>",
+      "preview": "<button class=\"bg-primary text-primary-foreground hover:bg-primary/90\" disabled>Loading...</button>"
+    },
+    "as-child": {
+      "code": "<Button asChild><Link href=\"/\">Login</Link></Button>",
+      "preview": "<a class=\"bg-primary text-primary-foreground hover:bg-primary/90\">Login</a>"
     }
   },
   "description": "Button component",

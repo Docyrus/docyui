@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { join, resolve } from 'path'
+import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
@@ -52,7 +52,7 @@ export function getComponentRegistry(framework: 'react' | 'vue'): RegistryData {
         reactRegistry = {}
       }
     }
-    return reactRegistry
+    return reactRegistry || {}
   } else {
     if (!vueRegistry) {
       try {
@@ -64,7 +64,7 @@ export function getComponentRegistry(framework: 'react' | 'vue'): RegistryData {
         vueRegistry = {}
       }
     }
-    return vueRegistry
+    return vueRegistry || {}
   }
 }
 

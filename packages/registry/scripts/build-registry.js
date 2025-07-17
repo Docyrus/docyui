@@ -2,7 +2,6 @@ import fs from 'fs-extra'
 import path from 'path'
 import { glob } from 'glob'
 import { fileURLToPath } from 'url'
-import ts from 'typescript'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
