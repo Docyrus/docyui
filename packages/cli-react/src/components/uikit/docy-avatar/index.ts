@@ -1,0 +1,6 @@
+export * from "./docy-avatar"
+export * from "./types"
+export * from "./utils"
+export * from "./avatar"
+export * from "./error-boundary"
+export { default } from "./docy-avatar"
