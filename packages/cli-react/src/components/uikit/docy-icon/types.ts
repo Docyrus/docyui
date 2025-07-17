@@ -2,12 +2,18 @@ export type IconSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
 export type IconLibrary = "lucide" | "heroicons" | "tabler" | "phosphor" | "custom"  
 export type IconAnimation = "spin" | "pulse" | "bounce"
 
+// Constants for better maintainability
+export const DEFAULT_ICON_SIZE = "md" as const
+export const DEFAULT_ICON_LIB = "lucide" as const
+export const DEFAULT_STROKE_WIDTH = 1.5 as const
+export const SIZE_VALIDATION_RANGE = { min: 4, max: 200 } as const
+
 export interface IconSizeMap {
   xs: 12
   sm: 14
-  md: 16
-  lg: 20
-  xl: 24
+  md: 20
+  lg: 24
+  xl: 28
   "2xl": 32
 }
 

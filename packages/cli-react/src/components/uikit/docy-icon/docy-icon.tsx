@@ -1,13 +1,14 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import type { IconSize, IconLibrary, IconAnimation } from "./types"
+import type { IconSize, IconLibrary, IconAnimation, DEFAULT_ICON_SIZE, DEFAULT_ICON_LIB, DEFAULT_STROKE_WIDTH } from "./types"
 import { 
   isEmoji, 
   isDotCharacter, 
   getIconComponent, 
   getDefaultIcon, 
-  validateIconProps 
+  validateIconProps,
+  validateNumericSize
 } from "./utils"
 
 const iconVariants = cva(
@@ -39,9 +40,9 @@ const iconVariants = cva(
 const sizeMap = {
   xs: 12,
   sm: 14,
-  md: 16,
-  lg: 20,
-  xl: 24,
+  md: 20,
+  lg: 24,
+  xl: 28,
   "2xl": 32,
 } as const
 
@@ -53,6 +54,32 @@ export interface DocyIconProps
   size?: IconSize | number
   color?: string
   animation?: IconAnimation
+  decorative?: boolean
+}
+
+// Helper functions for style optimization
+function createDotStyle(size: number, color: string) {
+  return { 
+    width: size, 
+    height: size, 
+    color,
+    fontSize: size * 0.4,
+    lineHeight: 1
+  }
+}
+
+function createEmojiStyle(size: number, color: string) {
+  return { 
+    fontSize: size * 0.8,
+    lineHeight: 1,
+    color,
+    width: size,
+    height: size
+  }
+}
+
+function createIconStyle(color: string) {
+  return { color }
 }
 
 function renderIcon(
@@ -60,7 +87,8 @@ function renderIcon(
   lib: IconLibrary,
   size: number,
   color: string,
-  className: string
+  className: string,
+  decorative: boolean = false
 ): React.ReactNode {
   if (!validateIconProps(name, lib)) {
     const DefaultIcon = getDefaultIcon()
@@ -68,8 +96,9 @@ function renderIcon(
       <DefaultIcon
         size={size}
         className={className}
-        style={{ color }}
-        strokeWidth={1.5}
+        style={createIconStyle(color)}
+        strokeWidth={DEFAULT_STROKE_WIDTH}
+        aria-hidden={decorative}
       />
     )
   }
@@ -78,15 +107,10 @@ function renderIcon(
     return (
       <span 
         className={cn("flex items-center justify-center", className)}
-        style={{ 
-          width: size, 
-          height: size, 
-          color,
-          fontSize: size * 0.4,
-          lineHeight: 1
-        }}
+        style={createDotStyle(size, color)}
         role="img"
-        aria-label="dot"
+        aria-label={decorative ? undefined : "dot"}
+        aria-hidden={decorative}
       >
         •
       </span>
@@ -97,15 +121,10 @@ function renderIcon(
     return (
       <span 
         className={cn("flex items-center justify-center", className)}
-        style={{ 
-          fontSize: size * 0.8,
-          lineHeight: 1,
-          color,
-          width: size,
-          height: size
-        }}
+        style={createEmojiStyle(size, color)}
         role="img"
-        aria-label={`${name} emoji`}
+        aria-label={decorative ? undefined : `${name} emoji`}
+        aria-hidden={decorative}
       >
         {name}
       </span>
@@ -118,8 +137,9 @@ function renderIcon(
       <IconComponent
         size={size}
         className={className}
-        style={{ color }}
-        strokeWidth={1.5}
+        style={createIconStyle(color)}
+        strokeWidth={DEFAULT_STROKE_WIDTH}
+        aria-hidden={decorative}
       />
     )
   }
@@ -129,27 +149,47 @@ function renderIcon(
     <DefaultIcon
       size={size}
       className={className}
-      style={{ color }}
-      strokeWidth={1.5}
+      style={createIconStyle(color)}
+      strokeWidth={DEFAULT_STROKE_WIDTH}
+      aria-hidden={decorative}
     />
   )
 }
 
 const DocyIcon = React.forwardRef<HTMLElement, DocyIconProps>(
-  ({ name, lib = "lucide", size = "md", color = "currentColor", animation, className, ...props }, ref) => {
-    const iconSize = typeof size === "number" ? size : sizeMap[size]
+  ({ 
+    name, 
+    lib = DEFAULT_ICON_LIB, 
+    size = DEFAULT_ICON_SIZE, 
+    color = "currentColor", 
+    animation, 
+    className, 
+    decorative = false,
+    ...props 
+  }, ref) => {
+    const validatedSize = typeof size === "number" ? validateNumericSize(size) : sizeMap[size]
     const iconClasses = cn(
       iconVariants({ 
-        size: typeof size === "number" ? "md" : size, 
+        size: typeof size === "number" ? DEFAULT_ICON_SIZE : size, 
         animation 
       }),
       className
     )
 
-    const iconElement = renderIcon(name, lib, iconSize, color, iconClasses)
+    const iconElement = renderIcon(name, lib, validatedSize, color, iconClasses, decorative)
 
-    if (React.isValidElement(iconElement)) {
-      return React.cloneElement(iconElement, { ref, ...props })
+    // Add error boundary around React.cloneElement
+    try {
+      if (React.isValidElement(iconElement)) {
+        return React.cloneElement(iconElement, { ref, ...props })
+      }
+    } catch {
+      // Fallback if cloneElement fails
+      return (
+        <span ref={ref as React.RefObject<HTMLSpanElement>} {...props}>
+          {iconElement}
+        </span>
+      )
     }
 
     return (
