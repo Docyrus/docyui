@@ -1,0 +1,30 @@
+<svg id="katman_1" data-name="katman 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24.07">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        fill-opacity: 0.01;
+      }
+
+      .cls-2 {
+        fill: #b5d1ef;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.04" width="24" height="24"/>
+  <rect class="cls-1" y="0.07" width="24" height="24"/>
+  <rect class="cls-1" width="24" height="24"/>
+  <rect class="cls-1" y="0.07" width="24" height="24"/>
+  <rect class="cls-1" y="0.07" width="24" height="24"/>
+  <path class="cls-2" d="M10,4H22a2,2,0,0,1,2,2V20a2,2,0,0,1-2,2H2a2,2,0,0,1-1.41-.59A2,2,0,0,1,0,20V4A2,2,0,0,1,.59,2.61,2,2,0,0,1,2,2H8a2,2,0,0,1,2,2Z" transform="translate(0 0.04)"/>
+  <path class="cls-2" d="M0,6H24V20a2,2,0,0,1-2,2H2a2,2,0,0,1-1.41-.59A2,2,0,0,1,0,20Z" transform="translate(0 0.04)"/>
+</svg>
