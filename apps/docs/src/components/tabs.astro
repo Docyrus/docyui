@@ -1,0 +1,77 @@
+---
+export interface Props {
+  defaultValue?: string;
+  className?: string;
+}
+
+const { defaultValue, className = '' } = Astro.props;
+---
+
+<div class={`tabs ${className}`} data-default-value={defaultValue}>
+  <slot />
+</div>
+
+<script>
+  class Tabs {
+    constructor(element) {
+      this.element = element;
+      this.defaultValue = element.dataset.defaultValue;
+      this.tabsList = element.querySelector('.tabs-list');
+      this.tabsTriggers = element.querySelectorAll('.tabs-trigger');
+      this.tabsContents = element.querySelectorAll('.tabs-content');
+      
+      this.init();
+    }
+    
+    init() {
+      // Set initial active tab
+      const activeTab = this.defaultValue || this.tabsTriggers[0]?.dataset.value;
+      this.setActiveTab(activeTab);
+      
+      // Add click listeners to triggers
+      this.tabsTriggers.forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const value = trigger.dataset.value;
+          this.setActiveTab(value);
+        });
+      });
+    }
+    
+    setActiveTab(value) {
+      // Update triggers
+      this.tabsTriggers.forEach(trigger => {
+        const isActive = trigger.dataset.value === value;
+        trigger.classList.toggle('active', isActive);
+        trigger.setAttribute('aria-selected', isActive.toString());
+      });
+      
+      // Update contents
+      this.tabsContents.forEach(content => {
+        const isActive = content.dataset.value === value;
+        content.style.display = isActive ? 'block' : 'none';
+      });
+    }
+  }
+  
+  // Auto-initialize tabs
+  function initTabs() {
+    const tabsElements = document.querySelectorAll('.tabs:not([data-initialized])');
+    tabsElements.forEach(element => {
+      element.dataset.initialized = 'true';
+      new Tabs(element);
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTabs);
+  } else {
+    initTabs();
+  }
+  
+  // Re-initialize when new content is loaded
+  const observer = new MutationObserver(initTabs);
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+</script>

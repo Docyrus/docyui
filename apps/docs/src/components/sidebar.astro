@@ -1,0 +1,96 @@
+---
+// Sidebar component - Tailwind CSS docs inspired design
+export interface SidebarItem {
+  title: string;
+  href?: string;
+  items?: SidebarItem[];
+}
+
+const sidebarItems: SidebarItem[] = [
+  {
+    title: "Getting Started",
+    items: [
+      {
+        title: "Introduction",
+        href: "/docs"
+      },
+      {
+        title: "Installation",
+        href: "/docs/installation"
+      },
+      {
+        title: "docyui.json",
+        href: "/docs/docyui-json"
+      },
+      {
+        title: "Theming",
+        href: "/docs/theming"
+      }
+    ]
+  },
+  {
+    title: "Components",
+    items: [
+      {
+        title: "Button",
+        href: "/docs/components/button"
+      }
+    ]
+  }
+];
+
+// Get current path for active state
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  return currentPath === href;
+}
+
+function isSectionActive(items: SidebarItem[]): boolean {
+  return items.some(item => item.href && isActive(item.href));
+}
+---
+
+<aside class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
+  <div class="relative overflow-hidden h-full py-6 pr-6 lg:py-8">
+    <div class="h-full w-full">
+      <div class="relative overflow-hidden h-full">
+        <div class="h-full w-full" style="min-width: 256px;">
+          <nav class="space-y-8">
+            {sidebarItems.map((section) => (
+              <div class="space-y-3">
+                <h4 class="text-sm font-semibold text-foreground tracking-tight">
+                  {section.title}
+                </h4>
+                {section.items && (
+                  <ul class="space-y-1 border-l border-slate-200 dark:border-slate-800">
+                    {section.items.map((item) => (
+                      <li class="relative">
+                        <a
+                          href={item.href}
+                          class={`
+                            -ml-px block border-l pl-4 py-2 text-sm transition-colors
+                            ${isActive(item.href || '') 
+                              ? 'border-sky-500 text-sky-600 dark:text-sky-400' 
+                              : 'border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300'
+                            }
+                          `}
+                        >
+                          {item.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<style>
+  @reference "../styles/global.css";
+</style>

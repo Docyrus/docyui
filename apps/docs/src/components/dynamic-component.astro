@@ -1,0 +1,64 @@
+---
+import { getComponent } from '../lib/registry';
+
+export interface Props {
+  name: string;
+  framework: 'react' | 'vue';
+  variant?: string;
+  size?: string;
+  className?: string;
+}
+
+const { name, framework, variant = 'default', size = 'default', className = '' } = Astro.props;
+
+// Get component from registry
+const component = getComponent(name, framework);
+
+if (!component) {
+  console.warn(`Component '${name}' not found in ${framework} registry`);
+}
+
+// Generate component classes from registry data
+const generateComponentClasses = (name: string, variant: string, size: string) => {
+  if (!component) return '';
+  
+  const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  
+  const variantClasses = component.variants?.variant?.find(v => v.key === variant)?.value || 
+                        component.variants?.variant?.find(v => v.key === 'default')?.value || '';
+  
+  const sizeClasses = component.variants?.size?.find(s => s.key === size)?.value || 
+                     component.variants?.size?.find(s => s.key === 'default')?.value || '';
+  
+  return `${baseClasses} ${variantClasses} ${sizeClasses} ${className}`;
+};
+
+const componentClasses = generateComponentClasses(name, variant, size);
+const componentText = size === 'icon' ? '' : (variant.charAt(0).toUpperCase() + variant.slice(1));
+const isIconButton = size === 'icon';
+---
+
+{name === 'button' && (
+  <button class={componentClasses}>
+    {isIconButton ? (
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9,18 15,12 9,6"/>
+      </svg>
+    ) : componentText}
+  </button>
+)}
+
+{name !== 'button' && (
+  <div class="text-muted-foreground text-sm">
+    Component '{name}' preview not implemented
+  </div>
+)}
+
+<script define:vars={{ component, framework, name }}>
+  // This script block runs on the client
+  // Here we could dynamically compile and render the component
+  // For now, we'll just log the component data
+  if (component) {
+    console.log(`${framework} component '${name}' data:`, component);
+  }
+</script>

@@ -1,0 +1,309 @@
+---
+// Component Preview with React/Vue islands
+import DynamicComponent from './dynamic-component.astro';
+import { getComponent } from '../lib/registry';
+
+export interface Props {
+  name: string;
+  variant?: string;
+  description?: string;
+  className?: string;
+}
+
+const { name, variant = 'default', description, className = '' } = Astro.props;
+
+// Get component metadata from registry
+const reactComponent = getComponent(name, 'react');
+const vueComponent = getComponent(name, 'vue');
+
+if (!reactComponent && !vueComponent) {
+  console.warn(`Component not found in registry: ${name}`);
+}
+
+// Get examples from registry or use single variant
+let componentExamples = [];
+if (variant !== 'default') {
+  // Single variant mode
+  componentExamples = [{ name: variant, variant, description: `${variant} variant` }];
+} else {
+  // All variants mode - get from registry
+  const variants = reactComponent?.variants?.variant || vueComponent?.variants?.variant || [];
+  componentExamples = variants.map(v => ({
+    name: v.key,
+    variant: v.key,
+    description: `${v.key} variant`
+  }));
+}
+
+// Get code examples from registry
+const reactImport = reactComponent?.usage?.import || `import { ${name.charAt(0).toUpperCase() + name.slice(1)} } from "@/components/ui/${name}"`;
+const vueImport = vueComponent?.usage?.import || `import ${name.charAt(0).toUpperCase() + name.slice(1)} from "@/components/ui/${name}.vue"`;
+
+const reactUsage = reactComponent?.examples?.[variant]?.code || reactComponent?.usage?.basic || `<${name.charAt(0).toUpperCase() + name.slice(1)} />`;
+const vueUsage = vueComponent?.examples?.[variant]?.code || vueComponent?.usage?.basic || `<${name.charAt(0).toUpperCase() + name.slice(1)} />`;
+
+const reactCode = `${reactImport}
+
+export default function Component() {
+  return (
+    ${reactUsage.split('\n').map(line => line ? `    ${line}` : line).join('\n')}
+  )
+}`
+
+const vueCode = `<template>
+  ${vueUsage.split('\n').map(line => line ? `  ${line}` : line).join('\n')}
+</template>
+
+<script setup>
+${vueImport}
+</script>`
+
+// HTML escape function
+const escapeHtml = (text) => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+---
+
+<div class={`component-preview ${className}`}>
+  <div class="space-y-4">
+    {description && (
+      <p class="text-sm text-muted-foreground">{description}</p>
+    )}
+    
+    <div class="relative overflow-hidden rounded border bg-background">
+      <!-- Tab Navigation -->
+      <div class="flex items-center border-b bg-muted/50">
+        <button class="preview-tab px-4 py-2 text-sm font-medium text-foreground bg-background border-b-2 border-primary" data-tab="preview">
+          Preview
+        </button>
+        <button class="preview-tab px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" data-tab="code">
+          Code
+        </button>
+      </div>
+      
+      <!-- Preview Content -->
+      <div class="preview-content-area" data-tab="preview">
+        <div class="preview-area h-[200px] flex items-center justify-center p-8 bg-gradient-to-br from-background to-muted/20">
+          <!-- React Preview -->
+          <div class="preview-content" data-framework="react">
+            <div id={`react-preview-${name}`} class="flex items-center justify-center gap-4">
+              {componentExamples.map((example) => (
+                <DynamicComponent 
+                  name={name}
+                  framework="react"
+                  variant={example.variant}
+                  size={example.size}
+                />
+              ))}
+            </div>
+          </div>
+          
+          <!-- Vue Preview -->
+          <div class="preview-content hidden" data-framework="vue">
+            <div id={`vue-preview-${name}`} class="flex items-center justify-center gap-4">
+              {componentExamples.map((example) => (
+                <DynamicComponent 
+                  name={name}
+                  framework="vue"
+                  variant={example.variant}
+                  size={example.size}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Code Content -->
+      <div class="preview-content-area hidden" data-tab="code">
+        <div class="framework-content" data-framework="react">
+          <div class="relative h-[200px]">
+            <div class="bg-muted p-4 h-full overflow-y-auto">
+              <pre class="text-sm overflow-x-auto"><code set:html={escapeHtml(reactCode)}></code></pre>
+            </div>
+            <button class="copy-button absolute top-2 right-2 p-2 text-xs bg-background border rounded hover:bg-muted transition-colors">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="framework-content hidden" data-framework="vue">
+          <div class="relative h-[200px]">
+            <div class="bg-muted p-4 h-full overflow-y-auto">
+              <pre class="text-sm overflow-x-auto"><code set:html={escapeHtml(vueCode)}></code></pre>
+            </div>
+            <button class="copy-button absolute top-2 right-2 p-2 text-xs bg-background border rounded hover:bg-muted transition-colors">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class ComponentPreview {
+    constructor(element) {
+      this.element = element;
+      this.previewContents = element.querySelectorAll('.preview-content');
+      this.frameworkContents = element.querySelectorAll('.framework-content');
+      this.previewTabs = element.querySelectorAll('.preview-tab');
+      this.previewContentAreas = element.querySelectorAll('.preview-content-area');
+      this.copyButtons = element.querySelectorAll('.copy-button');
+      this.currentFramework = document.documentElement.dataset.framework || 'react';
+      this.currentTab = 'preview';
+      
+      this.init();
+    }
+    
+    init() {
+      // Listen for framework changes
+      document.addEventListener('frameworkchange', (e) => {
+        this.switchFramework(e.detail.framework);
+      });
+      
+      // Set initial framework
+      this.switchFramework(this.currentFramework);
+      
+      // Add tab functionality
+      this.previewTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          this.switchTab(tab.dataset.tab);
+        });
+      });
+      
+      // Add copy functionality
+      this.copyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          this.copyCode(button);
+        });
+      });
+    }
+    
+    switchFramework(framework) {
+      this.currentFramework = framework;
+      
+      // Switch preview content
+      this.previewContents.forEach(content => {
+        const contentFramework = content.dataset.framework;
+        if (contentFramework === framework) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+      
+      // Switch framework content
+      this.frameworkContents.forEach(content => {
+        const contentFramework = content.dataset.framework;
+        if (contentFramework === framework) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    }
+    
+    switchTab(tab) {
+      this.currentTab = tab;
+      
+      // Update tab buttons
+      this.previewTabs.forEach(tabBtn => {
+        if (tabBtn.dataset.tab === tab) {
+          tabBtn.classList.add('text-foreground', 'bg-background', 'border-b-2', 'border-primary');
+          tabBtn.classList.remove('text-muted-foreground');
+        } else {
+          tabBtn.classList.remove('text-foreground', 'bg-background', 'border-b-2', 'border-primary');
+          tabBtn.classList.add('text-muted-foreground');
+        }
+      });
+      
+      // Update content areas
+      this.previewContentAreas.forEach(area => {
+        if (area.dataset.tab === tab) {
+          area.classList.remove('hidden');
+        } else {
+          area.classList.add('hidden');
+        }
+      });
+    }
+    
+    copyCode(button) {
+      const codeBlock = button.parentElement.querySelector('code');
+      if (codeBlock) {
+        const text = codeBlock.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          // Show success feedback
+          const originalContent = button.innerHTML;
+          button.innerHTML = `
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          `;
+          
+          setTimeout(() => {
+            button.innerHTML = originalContent;
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy code:', err);
+        });
+      }
+    }
+  }
+  
+  // Auto-initialize component previews
+  function initComponentPreviews() {
+    const previews = document.querySelectorAll('.component-preview:not([data-initialized])');
+    previews.forEach(preview => {
+      preview.dataset.initialized = 'true';
+      new ComponentPreview(preview);
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initComponentPreviews);
+  } else {
+    initComponentPreviews();
+  }
+  
+  // Re-initialize when new content is loaded
+  const observer = new MutationObserver(() => {
+    initComponentPreviews();
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+</script>
+
+<style>
+  @reference "../styles/global.css";
+
+  .preview-area {
+    @apply bg-muted/50;
+  }
+  
+  .preview-tab {
+    @apply transition-colors duration-200;
+  }
+  
+  .copy-button {
+    @apply transition-colors duration-200;
+  }
+  
+  .copy-button:hover {
+    @apply bg-muted;
+  }
+</style>

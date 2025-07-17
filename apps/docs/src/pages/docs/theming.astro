@@ -1,0 +1,428 @@
+---
+import DocsLayout from '../../layouts/docs-layout.astro';
+import CodeBlock from '../../components/code-block.astro';
+import ColorPicker from '../../components/color-picker.astro';
+---
+
+<DocsLayout title="Theming - DocyUI" description="Customize the look and feel of your DocyUI components">
+  <div class="pb-12 pt-8">
+    <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+      <div class="flex-1 space-y-4">
+        <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
+          <span class="docyui-gradient-text">Theming</span>
+        </h1>
+        <p class="text-xl text-muted-foreground leading-relaxed">
+          Customize the look and feel of your DocyUI components with color palettes, design tokens, and themes.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Color Picker -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Color Palettes</h2>
+      <p class="text-muted-foreground">
+        DocyUI comes with 11 carefully crafted color palettes. Click on any color to see a live preview and apply it to the documentation.
+      </p>
+      
+      <ColorPicker selectedColor="slate" />
+    </div>
+  </div>
+
+  <!-- Color Palette Information -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h3 class="text-lg font-heading font-semibold">Available Palettes</h3>
+      <p class="text-muted-foreground">
+        Each palette includes carefully selected colors that work harmoniously together across light and dark themes.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Slate</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(215.4, 16.3%, 46.9%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(215.3, 19.3%, 34.5%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(215.4, 16.3%, 26.9%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Cool, professional gray-blue tones</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Gray</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(0, 0%, 45.1%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(0, 0%, 32.2%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(0, 0%, 14.9%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Pure neutral grays</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Zinc</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(240, 3.8%, 46.1%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(240, 5.9%, 33.9%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(240, 10%, 3.9%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Subtle blue-tinted grays</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Stone</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(25, 5.3%, 44.7%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(33.3, 5.5%, 32.4%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(20, 14.3%, 4.1%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Warm, earthy tones</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Red</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(0, 84.2%, 60.2%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(0, 93.5%, 50.4%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(0, 62.8%, 30.6%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Bold, energetic reds</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Orange</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(24.6, 95%, 53.1%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(20.5, 90.2%, 48.2%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(12, 76%, 61%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Vibrant, warm oranges</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Blue</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(221.2, 83.2%, 53.3%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(224, 76.3%, 48%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(224, 76.3%, 48%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Classic, trustworthy blues</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Green</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(142.1, 76.2%, 36.3%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(142.1, 70.6%, 45.3%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(142.4, 71.8%, 29.2%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Fresh, natural greens</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Yellow</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(47.9, 95.8%, 53.1%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(45.4, 93.4%, 47.5%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(35.5, 91.7%, 32.9%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Bright, cheerful yellows</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Violet</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(262.1, 83.3%, 57.8%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(263.4, 70%, 50.4%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(263.4, 70%, 50.4%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Royal, sophisticated purples</p>
+        </div>
+        <div class="p-4 border rounded-lg space-y-2">
+          <div class="font-semibold">Rose</div>
+          <div class="flex space-x-2">
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(330, 81.2%, 60.4%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(336, 84.1%, 56.5%)"></div>
+            <div class="w-6 h-6 rounded border" style="background-color: hsl(336, 84.1%, 56.5%)"></div>
+          </div>
+          <p class="text-xs text-muted-foreground">Elegant, romantic pinks</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Convention -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Convention</h2>
+      <p class="text-muted-foreground">
+        DocyUI uses a simple <code class="text-sm bg-muted px-1 py-0.5 rounded">background</code> and <code class="text-sm bg-muted px-1 py-0.5 rounded">foreground</code> convention for colors. The <code class="text-sm bg-muted px-1 py-0.5 rounded">background</code> variable is used for the background color of a component and the <code class="text-sm bg-muted px-1 py-0.5 rounded">foreground</code> variable is used for the text color.
+      </p>
+      <p class="text-muted-foreground">
+        The <code class="text-sm bg-muted px-1 py-0.5 rounded">background</code> suffix is omitted when the variable is used for the background color of the component.
+      </p>
+      
+      <CodeBlock 
+        react={`--primary: 222.2 47.4% 11.2%;
+--primary-foreground: 210 40% 98%;`}
+        vue={`--primary: 222.2 47.4% 11.2%;
+--primary-foreground: 210 40% 98%;`}
+        language="css"
+        title="CSS Variables"
+      />
+      
+      <p class="text-muted-foreground">
+        The <code class="text-sm bg-muted px-1 py-0.5 rounded">primary</code> variable is used for the background color of the component and the <code class="text-sm bg-muted px-1 py-0.5 rounded">primary-foreground</code> variable is used for the text color.
+      </p>
+      
+      <CodeBlock 
+        react={`<div className="bg-primary text-primary-foreground">
+  Hello, world!
+</div>`}
+        vue={`<div class="bg-primary text-primary-foreground">
+  Hello, world!
+</div>`}
+        title="Usage Example"
+      />
+    </div>
+  </div>
+
+  <!-- List of Variables -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">List of Variables</h2>
+      <p class="text-muted-foreground">
+        Here's the list of variables available for customization:
+      </p>
+      
+      <CodeBlock 
+        react={`--background
+--foreground
+--card
+--card-foreground
+--popover
+--popover-foreground
+--primary
+--primary-foreground
+--secondary
+--secondary-foreground
+--muted
+--muted-foreground
+--accent
+--accent-foreground
+--destructive
+--destructive-foreground
+--border
+--input
+--ring
+--radius
+--chart-1
+--chart-2
+--chart-3
+--chart-4
+--chart-5`}
+        vue={`--background
+--foreground
+--card
+--card-foreground
+--popover
+--popover-foreground
+--primary
+--primary-foreground
+--secondary
+--secondary-foreground
+--muted
+--muted-foreground
+--accent
+--accent-foreground
+--destructive
+--destructive-foreground
+--border
+--input
+--ring
+--radius
+--chart-1
+--chart-2
+--chart-3
+--chart-4
+--chart-5`}
+        language="css"
+        title="Available CSS Variables"
+      />
+    </div>
+  </div>
+
+  <!-- Adding New Colors -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Adding New Colors</h2>
+      <p class="text-muted-foreground">
+        To add new colors, you need to add them to your CSS file and your <code class="text-sm bg-muted px-1 py-0.5 rounded">tailwind.config.js</code> file.
+      </p>
+      
+      <h3 class="text-lg font-heading font-semibold">1. Add to CSS</h3>
+      <CodeBlock 
+        react={`:root {
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 89%;
+}
+
+.dark {
+  --warning: 48 96% 89%;
+  --warning-foreground: 38 92% 50%;
+}`}
+        vue={`:root {
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 89%;
+}
+
+.dark {
+  --warning: 48 96% 89%;
+  --warning-foreground: 38 92% 50%;
+}`}
+        language="css"
+        title="global.css"
+      />
+      
+      <h3 class="text-lg font-heading font-semibold">2. Add to Tailwind Config</h3>
+      <CodeBlock 
+        react={`module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        warning: "hsl(var(--warning))",
+        "warning-foreground": "hsl(var(--warning-foreground))",
+      },
+    },
+  },
+}`}
+        vue={`module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        warning: "hsl(var(--warning))",
+        "warning-foreground": "hsl(var(--warning-foreground))",
+      },
+    },
+  },
+}`}
+        language="js"
+        title="tailwind.config.js"
+      />
+      
+      <p class="text-muted-foreground">
+        You can now use the <code class="text-sm bg-muted px-1 py-0.5 rounded">warning</code> utility class in your components.
+      </p>
+      
+      <CodeBlock 
+        react={`<div className="bg-warning text-warning-foreground" />`}
+        vue={`<div class="bg-warning text-warning-foreground" />`}
+        title="Usage"
+      />
+    </div>
+  </div>
+
+  <!-- Other Color Formats -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Other Color Formats</h2>
+      <p class="text-muted-foreground">
+        DocyUI supports multiple color formats. While the default uses HSL values, you can use any format supported by CSS.
+      </p>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Using RGB</h3>
+        <CodeBlock 
+          react={`:root {
+  --primary: 255, 255, 255;
+  --primary-foreground: 0, 0, 0;
+}`}
+          vue={`:root {
+  --primary: 255, 255, 255;
+  --primary-foreground: 0, 0, 0;
+}`}
+          language="css"
+        />
+        
+        <h3 class="text-lg font-heading font-semibold">Using OKLCH</h3>
+        <CodeBlock 
+          react={`:root {
+  --primary: 0.65 0.23 34.6;
+  --primary-foreground: 0.98 0.02 95.5;
+}`}
+          vue={`:root {
+  --primary: 0.65 0.23 34.6;
+  --primary-foreground: 0.98 0.02 95.5;
+}`}
+          language="css"
+        />
+        
+        <h3 class="text-lg font-heading font-semibold">Using HEX with Opacity</h3>
+        <CodeBlock 
+          react={`:root {
+  --primary: #3b82f6;
+}`}
+          vue={`:root {
+  --primary: #3b82f6;
+}`}
+          language="css"
+        />
+        
+        <p class="text-muted-foreground">
+          Make sure to update your <code class="text-sm bg-muted px-1 py-0.5 rounded">tailwind.config.js</code> to use the correct CSS variable format.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS Variables -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">CSS Variables</h2>
+      <p class="text-muted-foreground">
+        DocyUI components are styled using CSS variables, which makes it easy to customize the default colors and create custom themes.
+      </p>
+      
+      <h3 class="text-lg font-heading font-semibold">Enabling CSS Variables</h3>
+      <p class="text-muted-foreground">
+        CSS variables are enabled by default when you initialize a new project. You can also enable them manually by setting <code class="text-sm bg-muted px-1 py-0.5 rounded">tailwind.cssVariables</code> to <code class="text-sm bg-muted px-1 py-0.5 rounded">true</code> in your <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui.json</code> file.
+      </p>
+      
+      <CodeBlock 
+        react={`{
+  "tailwind": {
+    "cssVariables": true
+  }
+}`}
+        vue={`{
+  "tailwind": {
+    "cssVariables": true
+  }
+}`}
+        language="json"
+        title="docyui.json"
+      />
+      
+      <h3 class="text-lg font-heading font-semibold">Using CSS Variables</h3>
+      <p class="text-muted-foreground">
+        When CSS variables are enabled, components will use CSS variables instead of Tailwind CSS utility classes.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p class="text-sm font-semibold mb-2">Without CSS Variables:</p>
+          <CodeBlock 
+            react={`<div className="bg-zinc-950 text-zinc-50" />`}
+            vue={`<div class="bg-zinc-950 text-zinc-50" />`}
+          />
+        </div>
+        <div>
+          <p class="text-sm font-semibold mb-2">With CSS Variables:</p>
+          <CodeBlock 
+            react={`<div className="bg-background text-foreground" />`}
+            vue={`<div class="bg-background text-foreground" />`}
+          />
+        </div>
+      </div>
+      
+      <p class="text-muted-foreground mt-4">
+        This approach gives you more flexibility to create custom themes without modifying component code.
+      </p>
+    </div>
+  </div>
+</DocsLayout>
+
+<style>
+  @reference "../../styles/global.css";
+</style>

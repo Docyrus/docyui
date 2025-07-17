@@ -1,0 +1,25 @@
+---
+export interface Props {
+  value: string;
+  className?: string;
+}
+
+const { value, className = '' } = Astro.props;
+---
+
+<div 
+  class={`tabs-content mt-4 ${className}`}
+  data-value={value}
+  role="tabpanel"
+  style="display: none;"
+>
+  <slot />
+</div>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .tabs-content {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+</style>

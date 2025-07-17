@@ -1,29 +1,118 @@
 {
-  "utils": {
-    "name": "utils",
+  "button": {
+    "name": "button",
     "dependencies": [
-      "clsx",
-      "tailwind-merge"
+      "radix-vue",
+      "class-variance-authority"
     ],
+    "devDependencies": [],
     "registryDependencies": [],
     "files": [
       {
-        "name": "utils.ts",
-        "content": "import { type ClassValue, clsx } from \"clsx\"\nimport { twMerge } from \"tailwind-merge\"\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs))\n}"
-      }
-    ]
-  },
-  "button": {
-    "name": "button",
-    "description": "A customizable button component with multiple variants",
-    "framework": "vue",
-    "packageName": "@docyrus/ui-vue",
-    "dependencies": ["class-variance-authority", "clsx", "tailwind-merge"],
-    "files": [
-      {
         "name": "Button.vue",
-        "content": "<template>\n  <component\n    :is=\"asChild ? 'slot' : as\"\n    :class=\"cn(buttonVariants({ variant, size }), className)\"\n    :disabled=\"disabled\"\n    v-bind=\"$attrs\"\n  >\n    <slot />\n  </component>\n</template>\n\n<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\n\nconst buttonVariants = cva(\n  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',\n  {\n    variants: {\n      variant: {\n        default: 'bg-primary text-primary-foreground hover:bg-primary/90',\n        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',\n        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',\n        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',\n        ghost: 'hover:bg-accent hover:text-accent-foreground',\n        link: 'text-primary underline-offset-4 hover:underline',\n      },\n      size: {\n        default: 'h-10 px-4 py-2',\n        sm: 'h-9 rounded-md px-3',\n        lg: 'h-11 rounded-md px-8',\n        icon: 'h-10 w-10',\n      },\n    },\n    defaultVariants: {\n      variant: 'default',\n      size: 'default',\n    },\n  }\n)\n\nexport interface ButtonProps extends VariantProps<typeof buttonVariants> {\n  as?: string\n  asChild?: boolean\n  className?: string\n  disabled?: boolean\n}\n\nconst props = withDefaults(defineProps<ButtonProps>(), {\n  as: 'button',\n  asChild: false,\n  variant: 'default',\n  size: 'default',\n})\n</script>"
+        "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { Primitive, type PrimitiveProps } from 'radix-vue'\nimport { cva, type VariantProps } from 'class-variance-authority'\n\nimport { cn } from '@/lib/utils'\n\nconst buttonVariants = cva(\n  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',\n  {\n    variants: {\n      variant: {\n        default: 'bg-primary text-primary-foreground hover:bg-primary/90',\n        destructive:\n          'bg-destructive text-destructive-foreground hover:bg-destructive/90',\n        outline:\n          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',\n        secondary:\n          'bg-secondary text-secondary-foreground hover:bg-secondary/80',\n        ghost: 'hover:bg-accent hover:text-accent-foreground',\n        link: 'text-primary underline-offset-4 hover:underline',\n      },\n      size: {\n        default: 'h-10 px-4 py-2',\n        sm: 'h-9 rounded-md px-3',\n        lg: 'h-11 rounded-md px-8',\n        icon: 'h-10 w-10',\n      },\n    },\n    defaultVariants: {\n      variant: 'default',\n      size: 'default',\n    },\n  }\n)\n\ninterface ButtonProps extends PrimitiveProps {\n  variant?: VariantProps<typeof buttonVariants>['variant']\n  size?: VariantProps<typeof buttonVariants>['size']\n  class?: string\n}\n\nconst props = withDefaults(defineProps<ButtonProps>(), {\n  as: 'button',\n  variant: 'default',\n  size: 'default',\n})\n\nconst delegatedProps = computed(() => {\n  const { class: _, variant, size, ...delegated } = props\n  return delegated\n})\n\nconst className = computed(() => cn(buttonVariants({ variant: props.variant, size: props.size }), props.class))\n</script>\n\n<template>\n  <Primitive\n    :class=\"className\"\n    v-bind=\"delegatedProps\"\n  >\n    <slot />\n  </Primitive>\n</template>"
       }
-    ]
+    ],
+    "type": "components:ui",
+    "props": [
+      {
+        "name": "variant",
+        "type": "VariantProps<typeof buttonVariants>['variant']",
+        "optional": true,
+        "description": "variant property",
+        "default": "default"
+      },
+      {
+        "name": "size",
+        "type": "VariantProps<typeof buttonVariants>['size']",
+        "optional": true,
+        "description": "size property",
+        "default": "default"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "optional": true,
+        "description": "class property"
+      }
+    ],
+    "variants": {
+      "variant": [
+        {
+          "key": "default",
+          "value": "bg-primary text-primary-foreground hover:bg-primary/90"
+        },
+        {
+          "key": "destructive",
+          "value": "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        },
+        {
+          "key": "outline",
+          "value": "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+        },
+        {
+          "key": "secondary",
+          "value": "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+        },
+        {
+          "key": "ghost",
+          "value": "hover:bg-accent hover:text-accent-foreground"
+        },
+        {
+          "key": "link",
+          "value": "text-primary underline-offset-4 hover:underline"
+        }
+      ],
+      "size": [
+        {
+          "key": "default",
+          "value": "h-10 px-4 py-2"
+        },
+        {
+          "key": "sm",
+          "value": "h-9 rounded-md px-3"
+        },
+        {
+          "key": "lg",
+          "value": "h-11 rounded-md px-8"
+        },
+        {
+          "key": "icon",
+          "value": "h-10 w-10"
+        }
+      ]
+    },
+    "examples": {
+      "default": {
+        "code": "<Button variant=\"default\">Button</Button>",
+        "preview": "<button class=\"bg-primary text-primary-foreground hover:bg-primary/90\">Button</button>"
+      },
+      "destructive": {
+        "code": "<Button variant=\"destructive\">Button</Button>",
+        "preview": "<button class=\"bg-destructive text-destructive-foreground hover:bg-destructive/90\">Button</button>"
+      },
+      "outline": {
+        "code": "<Button variant=\"outline\">Button</Button>",
+        "preview": "<button class=\"border border-input bg-background hover:bg-accent hover:text-accent-foreground\">Button</button>"
+      },
+      "secondary": {
+        "code": "<Button variant=\"secondary\">Button</Button>",
+        "preview": "<button class=\"bg-secondary text-secondary-foreground hover:bg-secondary/80\">Button</button>"
+      },
+      "ghost": {
+        "code": "<Button variant=\"ghost\">Button</Button>",
+        "preview": "<button class=\"hover:bg-accent hover:text-accent-foreground\">Button</button>"
+      },
+      "link": {
+        "code": "<Button variant=\"link\">Button</Button>",
+        "preview": "<button class=\"text-primary underline-offset-4 hover:underline\">Button</button>"
+      }
+    },
+    "description": "Button component",
+    "usage": {
+      "import": "import Button from \"@/components/ui/Button.vue\"",
+      "basic": "<Button>Button</Button>",
+      "withProps": "<Button variant=\"outline\" size=\"sm\">Button</Button>"
+    }
   }
 }

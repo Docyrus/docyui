@@ -1,0 +1,673 @@
+---
+import DocsLayout from '../../layouts/docs-layout.astro';
+import CodeBlock from '../../components/code-block.astro';
+import PackageManagerTabs from '../../components/package-manager-tabs.astro';
+---
+
+<DocsLayout title="Installation - DocyUI" description="How to install DocyUI and its dependencies in your project">
+  <div class="pb-12 pt-8">
+    <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+      <div class="flex-1 space-y-4">
+        <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
+          <span class="docyui-gradient-text">Installation</span>
+        </h1>
+        <p class="text-xl text-muted-foreground leading-relaxed">
+          How to install dependencies and structure your app.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Framework Selection -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Choose your framework</h2>
+      <p class="text-muted-foreground">
+        DocyUI supports multiple frameworks. Choose the one that best fits your project.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="#next-js" class="group p-4 border rounded-lg hover:border-ring transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-black dark:bg-white rounded-sm flex items-center justify-center">
+              <svg class="w-5 h-5 text-white dark:text-black" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.25 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.573 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 0 1 .237.277c.018.06.023 1.365.018 4.304l-.006 4.218-.744-1.14-.746-1.14v-3.066c0-1.982.01-3.097.023-3.15a.478.478 0 0 1 .233-.296c.096-.05.13-.054.5-.054z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold">Next.js</h3>
+          </div>
+          <p class="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            The React framework for production applications.
+          </p>
+        </a>
+        
+        <a href="#vite" class="group p-4 border rounded-lg hover:border-ring transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-[#646CFF] to-[#747BFF] rounded-sm flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="m8.286 10.578.512-8.657a.306.306 0 0 1 .247-.282L17.377.006a.306.306 0 0 1 .353.385l-1.558 5.403a.306.306 0 0 0 .352.385l2.388-.46a.306.306 0 0 1 .332.438l-6.79 13.55-.123.19a.294.294 0 0 1-.252.14c-.177 0-.35-.152-.305-.33l1.24-5.34a.306.306 0 0 0-.353-.385L8.018 14.7a.306.306 0 0 1-.329-.438l.597-3.684z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold">Vite</h3>
+          </div>
+          <p class="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            Fast build tool for modern web development.
+          </p>
+        </a>
+        
+        <a href="#astro" class="group p-4 border rounded-lg hover:border-ring transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-[#FF5D01] to-[#FF1639] rounded-sm flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16.074 16.86c-.72.616-2.157 1.035-3.812 1.035-2.032 0-3.735-.632-4.187-1.483-.161-.3-.207-.66-.207-1.021 0-.3.023-.6.069-.9.115-.669.322-1.286.598-1.858.276-.572.621-1.097 1.02-1.563.399-.466.856-.859 1.359-1.175.503-.316 1.056-.549 1.649-.696.593-.147 1.223-.22 1.879-.22.656 0 1.286.073 1.879.22.593.147 1.146.38 1.649.696.503.316.96.709 1.359 1.175.399.466.744.991 1.02 1.563.276.572.483 1.189.598 1.858.046.3.069.6.069.9 0 .361-.046.721-.207 1.021-.452.851-2.155 1.483-4.187 1.483-1.655 0-3.092-.419-3.812-1.035z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold">Astro</h3>
+          </div>
+          <p class="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            Build faster websites with modern tooling.
+          </p>
+        </a>
+        
+        <a href="#nuxt" class="group p-4 border rounded-lg hover:border-ring transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-[#00DC82] to-[#36E4DA] rounded-sm flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.946 15.409 9.587 9.33l-1.858 3.24h4.217zm3.411-6.079L11.2 2.01 6.044 11.251H1.2L11.2 2.01 22.8 20.4h-4.844z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold">Nuxt</h3>
+          </div>
+          <p class="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            The Vue.js framework for building applications.
+          </p>
+        </a>
+        
+        <a href="#remix" class="group p-4 border rounded-lg hover:border-ring transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-black dark:bg-white rounded-sm flex items-center justify-center">
+              <svg class="w-5 h-5 text-white dark:text-black" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 14.794c-.478 1.196-1.315 2.047-2.568 2.047-1.253 0-2.09-.851-2.568-2.047-.334-.835-.4-1.764-.4-2.794 0-1.03.066-1.96.4-2.794.478-1.196 1.315-2.047 2.568-2.047 1.253 0 2.09.851 2.568 2.047.334.835.4 1.764.4 2.794 0 1.03-.066 1.959-.4 2.794z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold">Remix</h3>
+          </div>
+          <p class="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            Full stack web framework focused on web standards.
+          </p>
+        </a>
+        
+        <a href="#manual" class="group p-4 border rounded-lg hover:border-ring transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-muted rounded-sm flex items-center justify-center">
+              <svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-semibold">Manual</h3>
+          </div>
+          <p class="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            Manual installation for any React or Vue project.
+          </p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next.js Installation -->
+  <div class="pb-12" id="next-js">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Next.js</h2>
+      <p class="text-muted-foreground">
+        Install and configure DocyUI in your Next.js project.
+      </p>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Create project</h3>
+        <p class="text-sm text-muted-foreground">
+          Start by creating a new Next.js project if you don't have one set up already:
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npx create-next-app@latest my-app --typescript --tailwind --eslint`}
+            vue={`npx create-next-app@latest my-app --typescript --tailwind --eslint`}
+            language="bash"
+            title="Create Next.js project"
+          />
+        </PackageManagerTabs>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Run the CLI</h3>
+        <p class="text-sm text-muted-foreground">
+          Run the <code class="bg-muted px-1 py-0.5 rounded text-xs">docyui</code> init command to setup your project:
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npx docyui@latest init`}
+            vue={`npx docyui@latest init`}
+            language="bash"
+            title="Initialize DocyUI"
+          />
+        </PackageManagerTabs>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Configure docyui.json</h3>
+        <p class="text-sm text-muted-foreground">
+          You will be asked a few questions to configure <code class="bg-muted px-1 py-0.5 rounded text-xs">docyui.json</code>:
+        </p>
+        
+        <CodeBlock 
+          react={`Would you like to use TypeScript (recommended)? no / yes
+Which style would you like to use? › Default
+Which color would you like to use as base color? › Slate
+Would you like to use CSS variables for colors? › no / yes`}
+          vue={`Would you like to use TypeScript (recommended)? no / yes
+Which style would you like to use? › Default
+Which color would you like to use as base color? › Slate
+Would you like to use CSS variables for colors? › no / yes`}
+          language="bash"
+          title="Configuration prompts"
+        />
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">That's it</h3>
+        <p class="text-sm text-muted-foreground">
+          You can now start adding components to your project.
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npx docyui@latest add button`}
+            vue={`npx docyui@latest add button`}
+            language="bash"
+            title="Add components"
+          />
+        </PackageManagerTabs>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vite Installation -->
+  <div class="pb-12" id="vite">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Vite</h2>
+      <p class="text-muted-foreground">
+        Install and configure DocyUI in your Vite project.
+      </p>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Create project</h3>
+        <p class="text-sm text-muted-foreground">
+          Start by creating a new Vite project if you don't have one set up already:
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npm create vite@latest my-app -- --template react-ts`}
+            vue={`npm create vite@latest my-app -- --template vue-ts`}
+            language="bash"
+            title="Create Vite project"
+          />
+        </PackageManagerTabs>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Add Tailwind CSS</h3>
+        <p class="text-sm text-muted-foreground">
+          Install and configure Tailwind CSS:
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p`}
+            vue={`npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p`}
+            language="bash"
+            title="Install Tailwind CSS"
+          />
+        </PackageManagerTabs>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Run the CLI</h3>
+        <p class="text-sm text-muted-foreground">
+          Run the <code class="bg-muted px-1 py-0.5 rounded text-xs">docyui</code> init command to setup your project:
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npx docyui@latest init`}
+            vue={`npx docyui@latest init`}
+            language="bash"
+            title="Initialize DocyUI"
+          />
+        </PackageManagerTabs>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">That's it</h3>
+        <p class="text-sm text-muted-foreground">
+          You can now start adding components to your project.
+        </p>
+        
+        <PackageManagerTabs>
+          <CodeBlock 
+            react={`npx docyui@latest add button`}
+            vue={`npx docyui@latest add button`}
+            language="bash"
+            title="Add components"
+          />
+        </PackageManagerTabs>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Installation -->
+  <div class="pb-12" id="manual">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Manual Installation</h2>
+      <p class="text-muted-foreground">
+        Manually add DocyUI to your project.
+      </p>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Prerequisites</h3>
+        <p class="text-sm text-muted-foreground">
+          Before you begin, ensure you have the following installed:
+        </p>
+        
+        <ul class="space-y-2 text-sm text-muted-foreground ml-4">
+          <li class="flex items-start gap-2">
+            <span class="text-primary">•</span>
+            <span>Node.js 18+ and npm/pnpm/yarn</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-primary">•</span>
+            <span>React 18+ or Vue 3+ (depending on your framework)</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-primary">•</span>
+            <span>Tailwind CSS v3+</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Install dependencies</h3>
+        <p class="text-sm text-muted-foreground">
+          Install the required dependencies for your framework:
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <h4 class="font-semibold text-sm">React</h4>
+            <CodeBlock 
+              react={`npm install class-variance-authority clsx tailwind-merge lucide-react @radix-ui/react-slot`}
+              language="bash"
+              title="Install React dependencies"
+            />
+          </div>
+          
+          <div class="space-y-2">
+            <h4 class="font-semibold text-sm">Vue</h4>
+            <CodeBlock 
+              vue={`npm install class-variance-authority clsx tailwind-merge lucide-vue-next radix-vue`}
+              language="bash"
+              title="Install Vue dependencies"
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Configure Tailwind CSS</h3>
+        <p class="text-sm text-muted-foreground">
+          Add the following to your <code class="bg-muted px-1 py-0.5 rounded text-xs">tailwind.config.js</code> file:
+        </p>
+        
+        <CodeBlock 
+          react={`/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+}`}
+          vue={`/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx,vue}',
+    './components/**/*.{ts,tsx,vue}',
+    './app/**/*.{ts,tsx,vue}',
+    './src/**/*.{ts,tsx,vue}',
+  ],
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+}`}
+          language="javascript"
+          title="tailwind.config.js"
+        />
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Add CSS variables</h3>
+        <p class="text-sm text-muted-foreground">
+          Add the following to your CSS file (e.g. <code class="bg-muted px-1 py-0.5 rounded text-xs">globals.css</code>):
+        </p>
+        
+        <CodeBlock 
+          react={`@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}`}
+          vue={`@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}`}
+          language="css"
+          title="globals.css"
+        />
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Add the cn utility</h3>
+        <p class="text-sm text-muted-foreground">
+          Add the <code class="bg-muted px-1 py-0.5 rounded text-xs">cn</code> utility function. This is used to merge CSS classes:
+        </p>
+        
+        <CodeBlock 
+          react={`import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+ 
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}`}
+          vue={`import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+ 
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}`}
+          language="typescript"
+          title="lib/utils.ts"
+        />
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">Import styles</h3>
+        <p class="text-sm text-muted-foreground">
+          Import the <code class="bg-muted px-1 py-0.5 rounded text-xs">globals.css</code> file in the root of your application:
+        </p>
+        
+        <CodeBlock 
+          react={`import "./globals.css"`}
+          vue={`import "./globals.css"`}
+          language="typescript"
+          title="main.ts"
+        />
+      </div>
+      
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">That's it</h3>
+        <p class="text-sm text-muted-foreground">
+          You can now start copying and pasting components into your project.
+        </p>
+      </div>
+    </div>
+  </div>
+</DocsLayout>
+
+<style>
+  @reference "../../styles/global.css";
+</style>

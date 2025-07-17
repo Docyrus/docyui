@@ -1,0 +1,244 @@
+---
+// Table of Contents component
+export interface Props {
+  headings?: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+}
+
+const { headings = [] } = Astro.props;
+---
+
+<div class="text-sm">
+  <div class="pb-4">
+    <h4 class="font-semibold text-foreground tracking-tight">On This Page</h4>
+  </div>
+  <div class="space-y-2 max-h-[calc(100vh-8rem)] overflow-y-auto">
+    {headings.length > 0 ? (
+      <ul class="space-y-1">
+        {headings.map((heading) => (
+          <li class={`${heading.depth === 2 ? 'ml-0' : 'ml-4'}`}>
+            <a
+              href={`#${heading.slug}`}
+              class="toc-link block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors leading-relaxed"
+              data-target={heading.slug}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="toc-container-placeholder">
+        <!-- This will be populated by JavaScript -->
+      </div>
+    )}
+  </div>
+</div>
+
+<script>
+  class TableOfContents {
+    constructor() {
+      this.init();
+    }
+    
+    init() {
+      // Auto-generate TOC if no headings provided
+      if (document.querySelectorAll('.toc-link').length === 0) {
+        this.generateTOC();
+      }
+      
+      // Ensure all headings have IDs for scroll spy
+      this.ensureHeadingIds();
+      
+      // Add scroll spy functionality
+      this.setupScrollSpy();
+      
+      // Add smooth scrolling
+      this.setupSmoothScrolling();
+    }
+    
+    ensureHeadingIds() {
+      // Only target headings inside main content, exclude TOC headings
+      const headings = document.querySelectorAll('main h2, main h3, main h4');
+      headings.forEach(heading => {
+        // Skip if heading is inside TOC container or has specific text
+        if (heading.closest('.toc-container') || heading.textContent?.includes('On This Page')) {
+          return;
+        }
+        
+        if (!heading.id) {
+          heading.id = this.generateSlug(heading.textContent || '');
+        }
+      });
+    }
+    
+    generateTOC() {
+      const allHeadings = document.querySelectorAll('main h2, main h3, main h4');
+      const tocContainer = document.querySelector('.toc-container-placeholder');
+      
+      if (!tocContainer) return;
+      
+      // Filter out TOC headings
+      const headings = Array.from(allHeadings).filter(heading => {
+        return !heading.closest('.toc-container') && !heading.textContent?.includes('On This Page');
+      });
+      
+      if (headings.length === 0) return;
+      
+      // Clear existing content
+      tocContainer.innerHTML = '';
+      
+      // Create TOC list
+      const list = document.createElement('ul');
+      list.className = 'space-y-1';
+      
+      headings.forEach((heading, index) => {
+        // Generate ID if not exists
+        if (!heading.id) {
+          heading.id = this.generateSlug(heading.textContent || '');
+        }
+        
+        const li = document.createElement('li');
+        const depth = parseInt(heading.tagName.charAt(1)); // H2 = 2, H3 = 3, etc.
+        li.className = depth === 2 ? 'ml-0' : 'ml-4';
+        
+        const link = document.createElement('a');
+        link.href = `#${heading.id}`;
+        link.className = 'toc-link block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors leading-relaxed';
+        link.textContent = heading.textContent || '';
+        link.dataset.target = heading.id;
+        
+        li.appendChild(link);
+        list.appendChild(li);
+      });
+      
+      tocContainer.appendChild(list);
+    }
+    
+    generateSlug(text) {
+      return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+    
+    setupScrollSpy() {
+      const links = document.querySelectorAll('.toc-link');
+      const allHeadings = document.querySelectorAll('main h2, main h3, main h4');
+      
+      // Filter out TOC headings
+      const headings = Array.from(allHeadings).filter(heading => {
+        return !heading.closest('.toc-container') && !heading.textContent?.includes('On This Page');
+      });
+      
+      if (links.length === 0 || headings.length === 0) return;
+      
+      // Use a more stable scroll-based approach
+      const updateActiveLink = () => {
+        const scrollTop = window.scrollY;
+        const headerOffset = 100; // Increased offset for better detection
+        
+        let activeId = null;
+        let closestDistance = Infinity;
+        
+        // Find the heading that's closest to the top of the viewport
+        headings.forEach(heading => {
+          const rect = heading.getBoundingClientRect();
+          const absoluteTop = rect.top + scrollTop;
+          const distance = Math.abs(scrollTop + headerOffset - absoluteTop);
+          
+          // If this heading is in the viewport area and closer than previous
+          if (scrollTop + headerOffset >= absoluteTop - 50 && distance < closestDistance) {
+            closestDistance = distance;
+            activeId = heading.id;
+          }
+        });
+        
+        // Update active states
+        if (activeId) {
+          this.setActiveLink(activeId);
+        }
+      };
+      
+      // Initial call
+      setTimeout(updateActiveLink, 100);
+      
+      // Throttled scroll listener for better performance
+      let scrollTimeout;
+      window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateActiveLink, 10);
+      });
+      
+      // Update on resize
+      window.addEventListener('resize', updateActiveLink);
+    }
+    
+    setupSmoothScrolling() {
+      const links = document.querySelectorAll('.toc-link');
+      
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href')?.substring(1);
+          const target = document.getElementById(targetId || '');
+          
+          if (target) {
+            const headerOffset = 70; // Account for fixed header (56px header + padding)
+            const elementPosition = target.offsetTop - headerOffset;
+            
+            // Immediately update active state
+            this.setActiveLink(targetId);
+            
+            window.scrollTo({
+              top: elementPosition,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    }
+    
+    setActiveLink(activeId) {
+      const links = document.querySelectorAll('.toc-link');
+      
+      links.forEach(link => {
+        const isActive = link.dataset.target === activeId;
+        
+        if (isActive) {
+          link.classList.remove('text-muted-foreground');
+          link.classList.add('text-foreground', 'font-medium');
+        } else {
+          link.classList.remove('text-foreground', 'font-medium');
+          link.classList.add('text-muted-foreground');
+        }
+      });
+    }
+  }
+  
+  // Initialize TOC
+  function initTOC() {
+    new TableOfContents();
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTOC);
+  } else {
+    initTOC();
+  }
+</script>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .toc-link {
+    @apply transition-colors duration-200;
+  }
+  
+  .toc-link:hover {
+    @apply text-foreground;
+  }
+</style>

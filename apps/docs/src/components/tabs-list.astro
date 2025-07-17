@@ -1,0 +1,19 @@
+---
+export interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+---
+
+<div class={`tabs-list flex border-b ${className}`} role="tablist">
+  <slot />
+</div>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .tabs-list {
+    @apply border-muted-foreground/20;
+  }
+</style>

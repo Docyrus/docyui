@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:registry": "turbo run build --filter=@docyui/registry",
+    "sync": "pnpm build:registry && turbo run build --filter=@docyui/docs",
+    "sync:watch": "pnpm sync && chokidar 'packages/cli-*/**/*.{tsx,vue}' -c 'pnpm sync'",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "lint:root": "eslint . --config eslint.config.mjs",
@@ -22,6 +25,7 @@
     "@types/node": "24.0.14",
     "@typescript-eslint/eslint-plugin": "8.37.0",
     "@typescript-eslint/parser": "8.37.0",
+    "chokidar-cli": "^3.0.0",
     "eslint": "9.31.0",
     "eslint-plugin-react": "7.37.5",
     "globals": "16.3.0",

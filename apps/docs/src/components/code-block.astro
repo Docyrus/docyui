@@ -1,0 +1,316 @@
+---
+// Code Block Component with Framework Support
+export interface Props {
+  react?: string;
+  vue?: string;
+  language?: string;
+  title?: string;
+  className?: string;
+  // Package manager commands
+  npm?: string;
+  pnpm?: string;
+  yarn?: string;
+  bun?: string;
+  // If true, will show package manager tabs instead of framework switching
+  packageManager?: boolean;
+}
+
+const { react, vue, language = 'tsx', title, className = '', npm, pnpm, yarn, bun, packageManager = false } = Astro.props;
+
+// Auto-generate package manager commands if base command is provided
+const generatePackageCommands = (baseCommand: string) => {
+  if (baseCommand.startsWith('npx ')) {
+    const command = baseCommand.replace('npx ', '');
+    return {
+      npm: baseCommand,
+      pnpm: `pnpm dlx ${command}`,
+      yarn: `yarn dlx ${command}`,
+      bun: `bunx ${command}`
+    };
+  }
+  
+  if (baseCommand.startsWith('npm install')) {
+    const packages = baseCommand.replace('npm install ', '');
+    return {
+      npm: baseCommand,
+      pnpm: `pnpm add ${packages}`,
+      yarn: `yarn add ${packages}`,
+      bun: `bun add ${packages}`
+    };
+  }
+  
+  // Default fallback
+  return {
+    npm: baseCommand,
+    pnpm: baseCommand.replace('npm', 'pnpm'),
+    yarn: baseCommand.replace('npm', 'yarn'),
+    bun: baseCommand.replace('npm', 'bun')
+  };
+};
+
+// Use provided commands or auto-generate
+const baseCommand = npm || pnpm || yarn || bun || '';
+const commands = baseCommand ? generatePackageCommands(baseCommand) : { npm, pnpm, yarn, bun };
+
+const packageTabs = [
+  { id: 'npm', label: 'npm', command: commands.npm },
+  { id: 'pnpm', label: 'pnpm', command: commands.pnpm },
+  { id: 'yarn', label: 'yarn', command: commands.yarn },
+  { id: 'bun', label: 'bun', command: commands.bun }
+].filter(tab => tab.command);
+---
+
+{packageManager && packageTabs.length > 0 ? (
+  <!-- Package Manager Tabs -->
+  <div class={`package-manager-tabs ${className}`}>
+    {title && (
+      <div class="flex items-center gap-2 mb-3">
+        <h4 class="text-sm font-medium text-foreground">{title}</h4>
+      </div>
+    )}
+    
+    <div class="rounded-lg border bg-muted/50">
+      <!-- Tab Headers -->
+      <div class="flex border-b bg-muted">
+        {packageTabs.map((tab, index) => (
+          <button
+            class={`tab-button px-4 py-2 text-sm font-medium transition-colors border-b-2 border-transparent hover:text-foreground ${
+              index === 0 ? 'text-foreground border-primary' : 'text-muted-foreground'
+            }`}
+            data-tab={tab.id}
+            type="button"
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      
+      <!-- Tab Content -->
+      <div class="relative">
+        {packageTabs.map((tab, index) => (
+          <div
+            class={`tab-content ${index === 0 ? 'block' : 'hidden'}`}
+            data-tab-content={tab.id}
+          >
+            <div class="relative">
+              <pre class="bg-muted/50 text-card-foreground p-4 text-sm overflow-x-auto font-mono"><code>{tab.command}</code></pre>
+              <button
+                class="copy-button absolute top-2 right-2 p-2 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+                data-copy-text={tab.command}
+                title="Copy to clipboard"
+              >
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                  <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+) : (
+  <!-- Regular Framework Code Block -->
+  <div class={`code-block-container ${className}`}>
+    {title && (
+      <div class="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2">
+        <span class="text-sm font-medium text-muted-foreground">{title}</span>
+        <button class="copy-button inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+            <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+          </svg>
+          <span class="sr-only">Copy code</span>
+        </button>
+      </div>
+    )}
+    
+    <div class="relative">
+      {react && (
+        <pre class="code-block overflow-x-auto p-4 text-sm" data-framework="react" data-language={language}><code>{react}</code></pre>
+      )}
+      
+      {vue && (
+        <pre class="code-block overflow-x-auto p-4 text-sm hidden" data-framework="vue" data-language={language}><code>{vue}</code></pre>
+      )}
+      
+      {!title && (
+        <button class="copy-button absolute right-2 top-2 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8 opacity-0 group-hover:opacity-100">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+            <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+          </svg>
+          <span class="sr-only">Copy code</span>
+        </button>
+      )}
+    </div>
+  </div>
+)}
+
+<script>
+  class CodeBlock {
+    constructor(container) {
+      this.container = container;
+      this.codeBlocks = container.querySelectorAll('.code-block');
+      this.copyButtons = container.querySelectorAll('.copy-button');
+      this.tabButtons = container.querySelectorAll('.tab-button');
+      this.tabContents = container.querySelectorAll('.tab-content');
+      
+      this.init();
+    }
+    
+    init() {
+      // Initialize copy functionality
+      this.copyButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+          const text = button.dataset.copyText || this.getCodeContent(button);
+          await this.copyToClipboard(text);
+          this.showCopyFeedback(button);
+        });
+      });
+      
+      // Initialize tab switching for package managers
+      this.tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          this.switchTab(button.dataset.tab);
+        });
+      });
+      
+      // Initialize framework switching
+      this.initFrameworkSwitching();
+    }
+    
+    switchTab(tabId) {
+      // Update buttons
+      this.tabButtons.forEach(button => {
+        const isActive = button.dataset.tab === tabId;
+        button.classList.toggle('text-foreground', isActive);
+        button.classList.toggle('border-primary', isActive);
+        button.classList.toggle('text-muted-foreground', !isActive);
+        button.classList.toggle('border-transparent', !isActive);
+      });
+      
+      // Update content
+      this.tabContents.forEach(content => {
+        const isActive = content.dataset.tabContent === tabId;
+        content.classList.toggle('block', isActive);
+        content.classList.toggle('hidden', !isActive);
+      });
+    }
+    
+    initFrameworkSwitching() {
+      // Listen for framework changes
+      document.addEventListener('frameworkchange', (event) => {
+        const framework = event.detail.framework;
+        this.switchFramework(framework);
+      });
+      
+      // Set initial framework
+      const currentFramework = localStorage.getItem('docyui-framework') || 'react';
+      this.switchFramework(currentFramework);
+    }
+    
+    switchFramework(framework) {
+      this.codeBlocks.forEach(block => {
+        const blockFramework = block.dataset.framework;
+        if (blockFramework) {
+          block.classList.toggle('hidden', blockFramework !== framework);
+        }
+      });
+    }
+    
+    getCodeContent(button) {
+      const container = button.closest('.code-block-container, .package-manager-tabs');
+      const visibleCode = container.querySelector('.code-block:not(.hidden) code, .tab-content:not(.hidden) code');
+      return visibleCode ? visibleCode.textContent : '';
+    }
+    
+    async copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        console.error('Failed to copy text:', err);
+      }
+    }
+    
+    showCopyFeedback(button) {
+      const originalIcon = button.innerHTML;
+      button.innerHTML = `
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20,6 9,17 4,12"/>
+        </svg>
+        <span class="sr-only">Copied!</span>
+      `;
+      
+      setTimeout(() => {
+        button.innerHTML = originalIcon;
+      }, 2000);
+    }
+  }
+  
+  // Auto-initialize code blocks
+  function initCodeBlocks() {
+    const containers = document.querySelectorAll('.code-block-container:not([data-initialized]), .package-manager-tabs:not([data-initialized])');
+    containers.forEach(container => {
+      container.dataset.initialized = 'true';
+      new CodeBlock(container);
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCodeBlocks);
+  } else {
+    initCodeBlocks();
+  }
+  
+  // Re-initialize when new content is loaded
+  const observer = new MutationObserver(() => {
+    initCodeBlocks();
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+</script>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .code-block-container {
+    @apply rounded-lg border bg-muted/50 overflow-hidden;
+  }
+  
+  .code-block {
+    @apply bg-muted/50 text-card-foreground font-mono;
+  }
+  
+  .copy-button {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+  
+  .tab-button {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+  
+  .tab-button:first-child {
+    @apply rounded-tl-lg;
+  }
+  
+  .tab-button:last-child {
+    @apply rounded-tr-lg;
+  }
+  
+  .tab-content pre {
+    @apply rounded-none rounded-b-lg;
+  }
+  
+  .tab-content:first-child pre {
+    @apply rounded-b-lg;
+  }
+  
+  .package-manager-tabs {
+    @apply mb-4;
+  }
+</style>

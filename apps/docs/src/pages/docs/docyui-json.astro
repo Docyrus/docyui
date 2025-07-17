@@ -1,0 +1,416 @@
+---
+import DocsLayout from '../../layouts/docs-layout.astro';
+import CodeBlock from '../../components/code-block.astro';
+---
+
+<DocsLayout title="docyui.json - DocyUI" description="Configuration file for DocyUI projects to customize components and setup">
+  <div class="pb-12 pt-8">
+    <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+      <div class="flex-1 space-y-4">
+        <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
+          <span class="docyui-gradient-text">docyui.json</span>
+        </h1>
+        <p class="text-xl text-muted-foreground leading-relaxed">
+          Configuration file for DocyUI projects to customize components and setup.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Introduction -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <p class="text-muted-foreground">
+        The <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui.json</code> file is a configuration file for DocyUI projects that helps understand your project setup and generate customized components.
+      </p>
+    </div>
+  </div>
+
+  <!-- Configuration -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Configuration</h2>
+      <p class="text-muted-foreground">
+        The <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui.json</code> file is created in your project root when you run <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui init</code>. This file contains all the information about your project setup, component paths, and styling preferences.
+      </p>
+      
+      <p class="text-muted-foreground">
+        Here's an example of a <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui.json</code> file:
+      </p>
+      
+      <CodeBlock 
+        react={`{
+  "$schema": "https://ui.docyrus.dev/schema.json",
+  "framework": "react",
+  "rsc": true,
+  "tsx": true,
+  "componentsPath": "./src/components/ui",
+  "tailwind": {
+    "css": "app/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true,
+    "cssVersion": "0.0.1"
+  },
+  "icons": {
+    "library": "lucide",
+    "size": 20,
+    "strokeWidth": 1.5
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils"
+  }
+}`}
+        vue={`{
+  "$schema": "https://ui.docyrus.dev/schema.json",
+  "style": "default",
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "app/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "rsc": false,
+  "tsx": false,
+  "aliases": {
+    "utils": "~/lib/utils",
+    "components": "~/components",
+    "ui": "~/components/ui",
+    "lib": "~/lib",
+    "hooks": "~/composables"
+  }
+}`}
+        language="json"
+        title="docyui.json"
+      />
+    </div>
+  </div>
+
+  <!-- Properties -->
+  <div class="pb-12">
+    <div class="space-y-8">
+      <h2 class="text-2xl font-heading tracking-tight">Properties</h2>
+      
+      <!-- $schema -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">$schema</h3>
+        <p class="text-muted-foreground">
+          The JSON schema for validation. This provides IntelliSense and validation in your editor.
+        </p>
+        <CodeBlock 
+          react={`{
+  "$schema": "https://ui.docyrus.dev/schema.json"
+}`}
+          vue={`{
+  "$schema": "https://ui.docyrus.dev/schema.json"
+}`}
+          language="json"
+        />
+      </div>
+
+      <!-- style -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">style</h3>
+        <p class="text-muted-foreground">
+          The style configuration for your components. DocyUI provides different style variants:
+        </p>
+        <ul class="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+          <li><code class="text-sm bg-muted px-1 py-0.5 rounded">default</code> - The default DocyUI style</li>
+          <li><code class="text-sm bg-muted px-1 py-0.5 rounded">new-york</code> - A more compact, modern style inspired by New York design</li>
+        </ul>
+        <CodeBlock 
+          react={`{
+  "style": "default"
+}`}
+          vue={`{
+  "style": "default"
+}`}
+          language="json"
+        />
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 dark:bg-amber-950/20 dark:border-amber-800">
+          <p class="text-sm text-amber-800 dark:text-amber-200">
+            <strong>Note:</strong> The <code class="text-sm bg-amber-100 px-1 py-0.5 rounded dark:bg-amber-900">style</code> configuration cannot be changed after initialization. You'll need to delete the <code class="text-sm bg-amber-100 px-1 py-0.5 rounded dark:bg-amber-900">docyui.json</code> file and run <code class="text-sm bg-amber-100 px-1 py-0.5 rounded dark:bg-amber-900">docyui init</code> again.
+          </p>
+        </div>
+      </div>
+
+      <!-- tailwind -->
+      <div class="space-y-6">
+        <h3 class="text-lg font-heading font-semibold">tailwind</h3>
+        <p class="text-muted-foreground">
+          Configuration for Tailwind CSS integration.
+        </p>
+        
+        <!-- tailwind.config -->
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold">tailwind.config</h4>
+          <p class="text-muted-foreground">
+            Path to your Tailwind configuration file.
+          </p>
+          <CodeBlock 
+            react={`{
+  "tailwind": {
+    "config": "tailwind.config.js"
+  }
+}`}
+            vue={`{
+  "tailwind": {
+    "config": "tailwind.config.js"
+  }
+}`}
+            language="json"
+          />
+          <p class="text-muted-foreground">
+            For Tailwind CSS v4, you can leave this blank:
+          </p>
+          <CodeBlock 
+            react={`{
+  "tailwind": {
+    "config": ""
+  }
+}`}
+            vue={`{
+  "tailwind": {
+    "config": ""
+  }
+}`}
+            language="json"
+          />
+        </div>
+
+        <!-- tailwind.css -->
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold">tailwind.css</h4>
+          <p class="text-muted-foreground">
+            Path to your CSS file where Tailwind CSS is imported.
+          </p>
+          <CodeBlock 
+            react={`{
+  "tailwind": {
+    "css": "app/globals.css"
+  }
+}`}
+            vue={`{
+  "tailwind": {
+    "css": "src/main.css"
+  }
+}`}
+            language="json"
+          />
+        </div>
+
+        <!-- tailwind.baseColor -->
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold">tailwind.baseColor</h4>
+          <p class="text-muted-foreground">
+            The base color for your project. This is used to generate the default color palette.
+          </p>
+          <CodeBlock 
+            react={`{
+  "tailwind": {
+    "baseColor": "slate"
+  }
+}`}
+            vue={`{
+  "tailwind": {
+    "baseColor": "slate"
+  }
+}`}
+            language="json"
+          />
+          <p class="text-muted-foreground">Available options:</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+            <code class="bg-muted px-2 py-1 rounded">gray</code>
+            <code class="bg-muted px-2 py-1 rounded">neutral</code>
+            <code class="bg-muted px-2 py-1 rounded">slate</code>
+            <code class="bg-muted px-2 py-1 rounded">stone</code>
+            <code class="bg-muted px-2 py-1 rounded">zinc</code>
+            <code class="bg-muted px-2 py-1 rounded">red</code>
+            <code class="bg-muted px-2 py-1 rounded">orange</code>
+            <code class="bg-muted px-2 py-1 rounded">amber</code>
+            <code class="bg-muted px-2 py-1 rounded">yellow</code>
+            <code class="bg-muted px-2 py-1 rounded">lime</code>
+            <code class="bg-muted px-2 py-1 rounded">green</code>
+            <code class="bg-muted px-2 py-1 rounded">emerald</code>
+            <code class="bg-muted px-2 py-1 rounded">teal</code>
+            <code class="bg-muted px-2 py-1 rounded">cyan</code>
+            <code class="bg-muted px-2 py-1 rounded">sky</code>
+            <code class="bg-muted px-2 py-1 rounded">blue</code>
+            <code class="bg-muted px-2 py-1 rounded">indigo</code>
+            <code class="bg-muted px-2 py-1 rounded">violet</code>
+            <code class="bg-muted px-2 py-1 rounded">rose</code>
+          </div>
+        </div>
+
+        <!-- tailwind.cssVariables -->
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold">tailwind.cssVariables</h4>
+          <p class="text-muted-foreground">
+            Choose between CSS variables or utility classes for theming.
+          </p>
+          <CodeBlock 
+            react={`{
+  "tailwind": {
+    "cssVariables": true
+  }
+}`}
+            vue={`{
+  "tailwind": {
+    "cssVariables": true
+  }
+}`}
+            language="json"
+          />
+          <ul class="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+            <li><code class="text-sm bg-muted px-1 py-0.5 rounded">true</code> - Use CSS variables for theming (recommended)</li>
+            <li><code class="text-sm bg-muted px-1 py-0.5 rounded">false</code> - Use Tailwind utility classes</li>
+          </ul>
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 dark:bg-amber-950/20 dark:border-amber-800">
+            <p class="text-sm text-amber-800 dark:text-amber-200">
+              <strong>Note:</strong> The <code class="text-sm bg-amber-100 px-1 py-0.5 rounded dark:bg-amber-900">cssVariables</code> configuration cannot be changed after initialization. You'll need to delete the <code class="text-sm bg-amber-100 px-1 py-0.5 rounded dark:bg-amber-900">docyui.json</code> file and run <code class="text-sm bg-amber-100 px-1 py-0.5 rounded dark:bg-amber-900">docyui init</code> again.
+            </p>
+          </div>
+        </div>
+
+        <!-- tailwind.prefix -->
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold">tailwind.prefix</h4>
+          <p class="text-muted-foreground">
+            Prefix for Tailwind utility classes. This is useful when you need to avoid conflicts with other CSS frameworks.
+          </p>
+          <CodeBlock 
+            react={`{
+  "tailwind": {
+    "prefix": "tw-"
+  }
+}`}
+            vue={`{
+  "tailwind": {
+    "prefix": "tw-"
+  }
+}`}
+            language="json"
+          />
+        </div>
+      </div>
+
+      <!-- rsc -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">rsc</h3>
+        <p class="text-muted-foreground">
+          Enable React Server Components support. When set to <code class="text-sm bg-muted px-1 py-0.5 rounded">true</code>, the CLI will automatically add the <code class="text-sm bg-muted px-1 py-0.5 rounded">"use client"</code> directive to components that require client-side JavaScript.
+        </p>
+        <CodeBlock 
+          react={`{
+  "rsc": true
+}`}
+          vue={`{
+  "rsc": false
+}`}
+          language="json"
+        />
+      </div>
+
+      <!-- tsx -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-heading font-semibold">tsx</h3>
+        <p class="text-muted-foreground">
+          Choose between TypeScript (<code class="text-sm bg-muted px-1 py-0.5 rounded">.tsx</code>) or JavaScript (<code class="text-sm bg-muted px-1 py-0.5 rounded">.jsx</code>) for your components.
+        </p>
+        <CodeBlock 
+          react={`{
+  "tsx": true
+}`}
+          vue={`{
+  "tsx": false
+}`}
+          language="json"
+        />
+        <ul class="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+          <li><code class="text-sm bg-muted px-1 py-0.5 rounded">true</code> - Generate TypeScript components with <code class="text-sm bg-muted px-1 py-0.5 rounded">.tsx</code> extension</li>
+          <li><code class="text-sm bg-muted px-1 py-0.5 rounded">false</code> - Generate JavaScript components with <code class="text-sm bg-muted px-1 py-0.5 rounded">.jsx</code> extension</li>
+        </ul>
+      </div>
+
+      <!-- aliases -->
+      <div class="space-y-6">
+        <h3 class="text-lg font-heading font-semibold">aliases</h3>
+        <p class="text-muted-foreground">
+          Path aliases for imports. This is used to resolve imports in your components.
+        </p>
+        <CodeBlock 
+          react={`{
+  "aliases": {
+    "utils": "~/lib/utils",
+    "components": "~/components",
+    "ui": "~/components/ui",
+    "lib": "~/lib",
+    "hooks": "~/hooks"
+  }
+}`}
+          vue={`{
+  "aliases": {
+    "utils": "~/lib/utils",
+    "components": "~/components",
+    "ui": "~/components/ui",
+    "lib": "~/lib",
+    "hooks": "~/composables"
+  }
+}`}
+          language="json"
+        />
+        
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold">aliases.utils</h4>
+          <p class="text-muted-foreground">Path to your utility functions.</p>
+          
+          <h4 class="text-md font-semibold">aliases.components</h4>
+          <p class="text-muted-foreground">Path to your components directory.</p>
+          
+          <h4 class="text-md font-semibold">aliases.ui</h4>
+          <p class="text-muted-foreground">Path to your UI components directory. This is where DocyUI components will be installed.</p>
+          
+          <h4 class="text-md font-semibold">aliases.lib</h4>
+          <p class="text-muted-foreground">Path to your library directory.</p>
+          
+          <h4 class="text-md font-semibold">aliases.hooks</h4>
+          <p class="text-muted-foreground">Path to your hooks directory (React) or composables directory (Vue).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Configuration -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Manual Configuration</h2>
+      <p class="text-muted-foreground">
+        If you prefer to configure manually without using the CLI, you can create a <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui.json</code> file in your project root with the configuration options above. The CLI will detect this file and use it for component generation.
+      </p>
+    </div>
+  </div>
+
+  <!-- Note -->
+  <div class="pb-12">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-heading tracking-tight">Note</h2>
+      <p class="text-muted-foreground">
+        The <code class="text-sm bg-muted px-1 py-0.5 rounded">docyui.json</code> file is optional and primarily used when utilizing the CLI to add components to your project. If you're copying and pasting components manually, you don't need this file.
+      </p>
+      <p class="text-muted-foreground">
+        However, having this configuration file provides several benefits:
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+        <li>Automatic path resolution for imports</li>
+        <li>Consistent styling across components</li>
+        <li>Easier component updates and maintenance</li>
+        <li>Better IDE support and IntelliSense</li>
+      </ul>
+    </div>
+  </div>
+</DocsLayout>
+
+<style>
+  @reference "../../styles/global.css";
+</style>

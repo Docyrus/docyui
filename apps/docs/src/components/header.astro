@@ -1,0 +1,140 @@
+---
+// Header component - ShadCN layout pattern
+import ThemeToggle from './theme-toggle.astro';
+---
+
+<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-14 items-center">
+    <!-- Logo -->
+    <div class="mr-4 hidden md:flex">
+      <a class="mr-6 flex items-center space-x-2" href="/">
+        <div class="relative">
+          <svg class="h-8 w-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer ring -->
+            <circle cx="16" cy="16" r="14" stroke="url(#gradient)" stroke-width="2" fill="none"/>
+            <!-- Inner shapes representing components -->
+            <rect x="10" y="10" width="4" height="4" rx="1" fill="url(#gradient)"/>
+            <rect x="18" y="10" width="4" height="4" rx="1" fill="url(#gradient)" opacity="0.7"/>
+            <rect x="10" y="18" width="4" height="4" rx="1" fill="url(#gradient)" opacity="0.7"/>
+            <rect x="18" y="18" width="4" height="4" rx="1" fill="url(#gradient)" opacity="0.5"/>
+            <!-- Gradient definition -->
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#3b82f6"/>
+                <stop offset="50%" style="stop-color:#8b5cf6"/>
+                <stop offset="100%" style="stop-color:#06b6d4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="hidden font-heading font-bold text-xl docyui-gradient-text sm:inline-block">
+          DocyUI
+        </span>
+      </a>
+    </div>
+
+    <!-- Mobile menu button -->
+    <button class="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <span class="sr-only">Toggle Menu</span>
+    </button>
+
+    <!-- Navigation -->
+    <nav class="flex items-center gap-4 text-sm lg:gap-6">
+      <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/docs">
+        Docs
+      </a>
+      <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/components">
+        Components
+      </a>
+    </nav>
+
+    <!-- Right side -->
+    <div class="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+      <div class="w-full flex-1 md:w-auto md:flex-none">
+        <!-- Search will go here -->
+      </div>
+      <nav class="flex items-center">
+        <!-- GitHub Link -->
+        <a 
+          href="https://github.com/Docyrus/docyui" 
+          target="_blank" 
+          rel="noreferrer"
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+        >
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          <span class="sr-only">GitHub</span>
+        </a>
+
+        <!-- Framework Switcher -->
+        <div class="framework-switcher flex items-center gap-1 rounded-md bg-muted p-1 mr-2">
+          <button class="framework-btn px-2 py-1 text-xs font-medium rounded bg-background shadow-sm" data-framework="react">
+            React
+          </button>
+          <button class="framework-btn px-2 py-1 text-xs font-medium rounded" data-framework="vue">
+            Vue
+          </button>
+        </div>
+
+        <!-- Theme Toggle -->
+        <ThemeToggle />
+      </nav>
+    </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Global framework switcher
+  let currentFramework = localStorage.getItem('selectedFramework') || 'react';
+  
+  // Set initial state
+  document.documentElement.dataset.framework = currentFramework;
+  
+  function updateFrameworkButtons() {
+    const frameworkBtns = document.querySelectorAll('.framework-btn');
+    frameworkBtns.forEach(btn => {
+      if (btn.dataset.framework === currentFramework) {
+        btn.classList.add('bg-background', 'shadow-sm');
+        btn.classList.remove('bg-transparent');
+      } else {
+        btn.classList.remove('bg-background', 'shadow-sm');
+        btn.classList.add('bg-transparent');
+      }
+    });
+  }
+  
+  function updateFrameworkContent() {
+    const frameworkContents = document.querySelectorAll('.framework-content');
+    frameworkContents.forEach(content => {
+      if (content.dataset.framework === currentFramework) {
+        content.classList.remove('hidden');
+      } else {
+        content.classList.add('hidden');
+      }
+    });
+  }
+  
+  // Initialize when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    updateFrameworkButtons();
+    updateFrameworkContent();
+    
+    // Add click handlers
+    const frameworkBtns = document.querySelectorAll('.framework-btn');
+    frameworkBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFramework = btn.dataset.framework;
+        localStorage.setItem('selectedFramework', currentFramework);
+        document.documentElement.dataset.framework = currentFramework;
+        updateFrameworkButtons();
+        updateFrameworkContent();
+      });
+    });
+  });
+</script>

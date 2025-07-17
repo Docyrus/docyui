@@ -17,6 +17,13 @@ DocyUI is a component library monorepo built with TypeScript, React, and Tailwin
 - Components should extend or derive from these base libraries
 - Follow their patterns and design principles
 
+## CSS Framework
+- Use Tailwind CSS v4 exclusively
+- Built-in utility classes may differ from v3 (e.g., some utilities require @reference directive)
+- Use @theme directive in CSS for design token definitions
+- CSS variables for theming (--background, --foreground, --primary, etc.)
+- Follow Tailwind CSS v4 documentation for utility classes and directives
+
 ## Color System
 - Use ShadCN color patterns from https://ui.shadcn.com/colors
 - Supported color palettes: slate, zinc, stone, gray, neutral, blue, green, orange, red, rose, violet

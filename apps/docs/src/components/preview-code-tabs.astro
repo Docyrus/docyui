@@ -1,0 +1,238 @@
+---
+// Preview-Code Tabs Component
+export interface Props {
+  react?: string;
+  vue?: string;
+  title?: string;
+  className?: string;
+  previewClassName?: string;
+}
+
+const { react, vue, title, className = '', previewClassName = '' } = Astro.props;
+---
+
+<div class={`preview-code-tabs ${className}`}>
+  {title && (
+    <div class="flex items-center gap-2 mb-3">
+      <h4 class="text-sm font-medium text-foreground">{title}</h4>
+    </div>
+  )}
+  
+  <div class="rounded-lg border bg-muted/50 overflow-hidden">
+    <!-- Tab Headers -->
+    <div class="flex border-b">
+      <button
+        class="tab-button px-4 py-2 text-sm font-medium transition-colors border-b-2 text-foreground border-primary hover:text-foreground"
+        data-tab="preview"
+        type="button"
+      >
+        Preview
+      </button>
+      <button
+        class="tab-button px-4 py-2 text-sm font-medium transition-colors border-b-2 border-transparent text-muted-foreground hover:text-foreground"
+        data-tab="code"
+        type="button"
+      >
+        Code
+      </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="relative">
+      <!-- Preview Tab -->
+      <div class="tab-content block" data-tab-content="preview">
+        <div class={`p-6 min-h-[200px] flex items-center justify-center bg-muted/50 dark:bg-muted/30 ${previewClassName}`}>
+          <div class="preview-content flex items-center justify-center gap-4 flex-wrap">
+            <slot />
+          </div>
+        </div>
+      </div>
+      
+      <!-- Code Tab -->
+      <div class="tab-content hidden" data-tab-content="code">
+        <div class="relative">
+          {react && (
+            <pre class="code-block bg-muted/50 text-card-foreground p-4 text-sm overflow-x-auto font-mono" data-framework="react"><code>{react}</code></pre>
+          )}
+          
+          {vue && (
+            <pre class="code-block bg-muted/50 text-card-foreground p-4 text-sm overflow-x-auto font-mono hidden" data-framework="vue"><code>{vue}</code></pre>
+          )}
+          
+          <button
+            class="copy-button absolute top-2 right-2 p-2 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+            title="Copy to clipboard"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+              <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class PreviewCodeTabs {
+    constructor(element) {
+      this.element = element;
+      this.tabButtons = element.querySelectorAll('.tab-button');
+      this.tabContents = element.querySelectorAll('.tab-content');
+      this.copyButton = element.querySelector('.copy-button');
+      this.codeBlocks = element.querySelectorAll('.code-block');
+      
+      this.init();
+    }
+    
+    init() {
+      // Initialize tab switching
+      this.tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          this.switchTab(button.dataset.tab);
+        });
+      });
+      
+      // Initialize copy functionality
+      if (this.copyButton) {
+        this.copyButton.addEventListener('click', async () => {
+          const text = this.getVisibleCode();
+          await this.copyToClipboard(text);
+          this.showCopyFeedback();
+        });
+      }
+      
+      // Initialize framework switching
+      this.initFrameworkSwitching();
+    }
+    
+    switchTab(tabId) {
+      // Update buttons
+      this.tabButtons.forEach(button => {
+        const isActive = button.dataset.tab === tabId;
+        button.classList.toggle('text-foreground', isActive);
+        button.classList.toggle('border-primary', isActive);
+        button.classList.toggle('text-muted-foreground', !isActive);
+        button.classList.toggle('border-transparent', !isActive);
+      });
+      
+      // Update content
+      this.tabContents.forEach(content => {
+        const isActive = content.dataset.tabContent === tabId;
+        content.classList.toggle('block', isActive);
+        content.classList.toggle('hidden', !isActive);
+      });
+    }
+    
+    initFrameworkSwitching() {
+      // Listen for framework changes
+      document.addEventListener('frameworkchange', (event) => {
+        const framework = event.detail.framework;
+        this.switchFramework(framework);
+      });
+      
+      // Set initial framework
+      const currentFramework = localStorage.getItem('docyui-framework') || 'react';
+      this.switchFramework(currentFramework);
+    }
+    
+    switchFramework(framework) {
+      this.codeBlocks.forEach(block => {
+        const blockFramework = block.dataset.framework;
+        if (blockFramework) {
+          block.classList.toggle('hidden', blockFramework !== framework);
+        }
+      });
+    }
+    
+    getVisibleCode() {
+      const visibleCode = this.element.querySelector('.code-block:not(.hidden) code');
+      return visibleCode ? visibleCode.textContent : '';
+    }
+    
+    async copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        console.error('Failed to copy text:', err);
+      }
+    }
+    
+    showCopyFeedback() {
+      const originalIcon = this.copyButton.innerHTML;
+      this.copyButton.innerHTML = `
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20,6 9,17 4,12"/>
+        </svg>
+      `;
+      
+      setTimeout(() => {
+        this.copyButton.innerHTML = originalIcon;
+      }, 2000);
+    }
+  }
+  
+  // Auto-initialize preview-code tabs
+  function initPreviewCodeTabs() {
+    const tabs = document.querySelectorAll('.preview-code-tabs:not([data-initialized])');
+    tabs.forEach(tab => {
+      tab.dataset.initialized = 'true';
+      new PreviewCodeTabs(tab);
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPreviewCodeTabs);
+  } else {
+    initPreviewCodeTabs();
+  }
+  
+  // Re-initialize when new content is loaded
+  const observer = new MutationObserver(() => {
+    initPreviewCodeTabs();
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+</script>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .preview-code-tabs {
+    @apply mb-6;
+  }
+  
+  .tab-button {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+  
+  .tab-button:first-child {
+    @apply rounded-tl-lg;
+  }
+  
+  .tab-button:last-child {
+    @apply rounded-tr-lg;
+  }
+  
+  .preview-content {
+    @apply flex items-center justify-center gap-4 flex-wrap;
+  }
+  
+  .code-block {
+    @apply font-mono rounded-none;
+  }
+  
+  .copy-button {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+  
+  /* Preview specific styles */
+  .preview-content > * {
+    @apply m-1;
+  }
+  
+</style>

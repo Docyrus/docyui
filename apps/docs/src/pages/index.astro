@@ -1,0 +1,116 @@
+---
+import Layout from '../layouts/layout.astro';
+import Header from '../components/header.astro';
+---
+
+<Layout title="DocyUI - Beautiful components for React and Vue">
+	<Header />
+	<main class="min-h-screen bg-background text-foreground">
+		<div class="container mx-auto py-16">
+			<div class="flex flex-col items-center text-center space-y-8">
+				<div class="space-y-8">
+					<div class="flex justify-center">
+						<div class="relative docyui-glow">
+							<svg class="h-20 w-20 mb-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<!-- Outer ring -->
+								<circle cx="32" cy="32" r="28" stroke="url(#hero-gradient)" stroke-width="3" fill="none"/>
+								<!-- Inner shapes representing components -->
+								<rect x="20" y="20" width="8" height="8" rx="2" fill="url(#hero-gradient)"/>
+								<rect x="36" y="20" width="8" height="8" rx="2" fill="url(#hero-gradient)" opacity="0.7"/>
+								<rect x="20" y="36" width="8" height="8" rx="2" fill="url(#hero-gradient)" opacity="0.7"/>
+								<rect x="36" y="36" width="8" height="8" rx="2" fill="url(#hero-gradient)" opacity="0.5"/>
+								<!-- Gradient definition -->
+								<defs>
+									<linearGradient id="hero-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+										<stop offset="0%" style="stop-color:#3b82f6"/>
+										<stop offset="50%" style="stop-color:#8b5cf6"/>
+										<stop offset="100%" style="stop-color:#06b6d4"/>
+									</linearGradient>
+								</defs>
+							</svg>
+						</div>
+					</div>
+					<h1 class="text-4xl font-heading font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+						Build beautiful UIs with 
+						<span class="docyui-gradient-text">
+							DocyUI
+						</span>
+					</h1>
+					<p class="mx-auto max-w-[700px] text-lg text-muted-foreground sm:text-xl leading-relaxed">
+						Copy and paste components for React and Vue. Accessible. Customizable. Open Source.
+						<br />
+						<span class="text-sm font-medium text-foreground mt-2 inline-block">Powered by Tailwind CSS v4, TypeScript, and modern tooling.</span>
+					</p>
+				</div>
+				
+				<div class="flex flex-col gap-4 min-[400px]:flex-row">
+					<a 
+						href="/docs" 
+						class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 docyui-gradient text-white hover:shadow-lg hover:scale-105 h-11 px-6 py-2 font-semibold"
+					>
+						Get Started
+					</a>
+					<a 
+						href="/docs/components/button" 
+						class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:scale-105 h-11 px-6 py-2 font-semibold"
+					>
+						Components
+					</a>
+				</div>
+
+				<div class="grid w-full max-w-8xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mt-20">
+					<div class="relative overflow-hidden rounded-lg border bg-background p-6 docyui-card-hover">
+						<div class="flex h-[180px] flex-col justify-between">
+							<div class="h-12 w-12 rounded docyui-gradient p-2">
+								<svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+									<rect width="8" height="4" x="8" y="2" rx="1"/>
+								</svg>
+							</div>
+							<div class="space-y-2">
+								<h3 class="font-heading font-bold">Copy and Paste</h3>
+								<p class="text-sm text-muted-foreground leading-relaxed">
+									Copy and paste components into your apps. Own the code, customize freely.
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="relative overflow-hidden rounded-lg border bg-background p-6 docyui-card-hover">
+						<div class="flex h-[180px] flex-col justify-between">
+							<div class="h-12 w-12 rounded docyui-gradient p-2">
+								<svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M7 10v12"/>
+									<path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/>
+								</svg>
+							</div>
+							<div class="space-y-2">
+								<h3 class="font-heading font-bold">Accessible</h3>
+								<p class="text-sm text-muted-foreground leading-relaxed">
+									Built with accessibility in mind. WAI-ARIA compliant, keyboard navigation.
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="relative overflow-hidden rounded-lg border bg-background p-6 docyui-card-hover">
+						<div class="flex h-[180px] flex-col justify-between">
+							<div class="h-12 w-12 rounded docyui-gradient p-2">
+								<svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<rect width="18" height="18" x="3" y="3" rx="2"/>
+									<path d="M9 9h6v6H9z"/>
+								</svg>
+							</div>
+							<div class="space-y-2">
+								<h3 class="font-heading font-bold">Customizable</h3>
+								<p class="text-sm text-muted-foreground leading-relaxed">
+									Styled with Tailwind CSS v4. 11 color palettes, full customization.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</Layout>

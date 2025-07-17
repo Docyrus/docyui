@@ -1,0 +1,34 @@
+---
+export interface Props {
+  value: string;
+  className?: string;
+}
+
+const { value, className = '' } = Astro.props;
+---
+
+<button 
+  class={`tabs-trigger px-4 py-2 text-sm font-medium transition-colors border-b-2 border-transparent hover:text-foreground data-[state=active]:text-foreground data-[state=active]:border-primary ${className}`}
+  data-value={value}
+  role="tab"
+  aria-selected="false"
+  type="button"
+>
+  <slot />
+</button>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .tabs-trigger {
+    @apply text-muted-foreground;
+  }
+  
+  .tabs-trigger.active {
+    @apply text-foreground border-primary;
+  }
+  
+  .tabs-trigger:hover {
+    @apply text-foreground;
+  }
+</style>

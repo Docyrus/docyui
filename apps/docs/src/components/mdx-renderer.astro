@@ -1,0 +1,77 @@
+---
+import ComponentPreview from './component-preview.astro';
+import Tabs from './tabs.astro';
+import TabsList from './tabs-list.astro';
+import TabsTrigger from './tabs-trigger.astro';
+import TabsContent from './tabs-content.astro';
+
+export interface Props {
+  code: string;
+  components?: any;
+}
+
+const { code, components = {} } = Astro.props;
+
+// MDX component mappings
+const defaultComponents = {
+  ComponentPreview,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Table: 'table',
+  TableHeader: 'thead',
+  TableBody: 'tbody',
+  TableRow: 'tr',
+  TableHead: 'th',
+  TableCell: 'td',
+  Steps: 'div',
+  Step: 'div',
+  ...components
+};
+
+// Render MDX content
+let renderedContent = '';
+try {
+  // Execute the MDX function with components
+  const mdxFunction = new Function('components', `
+    const { Fragment, jsx, jsxs } = arguments[0];
+    ${code}
+    return _createMdxContent(components);
+  `);
+  
+  // Mock JSX runtime
+  const jsxRuntime = {
+    Fragment: ({ children }) => children,
+    jsx: (type, props) => {
+      if (typeof type === 'string') {
+        const attrs = Object.entries(props || {})
+          .filter(([key]) => key !== 'children')
+          .map(([key, value]) => `${key}="${value}"`)
+          .join(' ');
+        return `<${type} ${attrs}>${props?.children || ''}</${type}>`;
+      }
+      return props?.children || '';
+    },
+    jsxs: (type, props) => {
+      if (typeof type === 'string') {
+        const attrs = Object.entries(props || {})
+          .filter(([key]) => key !== 'children')
+          .map(([key, value]) => `${key}="${value}"`)
+          .join(' ');
+        return `<${type} ${attrs}>${Array.isArray(props?.children) ? props.children.join('') : props?.children || ''}</${type}>`;
+      }
+      return Array.isArray(props?.children) ? props.children.join('') : props?.children || '';
+    }
+  };
+  
+  renderedContent = mdxFunction(jsxRuntime, defaultComponents);
+} catch (error) {
+  console.error('MDX rendering error:', error);
+  renderedContent = `<div class="bg-red-50 border border-red-200 rounded-lg p-4">
+    <p class="text-red-800">Error rendering MDX content: ${error.message}</p>
+  </div>`;
+}
+---
+
+<div class="prose prose-slate dark:prose-invert max-w-none" set:html={renderedContent} />

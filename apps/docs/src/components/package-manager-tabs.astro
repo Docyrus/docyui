@@ -1,0 +1,282 @@
+---
+// Package Manager Tabs Component
+import { getComponent } from '../lib/registry';
+
+export interface Props {
+  component?: string;
+}
+
+const { component = 'button' } = Astro.props;
+
+// Get component source code from registry
+const reactComponent = getComponent(component, 'react');
+const vueComponent = getComponent(component, 'vue');
+
+const reactSourceCode = reactComponent?.files?.[0]?.content || '';
+const vueSourceCode = vueComponent?.files?.[0]?.content || '';
+
+// HTML escape the source code
+const escapeHtml = (text) => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/{/g, '&#123;')
+    .replace(/}/g, '&#125;');
+};
+---
+
+<div class="package-manager-tabs mb-8">
+  <div class="relative overflow-hidden rounded-lg border">
+    <div class="flex items-center border-b">
+      <button class="relative px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent" data-tab="cli">
+        CLI
+      </button>
+      <button class="relative px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent" data-tab="manual">
+        Manual
+      </button>
+    </div>
+    
+    <div class="tab-content" data-tab="cli">
+      <div class="p-4 bg-background">
+        <div class="framework-content" data-framework="react">
+          <!-- Nested package manager tabs -->
+          <div class="cli-tabs">
+            <div class="flex items-center gap-2 mb-4">
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded bg-background border active" data-pm="npm">npm</button>
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="yarn">yarn</button>
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="pnpm">pnpm</button>
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="bun">bun</button>
+            </div>
+            
+            <div class="pm-content" data-pm="npm">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>npx docyui@latest add {component}</code></pre>
+              </div>
+            </div>
+            <div class="pm-content hidden" data-pm="yarn">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>yarn dlx docyui@latest add {component}</code></pre>
+              </div>
+            </div>
+            <div class="pm-content hidden" data-pm="pnpm">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>pnpm dlx docyui@latest add {component}</code></pre>
+              </div>
+            </div>
+            <div class="pm-content hidden" data-pm="bun">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>bunx docyui@latest add {component}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="framework-content hidden" data-framework="vue">
+          <!-- Nested package manager tabs -->
+          <div class="cli-tabs">
+            <div class="flex items-center gap-2 mb-4">
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded bg-background border active" data-pm="npm">npm</button>
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="yarn">yarn</button>
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="pnpm">pnpm</button>
+              <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="bun">bun</button>
+            </div>
+            
+            <div class="pm-content" data-pm="npm">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>npx docyui@vue add {component}</code></pre>
+              </div>
+            </div>
+            <div class="pm-content hidden" data-pm="yarn">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>yarn dlx docyui@vue add {component}</code></pre>
+              </div>
+            </div>
+            <div class="pm-content hidden" data-pm="pnpm">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>pnpm dlx docyui@vue add {component}</code></pre>
+              </div>
+            </div>
+            <div class="pm-content hidden" data-pm="bun">
+              <div class="bg-muted rounded p-3">
+                <pre class="text-sm"><code>bunx docyui@vue add {component}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tab-content hidden" data-tab="manual">
+      <div class="p-4 bg-background space-y-4">
+        <div>
+          <h4 class="text-sm font-semibold mb-2">Install dependencies</h4>
+          <div class="framework-content" data-framework="react">
+            <div class="cli-tabs">
+              <div class="flex items-center gap-2 mb-4">
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded bg-background border active" data-pm="npm">npm</button>
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="yarn">yarn</button>
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="pnpm">pnpm</button>
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="bun">bun</button>
+              </div>
+              
+              <div class="pm-content" data-pm="npm">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>npm install class-variance-authority @radix-ui/react-slot</code></pre>
+                </div>
+              </div>
+              <div class="pm-content hidden" data-pm="yarn">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>yarn add class-variance-authority @radix-ui/react-slot</code></pre>
+                </div>
+              </div>
+              <div class="pm-content hidden" data-pm="pnpm">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>pnpm add class-variance-authority @radix-ui/react-slot</code></pre>
+                </div>
+              </div>
+              <div class="pm-content hidden" data-pm="bun">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>bun add class-variance-authority @radix-ui/react-slot</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="framework-content hidden" data-framework="vue">
+            <div class="cli-tabs">
+              <div class="flex items-center gap-2 mb-4">
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded bg-background border active" data-pm="npm">npm</button>
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="yarn">yarn</button>
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="pnpm">pnpm</button>
+                <button class="pm-btn px-3 py-1 text-xs font-medium rounded border" data-pm="bun">bun</button>
+              </div>
+              
+              <div class="pm-content" data-pm="npm">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>npm install class-variance-authority radix-vue</code></pre>
+                </div>
+              </div>
+              <div class="pm-content hidden" data-pm="yarn">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>yarn add class-variance-authority radix-vue</code></pre>
+                </div>
+              </div>
+              <div class="pm-content hidden" data-pm="pnpm">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>pnpm add class-variance-authority radix-vue</code></pre>
+                </div>
+              </div>
+              <div class="pm-content hidden" data-pm="bun">
+                <div class="bg-muted rounded p-3">
+                  <pre class="text-sm"><code>bun add class-variance-authority radix-vue</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-semibold mb-2">Copy and paste the component code</h4>
+          <div class="framework-content" data-framework="react">
+            <div class="bg-muted rounded p-3 max-h-96 overflow-y-auto">
+              <pre class="text-xs"><code set:html={escapeHtml(reactSourceCode)}></code></pre>
+            </div>
+          </div>
+          <div class="framework-content hidden" data-framework="vue">
+            <div class="bg-muted rounded p-3 max-h-96 overflow-y-auto">
+              <pre class="text-xs"><code set:html={escapeHtml(vueSourceCode)}></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple tab switching
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('[data-tab]');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // Set initial active tab
+    const firstTab = tabButtons[0];
+    if (firstTab) {
+      switchTab(firstTab.dataset.tab);
+    }
+    
+    // Add click handlers
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        switchTab(button.dataset.tab);
+      });
+    });
+    
+    // Package manager tabs
+    const pmButtons = document.querySelectorAll('.pm-btn');
+    pmButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const pm = button.dataset.pm;
+        const parentCliTabs = button.closest('.cli-tabs');
+        switchPackageManager(parentCliTabs, pm);
+      });
+    });
+    
+    function switchTab(activeTab) {
+      // Update buttons
+      tabButtons.forEach(btn => {
+        if (btn.dataset.tab === activeTab) {
+          btn.classList.add('text-foreground', 'border-b-2', 'border-primary');
+          btn.classList.remove('text-muted-foreground', 'border-b-2', 'border-transparent');
+        } else {
+          btn.classList.remove('text-foreground', 'border-b-2', 'border-primary');
+          btn.classList.add('text-muted-foreground', 'border-b-2', 'border-transparent');
+        }
+      });
+      
+      // Update content
+      tabContents.forEach(content => {
+        if (content.dataset.tab === activeTab) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    }
+    
+    function switchPackageManager(cliTabs, pm) {
+      // Update buttons within this specific cli-tabs container
+      const buttons = cliTabs.querySelectorAll('.pm-btn');
+      buttons.forEach(btn => {
+        if (btn.dataset.pm === pm) {
+          btn.classList.add('bg-background', 'active');
+          btn.classList.remove('bg-transparent');
+        } else {
+          btn.classList.remove('bg-background', 'active');
+          btn.classList.add('bg-transparent');
+        }
+      });
+      
+      // Update content within this specific cli-tabs container
+      const contents = cliTabs.querySelectorAll('.pm-content');
+      contents.forEach(content => {
+        if (content.dataset.pm === pm) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .tab-content {
+    @apply transition-all duration-200;
+  }
+  
+  .framework-content {
+    @apply transition-all duration-200;
+  }
+</style>

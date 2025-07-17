@@ -1,0 +1,148 @@
+---
+// Theme Toggle Component
+export interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+---
+
+<button 
+  class={`theme-toggle inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 ${className}`}
+  title="Toggle theme"
+>
+  <svg class="sun h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="5"></circle>
+    <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+  </svg>
+  <svg class="moon absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+  <span class="sr-only">Toggle theme</span>
+</button>
+
+<script>
+  class ThemeToggle {
+    constructor(element) {
+      this.element = element;
+      this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
+      
+      this.init();
+    }
+    
+    init() {
+      // Apply initial theme
+      this.applyTheme(this.currentTheme);
+      
+      // Add click listener
+      this.element.addEventListener('click', () => {
+        this.toggleTheme();
+      });
+      
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!this.getStoredTheme()) {
+          this.applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    }
+    
+    getSystemTheme() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    
+    getStoredTheme() {
+      return localStorage.getItem('theme');
+    }
+    
+    storeTheme(theme) {
+      localStorage.setItem('theme', theme);
+    }
+    
+    toggleTheme() {
+      const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+      this.applyTheme(newTheme);
+      this.storeTheme(newTheme);
+    }
+    
+    applyTheme(theme) {
+      this.currentTheme = theme;
+      
+      // Update document class
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(theme);
+      
+      // Update button state
+      this.updateButtonState(theme);
+      
+      // Dispatch theme change event
+      const event = new CustomEvent('themechange', {
+        detail: { theme },
+        bubbles: true
+      });
+      document.dispatchEvent(event);
+    }
+    
+    updateButtonState(theme) {
+      // Update button title
+      this.element.title = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
+      
+      // Update ARIA label
+      const srText = this.element.querySelector('.sr-only');
+      if (srText) {
+        srText.textContent = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
+      }
+    }
+  }
+  
+  // Auto-initialize theme toggles
+  function initThemeToggles() {
+    const toggles = document.querySelectorAll('.theme-toggle:not([data-initialized])');
+    toggles.forEach(toggle => {
+      toggle.dataset.initialized = 'true';
+      new ThemeToggle(toggle);
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeToggles);
+  } else {
+    initThemeToggles();
+  }
+</script>
+
+<style>
+  @reference "../styles/global.css";
+  
+  .theme-toggle {
+    @apply relative;
+  }
+  
+  .theme-toggle:hover {
+    @apply bg-accent text-accent-foreground;
+  }
+  
+  .sun {
+    @apply transition-all duration-300;
+  }
+  
+  .moon {
+    @apply absolute transition-all duration-300;
+  }
+  
+  :global(.dark) .sun {
+    @apply rotate-90 scale-0;
+  }
+  
+  :global(.dark) .moon {
+    @apply rotate-0 scale-100;
+  }
+  
+  :global(.light) .sun {
+    @apply rotate-0 scale-100;
+  }
+  
+  :global(.light) .moon {
+    @apply rotate-90 scale-0;
+  }
+</style>
