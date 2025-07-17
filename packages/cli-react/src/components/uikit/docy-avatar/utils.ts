@@ -1,5 +1,4 @@
-import type { SyntheticEvent } from "react"
-import type { User, UserData, AvatarSize } from "./types"
+import type { User, AvatarSize } from "./types"
 import { AVATAR_COLORS } from "./types"
 
 export function getInitials(user: User | string): string {
@@ -85,32 +84,13 @@ export function resolveUsers(
 
 export function validateImageUrl(url: string): boolean {
   try {
-    new URL(url)
-    return true
+    const parsedUrl = new URL(url)
+    return parsedUrl.protocol === "https:" || parsedUrl.protocol === "data:"
   } catch {
     return false
   }
 }
 
-export function handleImageError(
-  event: SyntheticEvent<HTMLImageElement, Event>
-): void {
-  const img = event.currentTarget
-  img.style.display = "none"
-}
-
-export function generateUserData(user: User, index?: number): UserData {
-  return {
-    id: String(user.userId),
-    initials: getInitials(user),
-    photoExists: Boolean(user.photo && validateImageUrl(user.photo)),
-    photo: user.photo,
-    color: getUserColor(user, index),
-    fullname: getFullName(user),
-    userStatus: Boolean(user.status),
-    status: user.status
-  }
-}
 
 export function getAvatarSizeClasses(size: AvatarSize): string {
   const sizeMap = {

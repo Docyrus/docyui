@@ -12,12 +12,11 @@ import {
   resolveUser, 
   resolveUsers, 
   validateImageUrl, 
-  handleImageError,
-  generateUserData,
   getAvatarSizeClasses,
   getStatusIndicatorSize 
 } from "./utils"
 import { STATUS_COLORS } from "./types"
+import { AvatarErrorBoundary } from "./error-boundary"
 
 const avatarVariants = cva(
   "relative inline-flex shrink-0 overflow-hidden rounded-full",
@@ -141,7 +140,7 @@ function SingleAvatar({
       {showUserStatus && displayStatus && (
         <span
           className={cn(
-            "absolute bottom-0 right-0 block rounded-full ring-2 ring-white",
+            "absolute -bottom-0.5 -right-0.5 block rounded-full ring-2 ring-white z-10",
             STATUS_COLORS[displayStatus],
             getStatusIndicatorSize(size)
           )}
@@ -174,7 +173,7 @@ function MultipleAvatars({
       {visibleUsers.map((user, index) => (
         <div 
           key={user.userId || index}
-          className="relative hover:z-10 hover:scale-110 transition-transform duration-150"
+          className="relative hover:z-10 hover:scale-105 transition-transform duration-150 origin-center"
         >
           <SingleAvatar
             user={user}
@@ -211,14 +210,14 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
     ...props 
   }, ref) => {
     
-    // Handle multiple user IDs
-    if (Array.isArray(userId)) {
-      const resolvedUsers = resolveUsers(userId, users)
-      
-      if (resolvedUsers.length === 0) {
-        // Show placeholder for empty group
-        return (
-          <div ref={ref} {...props} className={className}>
+    const renderContent = () => {
+      // Handle multiple user IDs
+      if (Array.isArray(userId)) {
+        const resolvedUsers = resolveUsers(userId, users)
+        
+        if (resolvedUsers.length === 0) {
+          // Show placeholder for empty group
+          return (
             <Avatar className={avatarVariants({ size })}>
               <AvatarFallback className={getAvatarSizeClasses(size)}>
                 <DocyIcon 
@@ -228,13 +227,11 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
                 />
               </AvatarFallback>
             </Avatar>
-          </div>
-        )
-      }
-      
-      if (resolvedUsers.length === 1) {
-        return (
-          <div ref={ref} {...props} className={className}>
+          )
+        }
+        
+        if (resolvedUsers.length === 1) {
+          return (
             <SingleAvatar
               user={resolvedUsers[0]}
               size={size}
@@ -242,30 +239,26 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
               status={status}
               fallbackSrc={fallbackSrc}
             />
-          </div>
-        )
-      }
-      
-      return (
-        <div ref={ref} {...props} className={className}>
+          )
+        }
+        
+        return (
           <MultipleAvatars
             users={resolvedUsers}
             size={size}
             maxItems={maxItems}
             showUserStatus={showUserStatus}
           />
-        </div>
-      )
-    }
-    
-    // Handle single user ID
-    if (userId) {
-      const resolvedUser = resolveUser(userId, users)
+        )
+      }
       
-      if (!resolvedUser) {
-        // Show placeholder when user not found
-        return (
-          <div ref={ref} {...props} className={className}>
+      // Handle single user ID
+      if (userId) {
+        const resolvedUser = resolveUser(userId, users)
+        
+        if (!resolvedUser) {
+          // Show placeholder when user not found
+          return (
             <Avatar className={avatarVariants({ size })}>
               <AvatarFallback className={getAvatarSizeClasses(size)}>
                 <DocyIcon 
@@ -275,12 +268,10 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
                 />
               </AvatarFallback>
             </Avatar>
-          </div>
-        )
-      }
-      
-      return (
-        <div ref={ref} {...props} className={className}>
+          )
+        }
+        
+        return (
           <SingleAvatar
             user={resolvedUser}
             size={size}
@@ -288,14 +279,12 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
             status={status}
             fallbackSrc={fallbackSrc}
           />
-        </div>
-      )
-    }
-    
-    // Handle direct user prop or src
-    if (user || src) {
-      return (
-        <div ref={ref} {...props} className={className}>
+        )
+      }
+      
+      // Handle direct user prop or src
+      if (user || src) {
+        return (
           <SingleAvatar
             user={user}
             src={src}
@@ -304,13 +293,11 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
             status={status}
             fallbackSrc={fallbackSrc}
           />
-        </div>
-      )
-    }
-    
-    // Default placeholder
-    return (
-      <div ref={ref} {...props} className={className}>
+        )
+      }
+      
+      // Default placeholder
+      return (
         <Avatar className={avatarVariants({ size })}>
           <AvatarFallback className={getAvatarSizeClasses(size)}>
             <DocyIcon 
@@ -320,6 +307,14 @@ const DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(
             />
           </AvatarFallback>
         </Avatar>
+      )
+    }
+    
+    return (
+      <div ref={ref} {...props} className={className}>
+        <AvatarErrorBoundary size={size}>
+          {renderContent()}
+        </AvatarErrorBoundary>
       </div>
     )
   }
