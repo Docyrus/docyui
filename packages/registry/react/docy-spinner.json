@@ -1,0 +1,112 @@
+{
+  "name": "docy-spinner",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "docy-spinner/types.ts",
+      "content": "export type SpinnerSize = \"sm\" | \"default\" | \"lg\"\nexport type SpinnerSpeed = \"slow\" | \"normal\" | \"fast\"\nexport type SpinnerColor = \"current\" | \"primary\" | \"secondary\" | \"muted\" | \"accent\" | \"destructive\"\n\nexport const DEFAULT_SPINNER_SIZE = \"default\" as const\nexport const DEFAULT_SPINNER_SPEED = \"normal\" as const\nexport const DEFAULT_SPINNER_COLOR = \"current\" as const"
+    },
+    {
+      "name": "docy-spinner/index.ts",
+      "content": "export * from \"./docy-spinner\"\nexport * from \"./types\"\nexport { default } from \"./docy-spinner\""
+    },
+    {
+      "name": "docy-spinner/docy-spinner.tsx",
+      "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport type { SpinnerSize, SpinnerSpeed, SpinnerColor } from \"./types\"\nimport { DEFAULT_SPINNER_SIZE, DEFAULT_SPINNER_SPEED, DEFAULT_SPINNER_COLOR } from \"./types\"\n\nconst spinnerVariants = cva(\n  \"animate-spin inline-block rounded-full border-2 border-solid\",\n  {\n    variants: {\n      size: {\n        sm: \"h-4 w-4 border-[1.5px]\",\n        default: \"h-6 w-6 border-2\",\n        lg: \"h-8 w-8 border-[2.5px]\"\n      },\n      speed: {\n        slow: \"animation-duration-1000\",\n        normal: \"animation-duration-700\",\n        fast: \"animation-duration-500\"\n      },\n      color: {\n        current: \"border-current border-t-transparent\",\n        primary: \"border-primary border-t-transparent\",\n        secondary: \"border-secondary border-t-transparent\",\n        muted: \"border-muted-foreground border-t-transparent\",\n        accent: \"border-accent border-t-transparent\",\n        destructive: \"border-destructive border-t-transparent\"\n      }\n    },\n    defaultVariants: {\n      size: \"default\",\n      speed: \"normal\",\n      color: \"current\"\n    }\n  }\n)\n\nexport interface DocySpinnerProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"size\" | \"color\">,\n    VariantProps<typeof spinnerVariants> {\n  size?: SpinnerSize\n  speed?: SpinnerSpeed\n  color?: SpinnerColor\n  className?: string\n  \"aria-label\"?: string\n}\n\nconst DocySpinner = React.forwardRef<HTMLDivElement, DocySpinnerProps>(\n  ({ \n    size = DEFAULT_SPINNER_SIZE,\n    speed = DEFAULT_SPINNER_SPEED,\n    color = DEFAULT_SPINNER_COLOR,\n    className,\n    \"aria-label\": ariaLabel,\n    ...props \n  }, ref) => {\n    return (\n      <div\n        ref={ref}\n        className={cn(\n          spinnerVariants({ size, speed, color }),\n          \"motion-reduce:animate-pulse motion-reduce:border-t-current\",\n          className\n        )}\n        role=\"status\"\n        aria-label={ariaLabel || \"Loading\"}\n        {...props}\n      >\n        <span className=\"sr-only\">Loading...</span>\n      </div>\n    )\n  }\n)\n\nDocySpinner.displayName = \"DocySpinner\"\n\nexport { DocySpinner, spinnerVariants }\nexport default DocySpinner"
+    }
+  ],
+  "type": "components:ui",
+  "props": [
+    {
+      "name": "size",
+      "type": "SpinnerSize",
+      "optional": true,
+      "default": "default"
+    },
+    {
+      "name": "speed",
+      "type": "SpinnerSpeed",
+      "optional": true,
+      "default": "normal"
+    },
+    {
+      "name": "color",
+      "type": "SpinnerColor",
+      "optional": true,
+      "default": "current"
+    },
+    {
+      "name": "className",
+      "type": "string",
+      "optional": true
+    }
+  ],
+  "variants": {
+    "size": [
+      {
+        "key": "sm",
+        "value": "h-4 w-4 border-[1.5px]"
+      },
+      {
+        "key": "default",
+        "value": "h-6 w-6 border-2"
+      },
+      {
+        "key": "lg",
+        "value": "h-8 w-8 border-[2.5px]"
+      }
+    ],
+    "speed": [
+      {
+        "key": "slow",
+        "value": "animation-duration-1000"
+      },
+      {
+        "key": "normal",
+        "value": "animation-duration-700"
+      },
+      {
+        "key": "fast",
+        "value": "animation-duration-500"
+      }
+    ],
+    "color": [
+      {
+        "key": "current",
+        "value": "border-current border-t-transparent"
+      },
+      {
+        "key": "primary",
+        "value": "border-primary border-t-transparent"
+      },
+      {
+        "key": "secondary",
+        "value": "border-secondary border-t-transparent"
+      },
+      {
+        "key": "muted",
+        "value": "border-muted-foreground border-t-transparent"
+      },
+      {
+        "key": "accent",
+        "value": "border-accent border-t-transparent"
+      },
+      {
+        "key": "destructive",
+        "value": "border-destructive border-t-transparent"
+      }
+    ]
+  },
+  "examples": {},
+  "description": "Docy-spinner component",
+  "usage": {
+    "import": "import { DocySpinner } from \"@/components/ui/docy-spinner\"",
+    "basic": "<DocySpinner>DocySpinner</DocySpinner>",
+    "withProps": "<DocySpinner size=\"sm\" speed=\"slow\" color=\"current\">DocySpinner</DocySpinner>"
+  },
+  "componentName": "DocySpinner"
+}

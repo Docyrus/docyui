@@ -1,0 +1,162 @@
+{
+  "name": "docy-button",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "docy-button/types.ts",
+      "content": "export type ButtonVariant = \n  | \"default\" \n  | \"destructive\" \n  | \"outline\" \n  | \"secondary\" \n  | \"ghost\" \n  | \"link\"\n\nexport type ButtonSize = \n  | \"default\" \n  | \"sm\" \n  | \"lg\" \n  | \"icon\"\n\nexport type IconPosition = \"left\" | \"right\"\n\nexport const DEFAULT_VARIANT: ButtonVariant = \"default\"\nexport const DEFAULT_SIZE: ButtonSize = \"default\"\nexport const DEFAULT_ICON_POSITION: IconPosition = \"left\"\nexport const DEFAULT_CONFIRM_TIMEOUT = 3000\n\nexport interface ConfirmationState {\n  isConfirming: boolean\n  timeRemaining: number\n  progressPercentage: number\n}"
+    },
+    {
+      "name": "docy-button/index.ts",
+      "content": "export { DocyButton, buttonVariants } from \"./docy-button\"\nexport type { DocyButtonProps } from \"./docy-button\"\nexport type { \n  ButtonVariant, \n  ButtonSize, \n  IconPosition, \n  ConfirmationState \n} from \"./types\"\nexport {\n  DEFAULT_VARIANT,\n  DEFAULT_SIZE,\n  DEFAULT_ICON_POSITION,\n  DEFAULT_CONFIRM_TIMEOUT\n} from \"./types\"\n\nexport { DocyButton as default } from \"./docy-button\""
+    },
+    {
+      "name": "docy-button/example.tsx",
+      "content": "import * as React from \"react\"\nimport DocyButton from \"./docy-button\"\n\nexport function DocyButtonExample() {\n  const [loading, setLoading] = React.useState(false)\n  const [clickCount, setClickCount] = React.useState(0)\n\n  const handleAsyncAction = async () => {\n    setLoading(true)\n    // Simulate async operation\n    await new Promise(resolve => setTimeout(resolve, 2000))\n    setLoading(false)\n    setClickCount(prev => prev + 1)\n  }\n\n  const handleDestructiveAction = () => {\n    alert(\"Destructive action confirmed!\")\n    setClickCount(prev => prev + 1)\n  }\n\n  return (\n    <div className=\"p-8 space-y-8 max-w-4xl mx-auto\">\n      <div className=\"space-y-4\">\n        <h1 className=\"text-3xl font-bold\">DocyButton Examples</h1>\n        <p className=\"text-muted-foreground\">\n          Comprehensive examples of the DocyButton component with all variants and features.\n        </p>\n        <p className=\"text-sm text-muted-foreground\">\n          Button clicks: {clickCount}\n        </p>\n      </div>\n\n      {/* Basic Variants */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Button Variants</h2>\n        <div className=\"flex flex-wrap gap-4\">\n          <DocyButton \n            variant=\"default\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Default\n          </DocyButton>\n          <DocyButton \n            variant=\"destructive\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Destructive\n          </DocyButton>\n          <DocyButton \n            variant=\"outline\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Outline\n          </DocyButton>\n          <DocyButton \n            variant=\"secondary\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Secondary\n          </DocyButton>\n          <DocyButton \n            variant=\"ghost\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Ghost\n          </DocyButton>\n          <DocyButton \n            variant=\"link\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Link\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Button Sizes */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Button Sizes</h2>\n        <div className=\"flex flex-wrap items-center gap-4\">\n          <DocyButton \n            size=\"sm\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Small\n          </DocyButton>\n          <DocyButton \n            size=\"default\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Default\n          </DocyButton>\n          <DocyButton \n            size=\"lg\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Large\n          </DocyButton>\n          <DocyButton \n            size=\"icon\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            <span>⭐</span>\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Icons */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Buttons with Icons</h2>\n        <div className=\"flex flex-wrap gap-4\">\n          <DocyButton \n            icon=\"save\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Save\n          </DocyButton>\n          <DocyButton \n            icon=\"download\"\n            iconPosition=\"right\"\n            variant=\"outline\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Download\n          </DocyButton>\n          <DocyButton \n            icon=\"plus\"\n            size=\"icon\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          />\n          <DocyButton \n            icon=\"trash\"\n            variant=\"destructive\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Delete\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Loading States */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Loading States</h2>\n        <div className=\"flex flex-wrap gap-4\">\n          <DocyButton \n            loading={loading}\n            onClick={handleAsyncAction}\n          >\n            {loading ? \"Processing...\" : \"Start Process\"}\n          </DocyButton>\n          <DocyButton \n            loading={loading}\n            loadingText=\"Saving...\"\n            icon=\"save\"\n            variant=\"outline\"\n            onClick={handleAsyncAction}\n          >\n            Save Document\n          </DocyButton>\n          <DocyButton \n            loading\n            variant=\"secondary\"\n          >\n            Always Loading\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Destructive Confirmation */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Destructive Confirmation</h2>\n        <div className=\"flex flex-wrap gap-4\">\n          <DocyButton \n            destructive\n            variant=\"destructive\"\n            onClick={handleDestructiveAction}\n          >\n            Delete Item\n          </DocyButton>\n          <DocyButton \n            destructive\n            variant=\"destructive\"\n            confirmText=\"Delete all data?\"\n            confirmTimeout={5000}\n            onClick={handleDestructiveAction}\n          >\n            Delete All\n          </DocyButton>\n          <DocyButton \n            destructive\n            variant=\"outline\"\n            confirmText=\"Remove user?\"\n            icon=\"trash\"\n            onClick={handleDestructiveAction}\n          >\n            Remove User\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Full Width */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Full Width</h2>\n        <div className=\"space-y-3\">\n          <DocyButton \n            fullWidth\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Full Width Button\n          </DocyButton>\n          <DocyButton \n            fullWidth\n            variant=\"outline\"\n            icon=\"arrow-right\"\n            iconPosition=\"right\"\n            onClick={() => setClickCount(prev => prev + 1)}\n          >\n            Continue to Next Step\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Disabled States */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Disabled States</h2>\n        <div className=\"flex flex-wrap gap-4\">\n          <DocyButton disabled>\n            Disabled Default\n          </DocyButton>\n          <DocyButton \n            disabled\n            variant=\"destructive\"\n            icon=\"trash\"\n          >\n            Disabled Destructive\n          </DocyButton>\n          <DocyButton \n            disabled\n            variant=\"outline\"\n            loading\n          >\n            Disabled Loading\n          </DocyButton>\n        </div>\n      </section>\n\n      {/* Complex Examples */}\n      <section className=\"space-y-4\">\n        <h2 className=\"text-xl font-semibold\">Complex Examples</h2>\n        <div className=\"space-y-4\">\n          <div className=\"p-4 border rounded-lg space-y-3\">\n            <h3 className=\"font-medium\">Form Actions</h3>\n            <div className=\"flex gap-3\">\n              <DocyButton \n                variant=\"outline\"\n                onClick={() => setClickCount(prev => prev + 1)}\n              >\n                Cancel\n              </DocyButton>\n              <DocyButton \n                icon=\"save\"\n                loading={loading}\n                loadingText=\"Saving...\"\n                onClick={handleAsyncAction}\n              >\n                Save Changes\n              </DocyButton>\n            </div>\n          </div>\n\n          <div className=\"p-4 border rounded-lg space-y-3\">\n            <h3 className=\"font-medium\">Dangerous Action with Confirmation</h3>\n            <DocyButton \n              destructive\n              variant=\"destructive\"\n              confirmText=\"This will permanently delete your account. Are you sure?\"\n              confirmTimeout={8000}\n              icon=\"trash\"\n              onClick={() => alert(\"Account deleted!\")}\n            >\n              Delete Account\n            </DocyButton>\n          </div>\n\n          <div className=\"p-4 border rounded-lg space-y-3\">\n            <h3 className=\"font-medium\">Call-to-Action</h3>\n            <DocyButton \n              size=\"lg\"\n              fullWidth\n              icon=\"arrow-right\"\n              iconPosition=\"right\"\n              onClick={() => setClickCount(prev => prev + 1)}\n            >\n              Get Started Now\n            </DocyButton>\n          </div>\n        </div>\n      </section>\n    </div>\n  )\n}\n\nexport default DocyButtonExample"
+    },
+    {
+      "name": "docy-button/docy-button.tsx",
+      "content": "import * as React from \"react\"\nimport { Slot } from \"@radix-ui/react-slot\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport DocySpinner from \"@/components/docy-spinner\"\nimport type { \n  ButtonVariant, \n  IconPosition, \n  ConfirmationState \n} from \"./types\"\nimport { \n  DEFAULT_VARIANT, \n  DEFAULT_SIZE, \n  DEFAULT_ICON_POSITION, \n  DEFAULT_CONFIRM_TIMEOUT \n} from \"./types\"\n\nconst buttonVariants = cva(\n  \"inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative overflow-hidden\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-primary text-primary-foreground hover:bg-primary/90\",\n        destructive:\n          \"bg-destructive text-destructive-foreground hover:bg-destructive/90\",\n        outline:\n          \"border border-input bg-background hover:bg-accent hover:text-accent-foreground\",\n        secondary:\n          \"bg-secondary text-secondary-foreground hover:bg-secondary/80\",\n        ghost: \"hover:bg-accent hover:text-accent-foreground\",\n        link: \"text-primary underline-offset-4 hover:underline\",\n      },\n      size: {\n        default: \"h-10 px-4 py-2\",\n        sm: \"h-9 rounded-md px-3\",\n        lg: \"h-11 rounded-md px-8\",\n        icon: \"h-10 w-10\",\n      },\n      fullWidth: {\n        true: \"w-full\",\n        false: \"\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n      size: \"default\",\n      fullWidth: false,\n    },\n  }\n)\n\nexport interface DocyButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement>,\n    VariantProps<typeof buttonVariants> {\n  asChild?: boolean\n  loading?: boolean\n  loadingText?: string\n  icon?: string\n  iconPosition?: IconPosition\n  destructive?: boolean\n  confirmText?: string\n  confirmTimeout?: number\n  fullWidth?: boolean\n}\n\nconst ProgressBar = React.memo(({ \n  percentage \n}: { \n  percentage: number\n  variant?: ButtonVariant \n}) => (\n  <div\n    className=\"absolute bottom-0 left-0 h-1 bg-white/30 transition-all duration-75 ease-linear\"\n    style={{ width: `${percentage}%` }}\n    role=\"progressbar\"\n    aria-valuenow={percentage}\n    aria-valuemin={0}\n    aria-valuemax={100}\n    aria-label=\"Confirmation countdown\"\n  />\n))\n\nconst ConfirmationContent = React.memo(({ \n  confirmText, \n  onCancel, \n  onConfirm\n}: {\n  confirmText: string\n  onCancel: () => void\n  onConfirm: () => void\n}) => (\n  <div className=\"flex items-center justify-center gap-2 w-full\">\n    <span className=\"text-xs font-medium truncate\">\n      {confirmText}\n    </span>\n    <div className=\"flex gap-1 shrink-0\">\n      <button\n        type=\"button\"\n        onClick={onCancel}\n        className=\"text-xs underline hover:no-underline focus:outline-none focus:ring-1 focus:ring-white rounded px-1\"\n        aria-label=\"Cancel action\"\n      >\n        Cancel\n      </button>\n      <button\n        type=\"button\"\n        onClick={onConfirm}\n        className=\"text-xs underline hover:no-underline focus:outline-none focus:ring-1 focus:ring-white rounded px-1\"\n        aria-label=\"Confirm action\"\n      >\n        Confirm\n      </button>\n    </div>\n  </div>\n))\n\nconst DocyButton = React.forwardRef<HTMLButtonElement, DocyButtonProps>(\n  ({ \n    className,\n    variant = DEFAULT_VARIANT,\n    size = DEFAULT_SIZE,\n    asChild = false,\n    loading = false,\n    loadingText,\n    icon,\n    iconPosition = DEFAULT_ICON_POSITION,\n    destructive = false,\n    confirmText,\n    confirmTimeout = DEFAULT_CONFIRM_TIMEOUT,\n    fullWidth = false,\n    disabled,\n    onClick,\n    children,\n    ...props \n  }, ref) => {\n    const [confirmationState, setConfirmationState] = React.useState<ConfirmationState>({\n      isConfirming: false,\n      timeRemaining: 0,\n      progressPercentage: 0\n    })\n    \n    const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null)\n    const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)\n\n    const cleanup = React.useCallback(() => {\n      if (intervalRef.current) {\n        clearInterval(intervalRef.current)\n        intervalRef.current = null\n      }\n      if (timeoutRef.current) {\n        clearTimeout(timeoutRef.current)\n        timeoutRef.current = null\n      }\n    }, [])\n\n    React.useEffect(() => {\n      return cleanup\n    }, [cleanup])\n\n    const startConfirmation = React.useCallback(() => {\n      const startTime = Date.now()\n      \n      setConfirmationState({\n        isConfirming: true,\n        timeRemaining: confirmTimeout,\n        progressPercentage: 0\n      })\n\n      intervalRef.current = setInterval(() => {\n        const elapsed = Date.now() - startTime\n        const remaining = Math.max(0, confirmTimeout - elapsed)\n        const progress = Math.min(100, (elapsed / confirmTimeout) * 100)\n\n        setConfirmationState(prev => ({\n          ...prev,\n          timeRemaining: remaining,\n          progressPercentage: progress\n        }))\n\n        if (remaining <= 0) {\n          cleanup()\n          setConfirmationState(prev => ({ ...prev, isConfirming: false }))\n        }\n      }, 50)\n\n      timeoutRef.current = setTimeout(() => {\n        cleanup()\n        setConfirmationState(prev => ({ ...prev, isConfirming: false }))\n      }, confirmTimeout)\n    }, [confirmTimeout, cleanup])\n\n    const cancelConfirmation = React.useCallback(() => {\n      cleanup()\n      setConfirmationState({\n        isConfirming: false,\n        timeRemaining: 0,\n        progressPercentage: 0\n      })\n    }, [cleanup])\n\n    const confirmAction = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {\n      cleanup()\n      setConfirmationState({\n        isConfirming: false,\n        timeRemaining: 0,\n        progressPercentage: 0\n      })\n      onClick?.(event)\n    }, [cleanup, onClick])\n\n    const handleClick = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {\n      if (loading || disabled) return\n\n      if (destructive && !confirmationState.isConfirming) {\n        event.preventDefault()\n        startConfirmation()\n        return\n      }\n\n      if (!destructive) {\n        onClick?.(event)\n      }\n    }, [loading, disabled, destructive, confirmationState.isConfirming, startConfirmation, onClick])\n\n    const isDisabled = disabled || loading\n    const displayConfirmText = confirmText || \"Are you sure?\"\n\n    const renderIcon = () => {\n      if (loading) {\n        return <DocySpinner size=\"sm\" className=\"text-current\" />\n      }\n      if (icon) {\n        return <DocyIcon name={icon} size=\"sm\" decorative />\n      }\n      return null\n    }\n\n    const renderContent = () => {\n      if (confirmationState.isConfirming) {\n        return (\n          <ConfirmationContent\n            confirmText={displayConfirmText}\n            onCancel={cancelConfirmation}\n            onConfirm={confirmAction}\n          />\n        )\n      }\n\n      const iconElement = renderIcon()\n      const textContent = loading && loadingText ? loadingText : children\n\n      if (!iconElement) {\n        return textContent\n      }\n\n      if (iconPosition === \"right\") {\n        return (\n          <>\n            {textContent}\n            {iconElement}\n          </>\n        )\n      }\n\n      return (\n        <>\n          {iconElement}\n          {textContent}\n        </>\n      )\n    }\n\n    const buttonClasses = cn(\n      buttonVariants({ variant, size, fullWidth }),\n      (loading || confirmationState.isConfirming) && \"cursor-not-allowed\",\n      className\n    )\n\n    const gapClass = icon && children && !confirmationState.isConfirming ? \"gap-2\" : \"\"\n\n    const Comp = asChild ? Slot : \"button\"\n    \n    return (\n      <Comp\n        className={cn(buttonClasses, gapClass)}\n        ref={ref}\n        disabled={isDisabled}\n        onClick={handleClick}\n        aria-busy={loading}\n        aria-label={\n          confirmationState.isConfirming \n            ? `Confirmation required: ${displayConfirmText}` \n            : props[\"aria-label\"]\n        }\n        {...props}\n      >\n        {renderContent()}\n        {confirmationState.isConfirming && (\n          <ProgressBar\n            percentage={confirmationState.progressPercentage}\n            variant={variant}\n          />\n        )}\n      </Comp>\n    )\n  }\n)\n\nDocyButton.displayName = \"DocyButton\"\n\nexport { DocyButton, buttonVariants }\nexport default DocyButton"
+    }
+  ],
+  "type": "components:ui",
+  "props": [
+    {
+      "name": "asChild",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "loadingText",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "iconPosition",
+      "type": "IconPosition",
+      "optional": true
+    },
+    {
+      "name": "destructive",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "confirmText",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "confirmTimeout",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
+  "variants": {
+    "variant": [
+      {
+        "key": "default",
+        "value": "bg-primary text-primary-foreground hover:bg-primary/90"
+      },
+      {
+        "key": "destructive",
+        "value": "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+      },
+      {
+        "key": "outline",
+        "value": "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+      },
+      {
+        "key": "secondary",
+        "value": "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+      },
+      {
+        "key": "ghost",
+        "value": "hover:bg-accent hover:text-accent-foreground"
+      },
+      {
+        "key": "link",
+        "value": "text-primary underline-offset-4 hover:underline"
+      }
+    ],
+    "size": [
+      {
+        "key": "default",
+        "value": "h-10 px-4 py-2"
+      },
+      {
+        "key": "sm",
+        "value": "h-9 rounded-md px-3"
+      },
+      {
+        "key": "lg",
+        "value": "h-11 rounded-md px-8"
+      },
+      {
+        "key": "icon",
+        "value": "h-10 w-10"
+      }
+    ],
+    "fullWidth": [
+      {
+        "key": "true",
+        "value": "w-full"
+      },
+      {
+        "key": "false",
+        "value": ""
+      }
+    ]
+  },
+  "examples": {
+    "default": {
+      "code": "<DocyButton variant=\"default\">DocyButton</DocyButton>"
+    },
+    "destructive": {
+      "code": "<DocyButton variant=\"destructive\">DocyButton</DocyButton>"
+    },
+    "outline": {
+      "code": "<DocyButton variant=\"outline\">DocyButton</DocyButton>"
+    },
+    "secondary": {
+      "code": "<DocyButton variant=\"secondary\">DocyButton</DocyButton>"
+    },
+    "ghost": {
+      "code": "<DocyButton variant=\"ghost\">DocyButton</DocyButton>"
+    },
+    "link": {
+      "code": "<DocyButton variant=\"link\">DocyButton</DocyButton>"
+    }
+  },
+  "description": "Docy-button component",
+  "usage": {
+    "import": "import { DocyButton } from \"@/components/ui/docy-button\"",
+    "basic": "<DocyButton>DocyButton</DocyButton>",
+    "withProps": "<DocyButton variant=\"default\" size=\"default\" fullWidth=\"true\">DocyButton</DocyButton>"
+  },
+  "componentName": "DocyButton",
+  "internalDependencies": [
+    "docy-icon",
+    "docy-spinner"
+  ]
+}
