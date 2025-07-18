@@ -1,7 +1,8 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import type { IconSize, IconLibrary, IconAnimation, DEFAULT_ICON_SIZE, DEFAULT_ICON_LIB, DEFAULT_STROKE_WIDTH } from "./types"
+import type { IconSize, IconLibrary, IconAnimation } from "./types"
+import { DEFAULT_ICON_SIZE, DEFAULT_ICON_LIB, DEFAULT_STROKE_WIDTH } from "./types"
 import { 
   isEmoji, 
   isDotCharacter, 
@@ -47,8 +48,7 @@ const sizeMap = {
 } as const
 
 export interface DocyIconProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, "size">,
-    VariantProps<typeof iconVariants> {
+  extends Omit<React.HTMLAttributes<HTMLElement>, "size"> {
   name: string
   lib?: IconLibrary
   size?: IconSize | number
@@ -181,7 +181,7 @@ const DocyIcon = React.forwardRef<HTMLElement, DocyIconProps>(
     // Add error boundary around React.cloneElement
     try {
       if (React.isValidElement(iconElement)) {
-        return React.cloneElement(iconElement, { ref, ...props })
+        return React.cloneElement(iconElement, { ...props })
       }
     } catch {
       // Fallback if cloneElement fails

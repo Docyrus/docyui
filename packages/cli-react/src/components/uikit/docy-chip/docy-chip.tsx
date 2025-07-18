@@ -1,7 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { Badge } from "./badge"
 import DocyIcon from "../docy-icon"
 import type { ChipSize, ChipVariant, ChipColor } from "./types"
 import { DEFAULT_CHIP_SIZE, DEFAULT_CHIP_VARIANT, DEFAULT_CHIP_COLOR } from "./types"
