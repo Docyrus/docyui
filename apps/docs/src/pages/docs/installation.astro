@@ -1,7 +1,7 @@
 ---
 import DocsLayout from '../../layouts/docs-layout.astro';
 import CodeBlock from '../../components/code-block.astro';
-import PackageManagerTabs from '../../components/package-manager-tabs.astro';
+import InstallTabs from '../../components/install-tabs.astro';
 ---
 
 <DocsLayout title="Installation - DocyUI" description="How to install DocyUI and its dependencies in your project">
@@ -129,14 +129,12 @@ import PackageManagerTabs from '../../components/package-manager-tabs.astro';
           Start by creating a new Next.js project if you don't have one set up already:
         </p>
         
-        <PackageManagerTabs>
-          <CodeBlock 
-            react={`npx create-next-app@latest my-app --typescript --tailwind --eslint`}
-            vue={`npx create-next-app@latest my-app --typescript --tailwind --eslint`}
-            language="bash"
-            title="Create Next.js project"
-          />
-        </PackageManagerTabs>
+        <CodeBlock 
+          react={`npx create-next-app@latest my-app --typescript --tailwind --eslint`}
+          vue={`npx create-next-app@latest my-app --typescript --tailwind --eslint`}
+          language="bash"
+          title="Create Next.js project"
+        />
       </div>
       
       <div class="space-y-4">
@@ -145,14 +143,7 @@ import PackageManagerTabs from '../../components/package-manager-tabs.astro';
           Run the <code class="bg-muted px-1 py-0.5 rounded text-xs">docyui</code> init command to setup your project:
         </p>
         
-        <PackageManagerTabs>
-          <CodeBlock 
-            react={`npx docyui@latest init`}
-            vue={`npx docyui@latest init`}
-            language="bash"
-            title="Initialize DocyUI"
-          />
-        </PackageManagerTabs>
+        <InstallTabs component="init" />
       </div>
       
       <div class="space-y-4">
@@ -181,14 +172,7 @@ Would you like to use CSS variables for colors? › no / yes`}
           You can now start adding components to your project.
         </p>
         
-        <PackageManagerTabs>
-          <CodeBlock 
-            react={`npx docyui@latest add button`}
-            vue={`npx docyui@latest add button`}
-            language="bash"
-            title="Add components"
-          />
-        </PackageManagerTabs>
+        <InstallTabs component="button" />
       </div>
     </div>
   </div>
@@ -207,14 +191,12 @@ Would you like to use CSS variables for colors? › no / yes`}
           Start by creating a new Vite project if you don't have one set up already:
         </p>
         
-        <PackageManagerTabs>
           <CodeBlock 
             react={`npm create vite@latest my-app -- --template react-ts`}
             vue={`npm create vite@latest my-app -- --template vue-ts`}
             language="bash"
             title="Create Vite project"
           />
-        </PackageManagerTabs>
       </div>
       
       <div class="space-y-4">
@@ -223,7 +205,6 @@ Would you like to use CSS variables for colors? › no / yes`}
           Install and configure Tailwind CSS:
         </p>
         
-        <PackageManagerTabs>
           <CodeBlock 
             react={`npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p`}
@@ -232,7 +213,6 @@ npx tailwindcss init -p`}
             language="bash"
             title="Install Tailwind CSS"
           />
-        </PackageManagerTabs>
       </div>
       
       <div class="space-y-4">
@@ -241,14 +221,7 @@ npx tailwindcss init -p`}
           Run the <code class="bg-muted px-1 py-0.5 rounded text-xs">docyui</code> init command to setup your project:
         </p>
         
-        <PackageManagerTabs>
-          <CodeBlock 
-            react={`npx docyui@latest init`}
-            vue={`npx docyui@latest init`}
-            language="bash"
-            title="Initialize DocyUI"
-          />
-        </PackageManagerTabs>
+        <InstallTabs component="init" />
       </div>
       
       <div class="space-y-4">
@@ -257,14 +230,7 @@ npx tailwindcss init -p`}
           You can now start adding components to your project.
         </p>
         
-        <PackageManagerTabs>
-          <CodeBlock 
-            react={`npx docyui@latest add button`}
-            vue={`npx docyui@latest add button`}
-            language="bash"
-            title="Add components"
-          />
-        </PackageManagerTabs>
+        <InstallTabs component="button" />
       </div>
     </div>
   </div>

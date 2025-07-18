@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 import DocyIcon from "../docy-icon"
 import type { ChipSize, ChipVariant, ChipColor } from "./types"
 import { DEFAULT_CHIP_SIZE, DEFAULT_CHIP_VARIANT, DEFAULT_CHIP_COLOR } from "./types"
@@ -47,7 +47,7 @@ const chipVariants = cva(
       { variant: "light", color: "slate", class: "bg-slate-100 text-slate-800" },
       { variant: "light", color: "slateDarker", class: "bg-slate-200 text-slate-900" },
       { variant: "light", color: "white", class: "bg-white text-gray-800 border border-gray-200" },
-      { variant: "light", color: "opaque", class: "bg-gray-50 text-gray-700" },
+      { variant: "light", color: "opaque", class: "bg-gray-50/80 text-gray-700 backdrop-blur-sm" },
       { variant: "light", color: "gray", class: "bg-gray-100 text-gray-800" },
       { variant: "light", color: "zinc", class: "bg-zinc-100 text-zinc-800" },
       { variant: "light", color: "stone", class: "bg-stone-100 text-stone-800" },
@@ -64,7 +64,7 @@ const chipVariants = cva(
       { variant: "dark", color: "slate", class: "bg-slate-800 text-white" },
       { variant: "dark", color: "slateDarker", class: "bg-slate-900 text-white" },
       { variant: "dark", color: "white", class: "bg-gray-800 text-white" },
-      { variant: "dark", color: "opaque", class: "bg-gray-800 text-white" },
+      { variant: "dark", color: "opaque", class: "bg-gray-800/80 text-white backdrop-blur-sm" },
       { variant: "dark", color: "gray", class: "bg-gray-800 text-white" },
       { variant: "dark", color: "zinc", class: "bg-zinc-800 text-white" },
       { variant: "dark", color: "stone", class: "bg-stone-800 text-white" },

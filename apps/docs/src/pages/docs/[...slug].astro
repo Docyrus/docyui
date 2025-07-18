@@ -3,7 +3,7 @@ import DocsLayout from '../../layouts/docs-layout.astro';
 import { getAllDocs } from '../../lib/content';
 import CodeBlock from '../../components/code-block.astro';
 import ComponentPreview from '../../components/component-preview.astro';
-import PackageManagerTabs from '../../components/package-manager-tabs.astro';
+import InstallTabs from '../../components/install-tabs.astro';
 import ColorPicker from '../../components/color-picker.astro';
 import type { GetStaticPaths } from 'astro';
 import type { CollectionEntry } from 'astro:content';
@@ -27,7 +27,7 @@ const { Content } = await entry.render();
 const components = {
   CodeBlock,
   ComponentPreview,
-  PackageManagerTabs,
+  InstallTabs,
   ColorPicker,
 };
 ---

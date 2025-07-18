@@ -1,0 +1,184 @@
+{
+  "name": "docy-chip",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "docy-chip/types.ts",
+      "content": "export type ChipSize = \"3xs\" | \"2xs\" | \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"xxl\"\nexport type ChipVariant = \"light\" | \"dark\"\nexport type ChipColor = \n  | \"slate\" \n  | \"slateDarker\"\n  | \"white\"\n  | \"opaque\"\n  | \"gray\"\n  | \"zinc\"\n  | \"stone\"\n  | \"neutral\"\n  | \"blue\"\n  | \"green\"\n  | \"orange\"\n  | \"red\"\n  | \"rose\"\n  | \"violet\"\n  | \"yellow\"\n\n// Constants for better maintainability\nexport const DEFAULT_CHIP_SIZE = \"sm\" as const\nexport const DEFAULT_CHIP_VARIANT = \"light\" as const\nexport const DEFAULT_CHIP_COLOR = \"slate\" as const\n\n// Supported color palettes following ShadCN patterns\nexport const SUPPORTED_COLORS: ChipColor[] = [\n  \"slate\",\n  \"slateDarker\", \n  \"white\",\n  \"opaque\",\n  \"gray\",\n  \"zinc\",\n  \"stone\", \n  \"neutral\",\n  \"blue\",\n  \"green\",\n  \"orange\",\n  \"red\",\n  \"rose\",\n  \"violet\",\n  \"yellow\"\n]"
+    },
+    {
+      "name": "docy-chip/index.ts",
+      "content": "export * from \"./docy-chip\"\nexport * from \"./types\"\nexport { default } from \"./docy-chip\""
+    },
+    {
+      "name": "docy-chip/docy-chip.tsx",
+      "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport type { ChipSize, ChipVariant, ChipColor } from \"./types\"\nimport { DEFAULT_CHIP_SIZE, DEFAULT_CHIP_VARIANT, DEFAULT_CHIP_COLOR } from \"./types\"\n\nconst chipVariants = cva(\n  \"inline-flex items-center gap-1 rounded-md border-0 px-2 py-0.5 font-mono font-medium uppercase tracking-tight\",\n  {\n    variants: {\n      size: {\n        \"3xs\": \"text-3xs\",\n        \"2xs\": \"text-2xs\", \n        \"xs\": \"text-xs\",\n        \"sm\": \"text-sm\",\n        \"md\": \"text-md\",\n        \"lg\": \"text-lg\",\n        \"xl\": \"text-xl\",\n        \"xxl\": \"text-xxl\"\n      },\n      variant: {\n        light: \"\",\n        dark: \"\"\n      },\n      color: {\n        // Light variants\n        slate: \"\",\n        slateDarker: \"\",\n        white: \"\",\n        opaque: \"\",\n        gray: \"\",\n        zinc: \"\",\n        stone: \"\",\n        neutral: \"\",\n        blue: \"\",\n        green: \"\",\n        orange: \"\",\n        red: \"\",\n        rose: \"\",\n        violet: \"\",\n        yellow: \"\"\n      }\n    },\n    compoundVariants: [\n      // Light variants\n      { variant: \"light\", color: \"slate\", class: \"bg-slate-100 text-slate-800\" },\n      { variant: \"light\", color: \"slateDarker\", class: \"bg-slate-200 text-slate-900\" },\n      { variant: \"light\", color: \"white\", class: \"bg-white text-gray-800 border border-gray-200\" },\n      { variant: \"light\", color: \"opaque\", class: \"bg-gray-50/80 text-gray-700 backdrop-blur-sm\" },\n      { variant: \"light\", color: \"gray\", class: \"bg-gray-100 text-gray-800\" },\n      { variant: \"light\", color: \"zinc\", class: \"bg-zinc-100 text-zinc-800\" },\n      { variant: \"light\", color: \"stone\", class: \"bg-stone-100 text-stone-800\" },\n      { variant: \"light\", color: \"neutral\", class: \"bg-neutral-100 text-neutral-800\" },\n      { variant: \"light\", color: \"blue\", class: \"bg-blue-100 text-blue-800\" },\n      { variant: \"light\", color: \"green\", class: \"bg-green-100 text-green-800\" },\n      { variant: \"light\", color: \"orange\", class: \"bg-orange-100 text-orange-800\" },\n      { variant: \"light\", color: \"red\", class: \"bg-red-100 text-red-800\" },\n      { variant: \"light\", color: \"rose\", class: \"bg-rose-100 text-rose-800\" },\n      { variant: \"light\", color: \"violet\", class: \"bg-violet-100 text-violet-800\" },\n      { variant: \"light\", color: \"yellow\", class: \"bg-yellow-100 text-yellow-800\" },\n      \n      // Dark variants\n      { variant: \"dark\", color: \"slate\", class: \"bg-slate-800 text-white\" },\n      { variant: \"dark\", color: \"slateDarker\", class: \"bg-slate-900 text-white\" },\n      { variant: \"dark\", color: \"white\", class: \"bg-gray-800 text-white\" },\n      { variant: \"dark\", color: \"opaque\", class: \"bg-gray-800/80 text-white backdrop-blur-sm\" },\n      { variant: \"dark\", color: \"gray\", class: \"bg-gray-800 text-white\" },\n      { variant: \"dark\", color: \"zinc\", class: \"bg-zinc-800 text-white\" },\n      { variant: \"dark\", color: \"stone\", class: \"bg-stone-800 text-white\" },\n      { variant: \"dark\", color: \"neutral\", class: \"bg-neutral-800 text-white\" },\n      { variant: \"dark\", color: \"blue\", class: \"bg-blue-800 text-white\" },\n      { variant: \"dark\", color: \"green\", class: \"bg-green-800 text-white\" },\n      { variant: \"dark\", color: \"orange\", class: \"bg-orange-800 text-white\" },\n      { variant: \"dark\", color: \"red\", class: \"bg-red-800 text-white\" },\n      { variant: \"dark\", color: \"rose\", class: \"bg-rose-800 text-white\" },\n      { variant: \"dark\", color: \"violet\", class: \"bg-violet-800 text-white\" },\n      { variant: \"dark\", color: \"yellow\", class: \"bg-yellow-800 text-white\" }\n    ],\n    defaultVariants: {\n      size: \"sm\",\n      variant: \"light\",\n      color: \"slate\"\n    }\n  }\n)\n\nexport interface DocyChipProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"size\" | \"color\">,\n    VariantProps<typeof chipVariants> {\n  children?: React.ReactNode\n  color?: ChipColor\n  variant?: ChipVariant\n  size?: ChipSize\n  icon?: string\n  className?: string\n}\n\n// Helper function to get icon size based on chip size\nfunction getIconSize(chipSize: ChipSize): \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" {\n  switch (chipSize) {\n    case \"3xs\":\n    case \"2xs\":\n      return \"xs\"\n    case \"xs\":\n    case \"sm\":\n      return \"sm\"\n    case \"md\":\n      return \"md\"\n    case \"lg\":\n      return \"lg\"\n    case \"xl\":\n      return \"xl\"\n    case \"xxl\":\n      return \"2xl\"\n    default:\n      return \"sm\"\n  }\n}\n\nconst DocyChip = React.forwardRef<HTMLDivElement, DocyChipProps>(\n  ({ \n    children,\n    color = DEFAULT_CHIP_COLOR,\n    variant = DEFAULT_CHIP_VARIANT,\n    size = DEFAULT_CHIP_SIZE,\n    icon,\n    className,\n    ...props \n  }, ref) => {\n    const iconSize = getIconSize(size)\n    \n    return (\n      <div\n        ref={ref}\n        className={cn(\n          chipVariants({ size, variant, color }),\n          className\n        )}\n        role=\"img\"\n        aria-label={typeof children === \"string\" ? children : undefined}\n        {...props}\n      >\n        {icon && (\n          <DocyIcon \n            name={icon} \n            size={iconSize}\n            decorative={true}\n            className=\"shrink-0\"\n          />\n        )}\n        {children && <span className=\"truncate\">{children}</span>}\n      </div>\n    )\n  }\n)\n\nDocyChip.displayName = \"DocyChip\"\n\nexport { DocyChip, chipVariants }\nexport default DocyChip"
+    }
+  ],
+  "type": "components:ui",
+  "props": [
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "optional": true
+    },
+    {
+      "name": "color",
+      "type": "ChipColor",
+      "optional": true,
+      "default": "slate"
+    },
+    {
+      "name": "variant",
+      "type": "ChipVariant",
+      "optional": true,
+      "default": "light"
+    },
+    {
+      "name": "size",
+      "type": "ChipSize",
+      "optional": true,
+      "default": "sm"
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "className",
+      "type": "string",
+      "optional": true
+    }
+  ],
+  "variants": {
+    "size": [
+      {
+        "key": "3xs",
+        "value": "text-3xs"
+      },
+      {
+        "key": "2xs",
+        "value": "text-2xs"
+      },
+      {
+        "key": "xs",
+        "value": "text-xs"
+      },
+      {
+        "key": "sm",
+        "value": "text-sm"
+      },
+      {
+        "key": "md",
+        "value": "text-md"
+      },
+      {
+        "key": "lg",
+        "value": "text-lg"
+      },
+      {
+        "key": "xl",
+        "value": "text-xl"
+      },
+      {
+        "key": "xxl",
+        "value": "text-xxl"
+      }
+    ],
+    "variant": [
+      {
+        "key": "light",
+        "value": ""
+      },
+      {
+        "key": "dark",
+        "value": ""
+      }
+    ],
+    "color": [
+      {
+        "key": "slate",
+        "value": ""
+      },
+      {
+        "key": "slateDarker",
+        "value": ""
+      },
+      {
+        "key": "white",
+        "value": ""
+      },
+      {
+        "key": "opaque",
+        "value": ""
+      },
+      {
+        "key": "gray",
+        "value": ""
+      },
+      {
+        "key": "zinc",
+        "value": ""
+      },
+      {
+        "key": "stone",
+        "value": ""
+      },
+      {
+        "key": "neutral",
+        "value": ""
+      },
+      {
+        "key": "blue",
+        "value": ""
+      },
+      {
+        "key": "green",
+        "value": ""
+      },
+      {
+        "key": "orange",
+        "value": ""
+      },
+      {
+        "key": "red",
+        "value": ""
+      },
+      {
+        "key": "rose",
+        "value": ""
+      },
+      {
+        "key": "violet",
+        "value": ""
+      },
+      {
+        "key": "yellow",
+        "value": ""
+      }
+    ]
+  },
+  "examples": {
+    "light": {
+      "code": "<DocyChip variant=\"light\">DocyChip</DocyChip>"
+    },
+    "dark": {
+      "code": "<DocyChip variant=\"dark\">DocyChip</DocyChip>"
+    }
+  },
+  "description": "Docy-chip component",
+  "usage": {
+    "import": "import { DocyChip } from \"@/components/ui/docy-chip\"",
+    "basic": "<DocyChip>DocyChip</DocyChip>",
+    "withProps": "<DocyChip size=\"3xs\" variant=\"light\" color=\"slate\">DocyChip</DocyChip>"
+  },
+  "componentName": "DocyChip",
+  "internalDependencies": [
+    "docy-icon"
+  ]
+}

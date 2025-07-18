@@ -7,11 +7,13 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export interface ComponentMetadata {
   name: string
   description: string
+  componentName?: string
   props: Array<{
     name: string
     type: string
     optional: boolean
     description: string
+    default?: string
   }>
   variants: Record<string, Array<{
     key: string
@@ -19,7 +21,7 @@ export interface ComponentMetadata {
   }>>
   examples: Record<string, {
     code: string
-    preview: string
+    preview?: string
   }>
   usage: {
     import: string

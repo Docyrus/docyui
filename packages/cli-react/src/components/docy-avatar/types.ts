@@ -40,5 +40,6 @@ export const AVATAR_COLORS = [
   "bg-purple-500",
   "bg-fuchsia-500",
   "bg-pink-500",
-  "bg-rose-500"
+  "bg-rose-500",
+  "bg-slate-500/80"
 ] as const

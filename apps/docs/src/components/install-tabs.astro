@@ -1,0 +1,141 @@
+---
+export interface Props {
+  component: string;
+  dependencies?: string;
+}
+
+const { component, dependencies } = Astro.props;
+
+// Build the command with dependencies included
+const buildCommand = (component: string, dependencies?: string) => {
+  if (component === 'init') return 'init';
+  
+  const baseCommand = `add ${component}`;
+  if (dependencies && dependencies.trim()) {
+    const deps = dependencies.trim().split(/\s+/);
+    return `add ${deps.join(' ')} ${component}`;
+  }
+  return baseCommand;
+};
+
+const command = buildCommand(component, dependencies);
+---
+
+<div class="install-tabs not-prose">
+  <div class="relative rounded-lg border bg-background">
+    <!-- Tab buttons -->
+    <div class="flex border-b">
+      <button class="install-tab px-4 py-2 text-sm font-medium transition-colors border-b-2 border-primary text-foreground" data-tab="npm">
+        npm
+      </button>
+      <button class="install-tab px-4 py-2 text-sm font-medium transition-colors border-b-2 border-transparent text-muted-foreground hover:text-foreground" data-tab="yarn">
+        yarn
+      </button>
+      <button class="install-tab px-4 py-2 text-sm font-medium transition-colors border-b-2 border-transparent text-muted-foreground hover:text-foreground" data-tab="pnpm">
+        pnpm
+      </button>
+      <button class="install-tab px-4 py-2 text-sm font-medium transition-colors border-b-2 border-transparent text-muted-foreground hover:text-foreground" data-tab="bun">
+        bun
+      </button>
+    </div>
+    
+    <!-- Tab content -->
+    <div class="install-content" data-tab="npm">
+      <div class="bg-muted rounded p-4">
+        <pre class="text-sm font-mono"><code>npx @docyui/react {command}</code></pre>
+      </div>
+    </div>
+    
+    <div class="install-content hidden" data-tab="yarn">
+      <div class="bg-muted rounded p-4">
+        <pre class="text-sm font-mono"><code>yarn dlx @docyui/react {command}</code></pre>
+      </div>
+    </div>
+    
+    <div class="install-content hidden" data-tab="pnpm">
+      <div class="bg-muted rounded p-4">
+        <pre class="text-sm font-mono"><code>pnpm dlx @docyui/react {command}</code></pre>
+      </div>
+    </div>
+    
+    <div class="install-content hidden" data-tab="bun">
+      <div class="bg-muted rounded p-4">
+        <pre class="text-sm font-mono"><code>bunx @docyui/react {command}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class InstallTabs {
+    constructor() {
+      this.init();
+    }
+    
+    init(): void {
+      // Initialize all install tabs on the page
+      const installTabs = document.querySelectorAll('.install-tabs');
+      installTabs.forEach((container: Element) => {
+        const containerEl = container as HTMLElement;
+        if (containerEl.dataset.initialized) return;
+        containerEl.dataset.initialized = 'true';
+        
+        const tabs = containerEl.querySelectorAll('.install-tab');
+        
+        tabs.forEach((tab: Element) => {
+          tab.addEventListener('click', () => {
+            const tabEl = tab as HTMLElement;
+            const tabName = tabEl.dataset.tab;
+            if (tabName) {
+              this.switchTab(containerEl, tabName);
+            }
+          });
+        });
+      });
+    }
+    
+    switchTab(container: HTMLElement, activeTab: string): void {
+      const tabs = container.querySelectorAll('.install-tab');
+      const contents = container.querySelectorAll('.install-content');
+      
+      // Update tab buttons
+      tabs.forEach((tab: Element) => {
+        const tabEl = tab as HTMLElement;
+        if (tabEl.dataset.tab === activeTab) {
+          tabEl.classList.add('text-foreground', 'border-primary');
+          tabEl.classList.remove('text-muted-foreground', 'border-transparent');
+        } else {
+          tabEl.classList.remove('text-foreground', 'border-primary');
+          tabEl.classList.add('text-muted-foreground', 'border-transparent');
+        }
+      });
+      
+      // Update content
+      contents.forEach((content: Element) => {
+        const contentEl = content as HTMLElement;
+        if (contentEl.dataset.tab === activeTab) {
+          contentEl.classList.remove('hidden');
+        } else {
+          contentEl.classList.add('hidden');
+        }
+      });
+    }
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new InstallTabs());
+  } else {
+    new InstallTabs();
+  }
+  
+  // Re-initialize when new content is loaded
+  const observer = new MutationObserver(() => {
+    new InstallTabs();
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+</script>

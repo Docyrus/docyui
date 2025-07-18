@@ -17,15 +17,6 @@ export function isDotCharacter(str: string): boolean {
   return str.trim() === "dot" || str.trim() === "•"
 }
 
-export function isValidLucideIconName(name: string): boolean {
-  try {
-    const icon = (LucideIcons as Record<string, unknown>)[name]
-    return icon !== undefined && React.isValidElement(React.createElement(icon as React.ComponentType))
-  } catch {
-    return false
-  }
-}
-
 export function normalizeIconName(name: string): string {
   return name
     .split(/[-_\s]/)

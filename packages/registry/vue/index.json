@@ -19,21 +19,18 @@
         "name": "variant",
         "type": "VariantProps<typeof buttonVariants>['variant']",
         "optional": true,
-        "description": "variant property",
         "default": "default"
       },
       {
         "name": "size",
         "type": "VariantProps<typeof buttonVariants>['size']",
         "optional": true,
-        "description": "size property",
         "default": "default"
       },
       {
         "name": "class",
         "type": "string",
-        "optional": true,
-        "description": "class property"
+        "optional": true
       }
     ],
     "variants": {
@@ -84,35 +81,30 @@
     },
     "examples": {
       "default": {
-        "code": "<Button variant=\"default\">Button</Button>",
-        "preview": "<button class=\"bg-primary text-primary-foreground hover:bg-primary/90\">Button</button>"
+        "code": "<Button variant=\"default\">Button</Button>"
       },
       "destructive": {
-        "code": "<Button variant=\"destructive\">Button</Button>",
-        "preview": "<button class=\"bg-destructive text-destructive-foreground hover:bg-destructive/90\">Button</button>"
+        "code": "<Button variant=\"destructive\">Button</Button>"
       },
       "outline": {
-        "code": "<Button variant=\"outline\">Button</Button>",
-        "preview": "<button class=\"border border-input bg-background hover:bg-accent hover:text-accent-foreground\">Button</button>"
+        "code": "<Button variant=\"outline\">Button</Button>"
       },
       "secondary": {
-        "code": "<Button variant=\"secondary\">Button</Button>",
-        "preview": "<button class=\"bg-secondary text-secondary-foreground hover:bg-secondary/80\">Button</button>"
+        "code": "<Button variant=\"secondary\">Button</Button>"
       },
       "ghost": {
-        "code": "<Button variant=\"ghost\">Button</Button>",
-        "preview": "<button class=\"hover:bg-accent hover:text-accent-foreground\">Button</button>"
+        "code": "<Button variant=\"ghost\">Button</Button>"
       },
       "link": {
-        "code": "<Button variant=\"link\">Button</Button>",
-        "preview": "<button class=\"text-primary underline-offset-4 hover:underline\">Button</button>"
+        "code": "<Button variant=\"link\">Button</Button>"
       }
     },
     "description": "Button component",
     "usage": {
-      "import": "import Button from \"@/components/ui/Button.vue\"",
+      "import": "import Button from \"@/components/ui/button.vue\"",
       "basic": "<Button>Button</Button>",
-      "withProps": "<Button variant=\"outline\" size=\"sm\">Button</Button>"
-    }
+      "withProps": "<Button variant=\"default\" size=\"default\">Button</Button>"
+    },
+    "componentName": "Button"
   }
 }

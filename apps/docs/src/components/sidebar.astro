@@ -1,10 +1,32 @@
 ---
+import { getCollection } from 'astro:content';
+
 // Sidebar component - Tailwind CSS docs inspired design
 export interface SidebarItem {
   title: string;
   href?: string;
   items?: SidebarItem[];
 }
+
+// Get all component entries
+const componentEntries = await getCollection('components');
+
+// Convert component entries to sidebar items
+const componentItems = componentEntries
+  .filter((entry: any) => entry.slug !== 'index') // Filter out index.mdx
+  .map((entry: any) => {
+    // Convert slug to title (e.g., "docy-avatar" -> "Docy Avatar")
+    const title = entry.slug
+      .split('-')
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    
+    return {
+      title,
+      href: `/docs/components/${entry.slug}`
+    };
+  })
+  .sort((a: any, b: any) => a.title.localeCompare(b.title)); // Sort alphabetically
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -30,12 +52,7 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     title: "Components",
-    items: [
-      {
-        title: "Button",
-        href: "/docs/components/button"
-      }
-    ]
+    items: componentItems
   }
 ];
 

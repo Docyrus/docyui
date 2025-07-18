@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 import { Avatar, AvatarFallback } from "./avatar"
 import DocyIcon from "../docy-icon"
 import { type AvatarSize } from "./types"

@@ -1,9 +1,10 @@
 ---
 import DocsLayout from '../../../layouts/docs-layout.astro';
 import { getAllComponents } from '../../../lib/content';
+import { getComponent } from '../../../lib/registry';
 import CodeBlock from '../../../components/code-block.astro';
 import ComponentPreview from '../../../components/component-preview.astro';
-import PackageManagerTabs from '../../../components/package-manager-tabs.astro';
+import InstallTabs from '../../../components/install-tabs.astro';
 import ColorPicker from '../../../components/color-picker.astro';
 import type { GetStaticPaths } from 'astro';
 import type { CollectionEntry } from 'astro:content';
@@ -23,11 +24,19 @@ interface Props {
 const { entry } = Astro.props as Props;
 const { Content } = await entry.render();
 
+// Check which frameworks have this component
+const componentName = entry.slug;
+const hasReact = !!getComponent(componentName, 'react');
+const hasVue = !!getComponent(componentName, 'vue');
+const availableFrameworks: string[] = [];
+if (hasReact) availableFrameworks.push('react');
+if (hasVue) availableFrameworks.push('vue');
+
 // Component registry for MDX
 const components = {
   CodeBlock,
   ComponentPreview,
-  PackageManagerTabs,
+  InstallTabs,
   ColorPicker,
 };
 ---
@@ -48,5 +57,56 @@ const components = {
     </div>
   </div>
 
-  <Content components={components} />
+  <div class="prose prose-slate dark:prose-invert max-w-none">
+    <Content components={components} />
+  </div>
+  
+  <script define:vars={{ availableFrameworks }}>
+    // Update framework switcher based on component availability
+    document.addEventListener('DOMContentLoaded', () => {
+      const frameworkSwitcher = document.querySelector('.framework-switcher');
+      
+      if (frameworkSwitcher) {
+        // Always show switcher, but disable/hide unavailable frameworks
+        const reactBtn = frameworkSwitcher.querySelector('[data-framework="react"]');
+        const vueBtn = frameworkSwitcher.querySelector('[data-framework="vue"]');
+        
+        if (availableFrameworks.length === 0) {
+          // No frameworks available - hide switcher
+          frameworkSwitcher.style.display = 'none';
+        } else {
+          // Show only available framework buttons
+          if (reactBtn) {
+            if (availableFrameworks.includes('react')) {
+              reactBtn.style.display = 'block';
+            } else {
+              reactBtn.style.display = 'none';
+            }
+          }
+          
+          if (vueBtn) {
+            if (availableFrameworks.includes('vue')) {
+              vueBtn.style.display = 'block';
+            } else {
+              vueBtn.style.display = 'none';
+            }
+          }
+          
+          // If only one framework, still show the switcher with single button
+          if (availableFrameworks.length === 1) {
+            document.documentElement.dataset.framework = availableFrameworks[0];
+            localStorage.setItem('selectedFramework', availableFrameworks[0]);
+          } else {
+            // Check if current framework is available
+            const currentFramework = localStorage.getItem('selectedFramework') || 'react';
+            if (!availableFrameworks.includes(currentFramework)) {
+              // Switch to first available framework
+              document.documentElement.dataset.framework = availableFrameworks[0];
+              localStorage.setItem('selectedFramework', availableFrameworks[0]);
+            }
+          }
+        }
+      }
+    });
+  </script>
 </DocsLayout>
