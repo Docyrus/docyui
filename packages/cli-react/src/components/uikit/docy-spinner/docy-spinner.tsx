@@ -14,9 +14,9 @@ const spinnerVariants = cva(
         lg: "h-8 w-8 border-[2.5px]"
       },
       speed: {
-        slow: "duration-1000",
-        normal: "duration-700",
-        fast: "duration-500"
+        slow: "animation-duration-1000",
+        normal: "animation-duration-700",
+        fast: "animation-duration-500"
       },
       color: {
         current: "border-current border-t-transparent",
