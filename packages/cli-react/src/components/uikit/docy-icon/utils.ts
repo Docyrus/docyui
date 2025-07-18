@@ -1,5 +1,7 @@
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
-import type { IconLibrary, SIZE_VALIDATION_RANGE } from "./types"
+import type { IconLibrary } from "./types"
+import { SIZE_VALIDATION_RANGE } from "./types"
 
 // Module-level constant to prevent ReDoS attacks
 const EMOJI_REGEX = /^(\p{Emoji}|\p{Emoji_Modifier}|\p{Emoji_Component})+$/u
@@ -15,9 +17,10 @@ export function isDotCharacter(str: string): boolean {
   return str.trim() === "dot" || str.trim() === "•"
 }
 
-export function isValidLucideIconName(name: string): name is keyof typeof LucideIcons {
+export function isValidLucideIconName(name: string): boolean {
   try {
-    return name in LucideIcons && typeof LucideIcons[name as keyof typeof LucideIcons] === "function"
+    const icon = (LucideIcons as Record<string, unknown>)[name]
+    return icon !== undefined && React.isValidElement(React.createElement(icon as React.ComponentType))
   } catch {
     return false
   }
@@ -40,15 +43,17 @@ export function validateNumericSize(size: number): number {
   return size
 }
 
-export function getLucideIcon(name: string): React.ComponentType<any> | null {
+export function getLucideIcon(name: string): React.ComponentType<LucideIcons.LucideProps> | null {
   try {
-    if (isValidLucideIconName(name)) {
-      return LucideIcons[name]
+    const icon = (LucideIcons as Record<string, unknown>)[name]
+    if (icon && React.isValidElement(React.createElement(icon as React.ComponentType))) {
+      return icon as React.ComponentType<LucideIcons.LucideProps>
     }
     
     const normalizedName = normalizeIconName(name)
-    if (isValidLucideIconName(normalizedName)) {
-      return LucideIcons[normalizedName]
+    const normalizedIcon = (LucideIcons as Record<string, unknown>)[normalizedName]
+    if (normalizedIcon && React.isValidElement(React.createElement(normalizedIcon as React.ComponentType))) {
+      return normalizedIcon as React.ComponentType<LucideIcons.LucideProps>
     }
     
     return null
@@ -60,7 +65,7 @@ export function getLucideIcon(name: string): React.ComponentType<any> | null {
 export function getIconComponent(
   name: string, 
   lib: IconLibrary
-): React.ComponentType<any> | null {
+): React.ComponentType<LucideIcons.LucideProps> | null {
   switch (lib) {
     case "lucide":
       return getLucideIcon(name)
@@ -79,7 +84,7 @@ export function getIconComponent(
   }
 }
 
-export function getDefaultIcon(): React.ComponentType<any> {
+export function getDefaultIcon(): React.ComponentType<LucideIcons.LucideProps> {
   return LucideIcons.HelpCircle
 }
 
