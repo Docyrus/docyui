@@ -1,136 +1,440 @@
 {
-  "button": {
-    "name": "button",
+  "docy-avatar": {
+    "name": "docy-avatar",
     "dependencies": [
-      "@radix-ui/react-slot",
       "class-variance-authority"
     ],
     "devDependencies": [],
     "registryDependencies": [],
     "files": [
       {
-        "name": "button.tsx",
-        "content": "import * as React from \"react\"\nimport { Slot } from \"@radix-ui/react-slot\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\n\nimport { cn } from \"@/lib/utils\"\n\nconst buttonVariants = cva(\n  \"inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-primary text-primary-foreground hover:bg-primary/90\",\n        destructive:\n          \"bg-destructive text-destructive-foreground hover:bg-destructive/90\",\n        outline:\n          \"border border-input bg-background hover:bg-accent hover:text-accent-foreground\",\n        secondary:\n          \"bg-secondary text-secondary-foreground hover:bg-secondary/80\",\n        ghost: \"hover:bg-accent hover:text-accent-foreground\",\n        link: \"text-primary underline-offset-4 hover:underline\",\n      },\n      size: {\n        default: \"h-10 px-4 py-2\",\n        sm: \"h-9 rounded-md px-3\",\n        lg: \"h-11 rounded-md px-8\",\n        icon: \"h-10 w-10\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n      size: \"default\",\n    },\n  }\n)\n\nexport interface ButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement>,\n    VariantProps<typeof buttonVariants> {\n  asChild?: boolean\n}\n\nconst Button = React.forwardRef<HTMLButtonElement, ButtonProps>(\n  ({ className, variant, size, asChild = false, ...props }, ref) => {\n    const Comp = asChild ? Slot : \"button\"\n    return (\n      <Comp\n        className={cn(buttonVariants({ variant, size, className }))}\n        ref={ref}\n        {...props}\n      />\n    )\n  }\n)\nButton.displayName = \"Button\"\n\nexport { Button, buttonVariants }"
+        "name": "docy-avatar/utils.ts",
+        "content": "import type { User, AvatarSize } from \"./types\"\nimport { AVATAR_COLORS } from \"./types\"\n\nexport function getInitials(user: User | string): string {\n  if (typeof user === \"string\") {\n    const names = user.trim().split(/\\s+/)\n    if (names.length === 1) {\n      return names[0].charAt(0).toUpperCase()\n    }\n    return names[0].charAt(0).toUpperCase() + names[names.length - 1].charAt(0).toUpperCase()\n  }\n\n  const firstname = user.firstname?.trim() || \"\"\n  const lastname = user.lastname?.trim() || \"\"\n  const name = user.name?.trim() || \"\"\n  const fullname = user.fullname?.trim() || \"\"\n\n  if (firstname && lastname) {\n    return firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase()\n  }\n\n  if (name) {\n    const nameParts = name.split(/\\s+/)\n    if (nameParts.length >= 2) {\n      return nameParts[0].charAt(0).toUpperCase() + nameParts[nameParts.length - 1].charAt(0).toUpperCase()\n    }\n    return nameParts[0].charAt(0).toUpperCase()\n  }\n\n  if (fullname) {\n    const fullnameParts = fullname.split(/\\s+/)\n    if (fullnameParts.length >= 2) {\n      return fullnameParts[0].charAt(0).toUpperCase() + fullnameParts[fullnameParts.length - 1].charAt(0).toUpperCase()\n    }\n    return fullnameParts[0].charAt(0).toUpperCase()\n  }\n\n  return \"?\"\n}\n\nexport function getFullName(user: User): string {\n  if (user.fullname) return user.fullname\n  if (user.name) return user.name\n  if (user.firstname && user.lastname) return `${user.firstname} ${user.lastname}`\n  if (user.firstname) return user.firstname\n  if (user.lastname) return user.lastname\n  return \"\"\n}\n\nexport function getUserColor(user: User, index?: number): string {\n  if (user.color) {\n    // If color is provided with bg- prefix, use it as is\n    if (user.color.startsWith(\"bg-\")) {\n      return user.color\n    }\n    // If color is just the color name, add bg- prefix\n    return `bg-${user.color}`\n  }\n\n  // Generate deterministic color based on user ID or index\n  const userId = user.userId || index || 0\n  const colorIndex = typeof userId === \"string\" \n    ? userId.length % AVATAR_COLORS.length\n    : Number(userId) % AVATAR_COLORS.length\n  \n  return AVATAR_COLORS[colorIndex]\n}\n\nexport function resolveUser(\n  userId: string | number, \n  users: User[] = []\n): User | null {\n  return users.find(user => user.userId === userId) || null\n}\n\nexport function resolveUsers(\n  userIds: (string | number)[], \n  users: User[] = []\n): User[] {\n  return userIds\n    .map(id => resolveUser(id, users))\n    .filter((user): user is User => user !== null)\n}\n\nexport function validateImageUrl(url: string): boolean {\n  try {\n    const parsedUrl = new URL(url)\n    return parsedUrl.protocol === \"https:\" || parsedUrl.protocol === \"data:\"\n  } catch {\n    return false\n  }\n}\n\n\nexport function getAvatarSizeClasses(size: AvatarSize): string {\n  const sizeMap = {\n    xs: \"h-4 w-4 text-xs\",\n    sm: \"h-5 w-5 text-xs\", \n    md: \"h-6 w-6 text-sm\",\n    lg: \"h-7 w-7 text-sm\",\n    xl: \"h-8 w-8 text-sm\",\n    \"2xl\": \"h-9 w-9 text-base\",\n    \"3xl\": \"h-10 w-10 text-base\",\n    \"4xl\": \"h-12 w-12 text-lg\",\n    \"5xl\": \"h-16 w-16 text-xl\",\n    max: \"h-20 w-20 text-2xl\"\n  }\n  return sizeMap[size]\n}\n\nexport function getStatusIndicatorSize(size: AvatarSize): string {\n  const statusSizeMap = {\n    xs: \"h-1 w-1\",\n    sm: \"h-1.5 w-1.5\",\n    md: \"h-2 w-2\", \n    lg: \"h-2 w-2\",\n    xl: \"h-2.5 w-2.5\",\n    \"2xl\": \"h-3 w-3\",\n    \"3xl\": \"h-3 w-3\", \n    \"4xl\": \"h-4 w-4\",\n    \"5xl\": \"h-5 w-5\",\n    max: \"h-6 w-6\"\n  }\n  return statusSizeMap[size]\n}"
+      },
+      {
+        "name": "docy-avatar/types.ts",
+        "content": "export type AvatarSize = \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" | \"3xl\" | \"4xl\" | \"5xl\" | \"max\"\nexport type UserStatus = \"online\" | \"offline\" | \"away\"\n\nexport interface User {\n  userId: string | number\n  firstname: string\n  lastname: string\n  name?: string\n  photo?: string\n  color?: string\n  status?: UserStatus\n  fullname?: string\n}\n\n\nexport const DEFAULT_AVATAR_SIZE = \"sm\" as const\nexport const DEFAULT_MAX_ITEMS = 5 as const\n\n\nexport const STATUS_COLORS = {\n  online: \"bg-green-400\",\n  offline: \"bg-red-400\", \n  away: \"bg-amber-400\"\n} as const\n\nexport const AVATAR_COLORS = [\n  \"bg-red-500\",\n  \"bg-orange-500\", \n  \"bg-amber-500\",\n  \"bg-yellow-500\",\n  \"bg-lime-500\",\n  \"bg-green-500\",\n  \"bg-emerald-500\",\n  \"bg-teal-500\",\n  \"bg-cyan-500\",\n  \"bg-sky-500\",\n  \"bg-blue-500\",\n  \"bg-indigo-500\",\n  \"bg-violet-500\",\n  \"bg-purple-500\",\n  \"bg-fuchsia-500\",\n  \"bg-pink-500\",\n  \"bg-rose-500\",\n  \"bg-slate-500/80\"\n] as const"
+      },
+      {
+        "name": "docy-avatar/index.ts",
+        "content": "export * from \"./docy-avatar\"\nexport * from \"./types\"\nexport * from \"./utils\"\nexport * from \"./avatar\"\nexport * from \"./error-boundary\"\nexport { default } from \"./docy-avatar\""
+      },
+      {
+        "name": "docy-avatar/error-boundary.tsx",
+        "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\nimport { Avatar, AvatarFallback } from \"./avatar\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport { type AvatarSize } from \"./types\"\nimport { getAvatarSizeClasses } from \"./utils\"\n\ninterface AvatarErrorBoundaryProps {\n  children: React.ReactNode\n  size?: AvatarSize\n  className?: string\n}\n\ninterface AvatarErrorBoundaryState {\n  hasError: boolean\n}\n\nexport class AvatarErrorBoundary extends React.Component<AvatarErrorBoundaryProps, AvatarErrorBoundaryState> {\n  constructor(props: AvatarErrorBoundaryProps) {\n    super(props)\n    this.state = { hasError: false }\n  }\n\n  static getDerivedStateFromError(): AvatarErrorBoundaryState {\n    return { hasError: true }\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.warn(\"DocyAvatar Error:\", error, errorInfo)\n  }\n\n  render() {\n    if (this.state.hasError) {\n      const { size = \"sm\", className } = this.props\n      \n      return (\n        <Avatar className={cn(\"bg-red-100\", className)}>\n          <AvatarFallback className={cn(\"bg-red-100 text-red-600\", getAvatarSizeClasses(size))}>\n            <DocyIcon \n              name=\"alert-circle\" \n              size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n              className=\"text-red-600\"\n            />\n          </AvatarFallback>\n        </Avatar>\n      )\n    }\n\n    return this.props.children\n  }\n}"
+      },
+      {
+        "name": "docy-avatar/docy-avatar.tsx",
+        "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport { Avatar, AvatarImage, AvatarFallback } from \"./avatar\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport type { User, AvatarSize, UserStatus } from \"./types\"\nimport { DEFAULT_AVATAR_SIZE, DEFAULT_MAX_ITEMS } from \"./types\"\nimport { \n  getInitials, \n  getFullName, \n  getUserColor, \n  resolveUser, \n  resolveUsers, \n  validateImageUrl, \n  getAvatarSizeClasses,\n  getStatusIndicatorSize \n} from \"./utils\"\nimport { STATUS_COLORS } from \"./types\"\nimport { AvatarErrorBoundary } from \"./error-boundary\"\n\nconst avatarVariants = cva(\n  \"relative inline-flex shrink-0 overflow-hidden rounded-full\",\n  {\n    variants: {\n      size: {\n        xs: \"h-4 w-4\",\n        sm: \"h-5 w-5\", \n        md: \"h-6 w-6\",\n        lg: \"h-7 w-7\",\n        xl: \"h-8 w-8\",\n        \"2xl\": \"h-9 w-9\",\n        \"3xl\": \"h-10 w-10\",\n        \"4xl\": \"h-12 w-12\",\n        \"5xl\": \"h-16 w-16\",\n        max: \"h-20 w-20\"\n      }\n    },\n    defaultVariants: {\n      size: \"sm\"\n    }\n  }\n)\n\nconst avatarGroupVariants = cva(\n  \"flex items-center\",\n  {\n    variants: {\n      spacing: {\n        default: \"-space-x-2\",\n        tight: \"-space-x-1\",\n        loose: \"-space-x-3\"\n      }\n    },\n    defaultVariants: {\n      spacing: \"default\"\n    }\n  }\n)\n\nexport interface DocyAvatarProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"size\">,\n    VariantProps<typeof avatarVariants> {\n  src?: string\n  userId?: string | number | (string | number)[]\n  user?: User\n  users?: User[]\n  size?: AvatarSize\n  maxItems?: number\n  showUserStatus?: boolean\n  status?: UserStatus\n  fallbackSrc?: string\n}\n\nfunction SingleAvatar({\n  user,\n  src,\n  size = DEFAULT_AVATAR_SIZE,\n  showUserStatus = false,\n  status,\n  fallbackSrc,\n  className\n}: {\n  user?: User\n  src?: string\n  size: AvatarSize\n  showUserStatus: boolean\n  status?: UserStatus\n  fallbackSrc?: string\n  className?: string\n}) {\n  const [imageError, setImageError] = React.useState(false)\n  const [fallbackError, setFallbackError] = React.useState(false)\n\n  const avatarClasses = cn(avatarVariants({ size }), className)\n  const sizeClasses = getAvatarSizeClasses(size)\n  \n  const displayStatus = status || user?.status\n  const initials = user ? getInitials(user) : \"?\"\n  const bgColor = user ? getUserColor(user) : \"bg-gray-500\"\n  const fullName = user ? getFullName(user) : \"\"\n\n  const primarySrc = src || user?.photo\n  const shouldShowImage = primarySrc && !imageError && validateImageUrl(primarySrc)\n  const shouldShowFallback = fallbackSrc && !fallbackError && !shouldShowImage && validateImageUrl(fallbackSrc)\n\n  return (\n    <div className=\"relative\">\n      <Avatar className={avatarClasses}>\n        {shouldShowImage && (\n          <AvatarImage\n            src={primarySrc}\n            alt={fullName || \"User avatar\"}\n            onError={() => setImageError(true)}\n            className=\"object-cover\"\n          />\n        )}\n        \n        {shouldShowFallback && (\n          <AvatarImage\n            src={fallbackSrc}\n            alt={fullName || \"User avatar\"}\n            onError={() => setFallbackError(true)}\n            className=\"object-cover\"\n          />\n        )}\n        \n        <AvatarFallback className={cn(bgColor, \"text-white\", sizeClasses)}>\n          {user ? (\n            <span className=\"font-medium\">{initials}</span>\n          ) : (\n            <DocyIcon \n              name=\"user\" \n              size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n              className=\"text-white\"\n            />\n          )}\n        </AvatarFallback>\n      </Avatar>\n      \n      {showUserStatus && displayStatus && (\n        <span\n          className={cn(\n            \"absolute -bottom-0.5 -right-0.5 block rounded-full ring-2 ring-white z-10\",\n            STATUS_COLORS[displayStatus],\n            getStatusIndicatorSize(size)\n          )}\n          aria-label={`User is ${displayStatus}`}\n        />\n      )}\n    </div>\n  )\n}\n\nfunction MultipleAvatars({\n  users,\n  size = DEFAULT_AVATAR_SIZE,\n  maxItems = DEFAULT_MAX_ITEMS,\n  showUserStatus = false,\n  className\n}: {\n  users: User[]\n  size: AvatarSize\n  maxItems: number\n  showUserStatus: boolean\n  className?: string\n}) {\n  const visibleUsers = users.slice(0, maxItems)\n  const remainingCount = users.length - maxItems\n  const sizeClasses = getAvatarSizeClasses(size)\n\n  return (\n    <div className={cn(avatarGroupVariants(), className)}>\n      {visibleUsers.map((user, index) => (\n        <div \n          key={user.userId || index}\n          className=\"relative hover:z-10 hover:scale-105 transition-transform duration-150 origin-center\"\n        >\n          <SingleAvatar\n            user={user}\n            size={size}\n            showUserStatus={showUserStatus}\n            className=\"ring-2 ring-white\"\n          />\n        </div>\n      ))}\n      \n      {remainingCount > 0 && (\n        <Avatar className={cn(avatarVariants({ size }), \"ring-2 ring-white bg-gray-100\")}>\n          <AvatarFallback className={cn(\"bg-gray-100 text-gray-600\", sizeClasses)}>\n            <span className=\"font-medium\">+{remainingCount}</span>\n          </AvatarFallback>\n        </Avatar>\n      )}\n    </div>\n  )\n}\n\nconst DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(\n  ({ \n    src,\n    userId,\n    user,\n    users = [],\n    size = DEFAULT_AVATAR_SIZE,\n    maxItems = DEFAULT_MAX_ITEMS,\n    showUserStatus = false,\n    status,\n    className,\n    fallbackSrc,\n    ...props \n  }, ref) => {\n    \n    const renderContent = () => {\n      // Handle multiple user IDs\n      if (Array.isArray(userId)) {\n        const resolvedUsers = resolveUsers(userId, users)\n        \n        if (resolvedUsers.length === 0) {\n          // Show placeholder for empty group\n          return (\n            <Avatar className={avatarVariants({ size })}>\n              <AvatarFallback className={getAvatarSizeClasses(size)}>\n                <DocyIcon \n                  name=\"users\" \n                  size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n                  className=\"text-gray-400\"\n                />\n              </AvatarFallback>\n            </Avatar>\n          )\n        }\n        \n        if (resolvedUsers.length === 1) {\n          return (\n            <SingleAvatar\n              user={resolvedUsers[0]}\n              size={size}\n              showUserStatus={showUserStatus}\n              status={status}\n              fallbackSrc={fallbackSrc}\n            />\n          )\n        }\n        \n        return (\n          <MultipleAvatars\n            users={resolvedUsers}\n            size={size}\n            maxItems={maxItems}\n            showUserStatus={showUserStatus}\n          />\n        )\n      }\n      \n      // Handle single user ID\n      if (userId) {\n        const resolvedUser = resolveUser(userId, users)\n        \n        if (!resolvedUser) {\n          // Show placeholder when user not found\n          return (\n            <Avatar className={avatarVariants({ size })}>\n              <AvatarFallback className={getAvatarSizeClasses(size)}>\n                <DocyIcon \n                  name=\"user\" \n                  size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n                  className=\"text-gray-400\"\n                />\n              </AvatarFallback>\n            </Avatar>\n          )\n        }\n        \n        return (\n          <SingleAvatar\n            user={resolvedUser}\n            size={size}\n            showUserStatus={showUserStatus}\n            status={status}\n            fallbackSrc={fallbackSrc}\n          />\n        )\n      }\n      \n      // Handle direct user prop or src\n      if (user || src) {\n        return (\n          <SingleAvatar\n            user={user}\n            src={src}\n            size={size}\n            showUserStatus={showUserStatus}\n            status={status}\n            fallbackSrc={fallbackSrc}\n          />\n        )\n      }\n      \n      // Default placeholder\n      return (\n        <Avatar className={avatarVariants({ size })}>\n          <AvatarFallback className={getAvatarSizeClasses(size)}>\n            <DocyIcon \n              name=\"image\" \n              size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n              className=\"text-gray-400\"\n            />\n          </AvatarFallback>\n        </Avatar>\n      )\n    }\n    \n    return (\n      <div ref={ref} {...props} className={className}>\n        <AvatarErrorBoundary size={size}>\n          {renderContent()}\n        </AvatarErrorBoundary>\n      </div>\n    )\n  }\n)\n\nDocyAvatar.displayName = \"DocyAvatar\"\n\nexport { DocyAvatar, avatarVariants }\nexport default DocyAvatar"
+      },
+      {
+        "name": "docy-avatar/avatar.tsx",
+        "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\nconst Avatar = React.forwardRef<\n  HTMLSpanElement,\n  React.HTMLAttributes<HTMLSpanElement>\n>(({ className, ...props }, ref) => (\n  <span\n    ref={ref}\n    className={cn(\n      \"relative flex shrink-0 overflow-hidden rounded-full\",\n      className\n    )}\n    {...props}\n  />\n))\nAvatar.displayName = \"Avatar\"\n\nconst AvatarImage = React.forwardRef<\n  HTMLImageElement,\n  React.ImgHTMLAttributes<HTMLImageElement>\n>(({ className, ...props }, ref) => (\n  <img\n    ref={ref}\n    className={cn(\"aspect-square h-full w-full object-cover\", className)}\n    {...props}\n  />\n))\nAvatarImage.displayName = \"AvatarImage\"\n\nconst AvatarFallback = React.forwardRef<\n  HTMLSpanElement,\n  React.HTMLAttributes<HTMLSpanElement>\n>(({ className, ...props }, ref) => (\n  <span\n    ref={ref}\n    className={cn(\n      \"flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground font-medium\",\n      className\n    )}\n    {...props}\n  />\n))\nAvatarFallback.displayName = \"AvatarFallback\"\n\nexport { Avatar, AvatarImage, AvatarFallback }"
       }
     ],
     "type": "components:ui",
     "props": [
       {
-        "name": "className",
+        "name": "src",
         "type": "string",
-        "optional": true,
-        "description": "CSS class name"
+        "optional": true
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "optional": true,
-        "description": "Disabled state"
+        "name": "userId",
+        "type": "string | number | (string | number)[]",
+        "optional": true
       },
       {
-        "name": "onClick",
-        "type": "MouseEventHandler",
-        "optional": true,
-        "description": "Click handler"
+        "name": "user",
+        "type": "User",
+        "optional": true
       },
       {
-        "name": "variant",
-        "type": "\"default\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\"",
-        "optional": true,
-        "description": "Button variant",
-        "default": "default"
+        "name": "users",
+        "type": "User[]",
+        "optional": true
       },
       {
         "name": "size",
-        "type": "\"default\" | \"sm\" | \"lg\" | \"icon\"",
+        "type": "AvatarSize",
         "optional": true,
-        "description": "Button size",
-        "default": "default"
+        "default": "sm"
       },
       {
-        "name": "asChild",
+        "name": "maxItems",
+        "type": "number",
+        "optional": true
+      },
+      {
+        "name": "showUserStatus",
         "type": "boolean",
-        "optional": true,
-        "description": "asChild property"
+        "optional": true
+      },
+      {
+        "name": "status",
+        "type": "UserStatus",
+        "optional": true
+      },
+      {
+        "name": "fallbackSrc",
+        "type": "string",
+        "optional": true
       }
     ],
     "variants": {
-      "variant": [
-        {
-          "key": "default",
-          "value": "bg-primary text-primary-foreground hover:bg-primary/90"
-        },
-        {
-          "key": "destructive",
-          "value": "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-        },
-        {
-          "key": "outline",
-          "value": "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
-        },
-        {
-          "key": "secondary",
-          "value": "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-        },
-        {
-          "key": "ghost",
-          "value": "hover:bg-accent hover:text-accent-foreground"
-        },
-        {
-          "key": "link",
-          "value": "text-primary underline-offset-4 hover:underline"
-        }
-      ],
       "size": [
         {
-          "key": "default",
-          "value": "h-10 px-4 py-2"
+          "key": "xs",
+          "value": "h-4 w-4"
         },
         {
           "key": "sm",
-          "value": "h-9 rounded-md px-3"
+          "value": "h-5 w-5"
+        },
+        {
+          "key": "md",
+          "value": "h-6 w-6"
         },
         {
           "key": "lg",
-          "value": "h-11 rounded-md px-8"
+          "value": "h-7 w-7"
         },
         {
-          "key": "icon",
+          "key": "xl",
+          "value": "h-8 w-8"
+        },
+        {
+          "key": "2xl",
+          "value": "h-9 w-9"
+        },
+        {
+          "key": "3xl",
           "value": "h-10 w-10"
+        },
+        {
+          "key": "4xl",
+          "value": "h-12 w-12"
+        },
+        {
+          "key": "5xl",
+          "value": "h-16 w-16"
+        },
+        {
+          "key": "max",
+          "value": "h-20 w-20"
+        }
+      ]
+    },
+    "examples": {},
+    "description": "Docy-avatar component",
+    "usage": {
+      "import": "import { DocyAvatar } from \"@/components/ui/docy-avatar\"",
+      "basic": "<DocyAvatar>DocyAvatar</DocyAvatar>",
+      "withProps": "<DocyAvatar size=\"xs\">DocyAvatar</DocyAvatar>"
+    },
+    "componentName": "DocyAvatar",
+    "internalDependencies": [
+      "docy-icon"
+    ]
+  },
+  "docy-chip": {
+    "name": "docy-chip",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "devDependencies": [],
+    "registryDependencies": [],
+    "files": [
+      {
+        "name": "docy-chip/types.ts",
+        "content": "export type ChipSize = \"3xs\" | \"2xs\" | \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"xxl\"\nexport type ChipVariant = \"light\" | \"dark\"\nexport type ChipColor = \n  | \"slate\" \n  | \"slateDarker\"\n  | \"white\"\n  | \"opaque\"\n  | \"gray\"\n  | \"zinc\"\n  | \"stone\"\n  | \"neutral\"\n  | \"blue\"\n  | \"green\"\n  | \"orange\"\n  | \"red\"\n  | \"rose\"\n  | \"violet\"\n  | \"yellow\"\n\n// Constants for better maintainability\nexport const DEFAULT_CHIP_SIZE = \"sm\" as const\nexport const DEFAULT_CHIP_VARIANT = \"light\" as const\nexport const DEFAULT_CHIP_COLOR = \"slate\" as const\n\n// Supported color palettes following ShadCN patterns\nexport const SUPPORTED_COLORS: ChipColor[] = [\n  \"slate\",\n  \"slateDarker\", \n  \"white\",\n  \"opaque\",\n  \"gray\",\n  \"zinc\",\n  \"stone\", \n  \"neutral\",\n  \"blue\",\n  \"green\",\n  \"orange\",\n  \"red\",\n  \"rose\",\n  \"violet\",\n  \"yellow\"\n]"
+      },
+      {
+        "name": "docy-chip/index.ts",
+        "content": "export * from \"./docy-chip\"\nexport * from \"./types\"\nexport { default } from \"./docy-chip\""
+      },
+      {
+        "name": "docy-chip/docy-chip.tsx",
+        "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport type { ChipSize, ChipVariant, ChipColor } from \"./types\"\nimport { DEFAULT_CHIP_SIZE, DEFAULT_CHIP_VARIANT, DEFAULT_CHIP_COLOR } from \"./types\"\n\nconst chipVariants = cva(\n  \"inline-flex items-center gap-1 rounded-md border-0 px-2 py-0.5 font-mono font-medium uppercase tracking-tight\",\n  {\n    variants: {\n      size: {\n        \"3xs\": \"text-3xs\",\n        \"2xs\": \"text-2xs\", \n        \"xs\": \"text-xs\",\n        \"sm\": \"text-sm\",\n        \"md\": \"text-md\",\n        \"lg\": \"text-lg\",\n        \"xl\": \"text-xl\",\n        \"xxl\": \"text-xxl\"\n      },\n      variant: {\n        light: \"\",\n        dark: \"\"\n      },\n      color: {\n        // Light variants\n        slate: \"\",\n        slateDarker: \"\",\n        white: \"\",\n        opaque: \"\",\n        gray: \"\",\n        zinc: \"\",\n        stone: \"\",\n        neutral: \"\",\n        blue: \"\",\n        green: \"\",\n        orange: \"\",\n        red: \"\",\n        rose: \"\",\n        violet: \"\",\n        yellow: \"\"\n      }\n    },\n    compoundVariants: [\n      // Light variants\n      { variant: \"light\", color: \"slate\", class: \"bg-slate-100 text-slate-800\" },\n      { variant: \"light\", color: \"slateDarker\", class: \"bg-slate-200 text-slate-900\" },\n      { variant: \"light\", color: \"white\", class: \"bg-white text-gray-800 border border-gray-200\" },\n      { variant: \"light\", color: \"opaque\", class: \"bg-gray-50/80 text-gray-700 backdrop-blur-sm\" },\n      { variant: \"light\", color: \"gray\", class: \"bg-gray-100 text-gray-800\" },\n      { variant: \"light\", color: \"zinc\", class: \"bg-zinc-100 text-zinc-800\" },\n      { variant: \"light\", color: \"stone\", class: \"bg-stone-100 text-stone-800\" },\n      { variant: \"light\", color: \"neutral\", class: \"bg-neutral-100 text-neutral-800\" },\n      { variant: \"light\", color: \"blue\", class: \"bg-blue-100 text-blue-800\" },\n      { variant: \"light\", color: \"green\", class: \"bg-green-100 text-green-800\" },\n      { variant: \"light\", color: \"orange\", class: \"bg-orange-100 text-orange-800\" },\n      { variant: \"light\", color: \"red\", class: \"bg-red-100 text-red-800\" },\n      { variant: \"light\", color: \"rose\", class: \"bg-rose-100 text-rose-800\" },\n      { variant: \"light\", color: \"violet\", class: \"bg-violet-100 text-violet-800\" },\n      { variant: \"light\", color: \"yellow\", class: \"bg-yellow-100 text-yellow-800\" },\n      \n      // Dark variants\n      { variant: \"dark\", color: \"slate\", class: \"bg-slate-800 text-white\" },\n      { variant: \"dark\", color: \"slateDarker\", class: \"bg-slate-900 text-white\" },\n      { variant: \"dark\", color: \"white\", class: \"bg-gray-800 text-white\" },\n      { variant: \"dark\", color: \"opaque\", class: \"bg-gray-800/80 text-white backdrop-blur-sm\" },\n      { variant: \"dark\", color: \"gray\", class: \"bg-gray-800 text-white\" },\n      { variant: \"dark\", color: \"zinc\", class: \"bg-zinc-800 text-white\" },\n      { variant: \"dark\", color: \"stone\", class: \"bg-stone-800 text-white\" },\n      { variant: \"dark\", color: \"neutral\", class: \"bg-neutral-800 text-white\" },\n      { variant: \"dark\", color: \"blue\", class: \"bg-blue-800 text-white\" },\n      { variant: \"dark\", color: \"green\", class: \"bg-green-800 text-white\" },\n      { variant: \"dark\", color: \"orange\", class: \"bg-orange-800 text-white\" },\n      { variant: \"dark\", color: \"red\", class: \"bg-red-800 text-white\" },\n      { variant: \"dark\", color: \"rose\", class: \"bg-rose-800 text-white\" },\n      { variant: \"dark\", color: \"violet\", class: \"bg-violet-800 text-white\" },\n      { variant: \"dark\", color: \"yellow\", class: \"bg-yellow-800 text-white\" }\n    ],\n    defaultVariants: {\n      size: \"sm\",\n      variant: \"light\",\n      color: \"slate\"\n    }\n  }\n)\n\nexport interface DocyChipProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"size\" | \"color\">,\n    VariantProps<typeof chipVariants> {\n  children?: React.ReactNode\n  color?: ChipColor\n  variant?: ChipVariant\n  size?: ChipSize\n  icon?: string\n  className?: string\n}\n\n// Helper function to get icon size based on chip size\nfunction getIconSize(chipSize: ChipSize): \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" {\n  switch (chipSize) {\n    case \"3xs\":\n    case \"2xs\":\n      return \"xs\"\n    case \"xs\":\n    case \"sm\":\n      return \"sm\"\n    case \"md\":\n      return \"md\"\n    case \"lg\":\n      return \"lg\"\n    case \"xl\":\n      return \"xl\"\n    case \"xxl\":\n      return \"2xl\"\n    default:\n      return \"sm\"\n  }\n}\n\nconst DocyChip = React.forwardRef<HTMLDivElement, DocyChipProps>(\n  ({ \n    children,\n    color = DEFAULT_CHIP_COLOR,\n    variant = DEFAULT_CHIP_VARIANT,\n    size = DEFAULT_CHIP_SIZE,\n    icon,\n    className,\n    ...props \n  }, ref) => {\n    const iconSize = getIconSize(size)\n    \n    return (\n      <div\n        ref={ref}\n        className={cn(\n          chipVariants({ size, variant, color }),\n          className\n        )}\n        role=\"img\"\n        aria-label={typeof children === \"string\" ? children : undefined}\n        {...props}\n      >\n        {icon && (\n          <DocyIcon \n            name={icon} \n            size={iconSize}\n            decorative={true}\n            className=\"shrink-0\"\n          />\n        )}\n        {children && <span className=\"truncate\">{children}</span>}\n      </div>\n    )\n  }\n)\n\nDocyChip.displayName = \"DocyChip\"\n\nexport { DocyChip, chipVariants }\nexport default DocyChip"
+      }
+    ],
+    "type": "components:ui",
+    "props": [
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "optional": true
+      },
+      {
+        "name": "color",
+        "type": "ChipColor",
+        "optional": true,
+        "default": "slate"
+      },
+      {
+        "name": "variant",
+        "type": "ChipVariant",
+        "optional": true,
+        "default": "light"
+      },
+      {
+        "name": "size",
+        "type": "ChipSize",
+        "optional": true,
+        "default": "sm"
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "optional": true
+      }
+    ],
+    "variants": {
+      "size": [
+        {
+          "key": "3xs",
+          "value": "text-3xs"
+        },
+        {
+          "key": "2xs",
+          "value": "text-2xs"
+        },
+        {
+          "key": "xs",
+          "value": "text-xs"
+        },
+        {
+          "key": "sm",
+          "value": "text-sm"
+        },
+        {
+          "key": "md",
+          "value": "text-md"
+        },
+        {
+          "key": "lg",
+          "value": "text-lg"
+        },
+        {
+          "key": "xl",
+          "value": "text-xl"
+        },
+        {
+          "key": "xxl",
+          "value": "text-xxl"
+        }
+      ],
+      "variant": [
+        {
+          "key": "light",
+          "value": ""
+        },
+        {
+          "key": "dark",
+          "value": ""
+        }
+      ],
+      "color": [
+        {
+          "key": "slate",
+          "value": ""
+        },
+        {
+          "key": "slateDarker",
+          "value": ""
+        },
+        {
+          "key": "white",
+          "value": ""
+        },
+        {
+          "key": "opaque",
+          "value": ""
+        },
+        {
+          "key": "gray",
+          "value": ""
+        },
+        {
+          "key": "zinc",
+          "value": ""
+        },
+        {
+          "key": "stone",
+          "value": ""
+        },
+        {
+          "key": "neutral",
+          "value": ""
+        },
+        {
+          "key": "blue",
+          "value": ""
+        },
+        {
+          "key": "green",
+          "value": ""
+        },
+        {
+          "key": "orange",
+          "value": ""
+        },
+        {
+          "key": "red",
+          "value": ""
+        },
+        {
+          "key": "rose",
+          "value": ""
+        },
+        {
+          "key": "violet",
+          "value": ""
+        },
+        {
+          "key": "yellow",
+          "value": ""
         }
       ]
     },
     "examples": {
-      "default": {
-        "code": "<Button variant=\"default\">Button</Button>",
-        "preview": "<button class=\"bg-primary text-primary-foreground hover:bg-primary/90\">Button</button>"
+      "light": {
+        "code": "<DocyChip variant=\"light\">DocyChip</DocyChip>"
       },
-      "destructive": {
-        "code": "<Button variant=\"destructive\">Button</Button>",
-        "preview": "<button class=\"bg-destructive text-destructive-foreground hover:bg-destructive/90\">Button</button>"
-      },
-      "outline": {
-        "code": "<Button variant=\"outline\">Button</Button>",
-        "preview": "<button class=\"border border-input bg-background hover:bg-accent hover:text-accent-foreground\">Button</button>"
-      },
-      "secondary": {
-        "code": "<Button variant=\"secondary\">Button</Button>",
-        "preview": "<button class=\"bg-secondary text-secondary-foreground hover:bg-secondary/80\">Button</button>"
-      },
-      "ghost": {
-        "code": "<Button variant=\"ghost\">Button</Button>",
-        "preview": "<button class=\"hover:bg-accent hover:text-accent-foreground\">Button</button>"
-      },
-      "link": {
-        "code": "<Button variant=\"link\">Button</Button>",
-        "preview": "<button class=\"text-primary underline-offset-4 hover:underline\">Button</button>"
+      "dark": {
+        "code": "<DocyChip variant=\"dark\">DocyChip</DocyChip>"
       }
     },
-    "description": "Button component",
+    "description": "Docy-chip component",
     "usage": {
-      "import": "import { Button } from \"@/components/ui/button\"",
-      "basic": "<Button>Button</Button>",
-      "withProps": "<Button variant=\"outline\" size=\"sm\">Button</Button>"
-    }
+      "import": "import { DocyChip } from \"@/components/ui/docy-chip\"",
+      "basic": "<DocyChip>DocyChip</DocyChip>",
+      "withProps": "<DocyChip size=\"3xs\" variant=\"light\" color=\"slate\">DocyChip</DocyChip>"
+    },
+    "componentName": "DocyChip",
+    "internalDependencies": [
+      "docy-icon"
+    ]
+  },
+  "docy-icon": {
+    "name": "docy-icon",
+    "dependencies": [
+      "lucide-react",
+      "class-variance-authority"
+    ],
+    "devDependencies": [],
+    "registryDependencies": [],
+    "files": [
+      {
+        "name": "docy-icon/utils.ts",
+        "content": "import * as React from \"react\"\nimport * as LucideIcons from \"lucide-react\"\nimport type { IconLibrary } from \"./types\"\nimport { SIZE_VALIDATION_RANGE } from \"./types\"\n\n// Module-level constant to prevent ReDoS attacks\nconst EMOJI_REGEX = /^(\\p{Emoji}|\\p{Emoji_Modifier}|\\p{Emoji_Component})+$/u\n\n// Check if running in development mode\nconst IS_DEV = process.env.NODE_ENV === \"development\"\n\nexport function isEmoji(str: string): boolean {\n  return EMOJI_REGEX.test(str.trim())\n}\n\nexport function isDotCharacter(str: string): boolean {\n  return str.trim() === \"dot\" || str.trim() === \"•\"\n}\n\nexport function normalizeIconName(name: string): string {\n  return name\n    .split(/[-_\\s]/)\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())\n    .join(\"\")\n}\n\nexport function validateNumericSize(size: number): number {\n  if (size < SIZE_VALIDATION_RANGE.min || size > SIZE_VALIDATION_RANGE.max) {\n    if (IS_DEV) {\n      console.warn(`DocyIcon: size must be between ${SIZE_VALIDATION_RANGE.min}-${SIZE_VALIDATION_RANGE.max}px`)\n    }\n    return 20 // Default fallback\n  }\n  return size\n}\n\nexport function getLucideIcon(name: string): React.ComponentType<LucideIcons.LucideProps> | null {\n  try {\n    const icon = (LucideIcons as Record<string, unknown>)[name]\n    if (icon && React.isValidElement(React.createElement(icon as React.ComponentType))) {\n      return icon as React.ComponentType<LucideIcons.LucideProps>\n    }\n    \n    const normalizedName = normalizeIconName(name)\n    const normalizedIcon = (LucideIcons as Record<string, unknown>)[normalizedName]\n    if (normalizedIcon && React.isValidElement(React.createElement(normalizedIcon as React.ComponentType))) {\n      return normalizedIcon as React.ComponentType<LucideIcons.LucideProps>\n    }\n    \n    return null\n  } catch {\n    return null\n  }\n}\n\nexport function getIconComponent(\n  name: string, \n  lib: IconLibrary\n): React.ComponentType<LucideIcons.LucideProps> | null {\n  switch (lib) {\n    case \"lucide\":\n      return getLucideIcon(name)\n      \n    case \"heroicons\":\n    case \"tabler\": \n    case \"phosphor\":\n    case \"custom\":\n      if (IS_DEV) {\n        console.warn(`DocyIcon: ${lib} library not yet implemented`)\n      }\n      return getLucideIcon(name)\n      \n    default:\n      return getLucideIcon(name)\n  }\n}\n\nexport function getDefaultIcon(): React.ComponentType<LucideIcons.LucideProps> {\n  return LucideIcons.HelpCircle\n}\n\nexport function validateIconProps(name: string, lib: IconLibrary): boolean {\n  if (!name || typeof name !== \"string\") {\n    if (IS_DEV) {\n      console.warn(\"DocyIcon: name prop required\")\n    }\n    return false\n  }\n  \n  if (lib && ![\"lucide\", \"heroicons\", \"tabler\", \"phosphor\", \"custom\"].includes(lib)) {\n    if (IS_DEV) {\n      console.warn(`DocyIcon: unsupported library \"${lib}\"`)\n    }\n    return false\n  }\n  \n  return true\n}"
+      },
+      {
+        "name": "docy-icon/types.ts",
+        "content": "export type IconSize = \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\"\nexport type IconLibrary = \"lucide\" | \"heroicons\" | \"tabler\" | \"phosphor\" | \"custom\"  \nexport type IconAnimation = \"spin\" | \"pulse\" | \"bounce\"\n\n// Constants for better maintainability\nexport const DEFAULT_ICON_SIZE = \"md\" as const\nexport const DEFAULT_ICON_LIB = \"lucide\" as const\nexport const DEFAULT_STROKE_WIDTH = 1.5 as const\nexport const SIZE_VALIDATION_RANGE = { min: 4, max: 200 } as const\n\nexport interface IconSizeMap {\n  xs: 12\n  sm: 14\n  md: 20\n  lg: 24\n  xl: 28\n  \"2xl\": 32\n}\n\nexport interface IconLibraryConfig {\n  name: IconLibrary\n  displayName: string\n  packageName?: string\n  importPath?: string\n  isInstalled: boolean\n}\n\nexport const SUPPORTED_LIBRARIES: IconLibraryConfig[] = [\n  {\n    name: \"lucide\",\n    displayName: \"Lucide\",\n    packageName: \"lucide-react\",\n    importPath: \"lucide-react\",\n    isInstalled: true\n  },\n  {\n    name: \"heroicons\", \n    displayName: \"Heroicons\",\n    packageName: \"@heroicons/react\",\n    importPath: \"@heroicons/react\",\n    isInstalled: false\n  },\n  {\n    name: \"tabler\",\n    displayName: \"Tabler Icons\", \n    packageName: \"@tabler/icons-react\",\n    importPath: \"@tabler/icons-react\",\n    isInstalled: false\n  },\n  {\n    name: \"phosphor\",\n    displayName: \"Phosphor Icons\",\n    packageName: \"phosphor-react\", \n    importPath: \"phosphor-react\",\n    isInstalled: false\n  },\n  {\n    name: \"custom\",\n    displayName: \"Custom Icons\",\n    isInstalled: true\n  }\n]"
+      },
+      {
+        "name": "docy-icon/index.ts",
+        "content": "export * from \"./docy-icon\"\nexport * from \"./types\"\nexport * from \"./utils\"\nexport { default } from \"./docy-icon\""
+      },
+      {
+        "name": "docy-icon/docy-icon.tsx",
+        "content": "import * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport type { IconSize, IconLibrary, IconAnimation } from \"./types\"\nimport { DEFAULT_ICON_SIZE, DEFAULT_ICON_LIB, DEFAULT_STROKE_WIDTH } from \"./types\"\nimport { \n  isEmoji, \n  isDotCharacter, \n  getIconComponent, \n  getDefaultIcon, \n  validateIconProps,\n  validateNumericSize\n} from \"./utils\"\n\nconst iconVariants = cva(\n  \"inline-flex items-center justify-center shrink-0\",\n  {\n    variants: {\n      size: {\n        xs: \"w-3 h-3\",\n        sm: \"w-3.5 h-3.5\", \n        md: \"w-4 h-4\",\n        lg: \"w-5 h-5\",\n        xl: \"w-6 h-6\",\n        \"2xl\": \"w-8 h-8\",\n      },\n      animation: {\n        none: \"\",\n        spin: \"animate-spin\",\n        pulse: \"animate-pulse\",\n        bounce: \"animate-bounce\",\n      },\n    },\n    defaultVariants: {\n      size: \"md\",\n      animation: \"none\",\n    },\n  }\n)\n\nconst sizeMap = {\n  xs: 12,\n  sm: 14,\n  md: 20,\n  lg: 24,\n  xl: 28,\n  \"2xl\": 32,\n} as const\n\nexport interface DocyIconProps\n  extends Omit<React.HTMLAttributes<HTMLElement>, \"size\"> {\n  name: string\n  lib?: IconLibrary\n  size?: IconSize | number\n  color?: string\n  animation?: IconAnimation\n  decorative?: boolean\n}\n\n// Helper functions for style optimization\nfunction createDotStyle(size: number, color: string) {\n  return { \n    width: size, \n    height: size, \n    color,\n    fontSize: size * 0.4,\n    lineHeight: 1\n  }\n}\n\nfunction createEmojiStyle(size: number, color: string) {\n  return { \n    fontSize: size * 0.8,\n    lineHeight: 1,\n    color,\n    width: size,\n    height: size\n  }\n}\n\nfunction createIconStyle(color: string) {\n  return { color }\n}\n\nfunction renderIcon(\n  name: string,\n  lib: IconLibrary,\n  size: number,\n  color: string,\n  className: string,\n  decorative: boolean = false\n): React.ReactNode {\n  if (!validateIconProps(name, lib)) {\n    const DefaultIcon = getDefaultIcon()\n    return (\n      <DefaultIcon\n        size={size}\n        className={className}\n        style={createIconStyle(color)}\n        strokeWidth={DEFAULT_STROKE_WIDTH}\n        aria-hidden={decorative}\n      />\n    )\n  }\n\n  if (isDotCharacter(name)) {\n    return (\n      <span \n        className={cn(\"flex items-center justify-center\", className)}\n        style={createDotStyle(size, color)}\n        role=\"img\"\n        aria-label={decorative ? undefined : \"dot\"}\n        aria-hidden={decorative}\n      >\n        •\n      </span>\n    )\n  }\n\n  if (isEmoji(name)) {\n    return (\n      <span \n        className={cn(\"flex items-center justify-center\", className)}\n        style={createEmojiStyle(size, color)}\n        role=\"img\"\n        aria-label={decorative ? undefined : `${name} emoji`}\n        aria-hidden={decorative}\n      >\n        {name}\n      </span>\n    )\n  }\n\n  const IconComponent = getIconComponent(name, lib)\n  if (IconComponent) {\n    return (\n      <IconComponent\n        size={size}\n        className={className}\n        style={createIconStyle(color)}\n        strokeWidth={DEFAULT_STROKE_WIDTH}\n        aria-hidden={decorative}\n      />\n    )\n  }\n\n  const DefaultIcon = getDefaultIcon()\n  return (\n    <DefaultIcon\n      size={size}\n      className={className}\n      style={createIconStyle(color)}\n      strokeWidth={DEFAULT_STROKE_WIDTH}\n      aria-hidden={decorative}\n    />\n  )\n}\n\nconst DocyIcon = React.forwardRef<HTMLElement, DocyIconProps>(\n  ({ \n    name, \n    lib = DEFAULT_ICON_LIB, \n    size = DEFAULT_ICON_SIZE, \n    color = \"currentColor\", \n    animation, \n    className, \n    decorative = false,\n    ...props \n  }, ref) => {\n    const validatedSize = typeof size === \"number\" ? validateNumericSize(size) : sizeMap[size]\n    const iconClasses = cn(\n      iconVariants({ \n        size: typeof size === \"number\" ? DEFAULT_ICON_SIZE : size, \n        animation \n      }),\n      className\n    )\n\n    const iconElement = renderIcon(name, lib, validatedSize, color, iconClasses, decorative)\n\n    // Add error boundary around React.cloneElement\n    try {\n      if (React.isValidElement(iconElement)) {\n        return React.cloneElement(iconElement, { ...props })\n      }\n    } catch {\n      // Fallback if cloneElement fails\n      return (\n        <span ref={ref as React.RefObject<HTMLSpanElement>} {...props}>\n          {iconElement}\n        </span>\n      )\n    }\n\n    return (\n      <span ref={ref as React.RefObject<HTMLSpanElement>} {...props}>\n        {iconElement}\n      </span>\n    )\n  }\n)\n\nDocyIcon.displayName = \"DocyIcon\"\n\nexport { DocyIcon, iconVariants }\nexport default DocyIcon"
+      }
+    ],
+    "type": "components:ui",
+    "props": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false
+      },
+      {
+        "name": "lib",
+        "type": "IconLibrary",
+        "optional": true
+      },
+      {
+        "name": "size",
+        "type": "IconSize | number",
+        "optional": true,
+        "default": "md"
+      },
+      {
+        "name": "color",
+        "type": "string",
+        "optional": true
+      },
+      {
+        "name": "animation",
+        "type": "IconAnimation",
+        "optional": true,
+        "default": "none"
+      },
+      {
+        "name": "decorative",
+        "type": "boolean",
+        "optional": true
+      }
+    ],
+    "variants": {
+      "size": [
+        {
+          "key": "xs",
+          "value": "w-3 h-3"
+        },
+        {
+          "key": "sm",
+          "value": "w-3.5 h-3.5"
+        },
+        {
+          "key": "md",
+          "value": "w-4 h-4"
+        },
+        {
+          "key": "lg",
+          "value": "w-5 h-5"
+        },
+        {
+          "key": "xl",
+          "value": "w-6 h-6"
+        },
+        {
+          "key": "2xl",
+          "value": "w-8 h-8"
+        }
+      ],
+      "animation": [
+        {
+          "key": "none",
+          "value": ""
+        },
+        {
+          "key": "spin",
+          "value": "animate-spin"
+        },
+        {
+          "key": "pulse",
+          "value": "animate-pulse"
+        },
+        {
+          "key": "bounce",
+          "value": "animate-bounce"
+        }
+      ]
+    },
+    "examples": {},
+    "description": "Docy-icon component",
+    "usage": {
+      "import": "import { DocyIcon } from \"@/components/ui/docy-icon\"",
+      "basic": "<DocyIcon>DocyIcon</DocyIcon>",
+      "withProps": "<DocyIcon size=\"xs\" animation=\"none\">DocyIcon</DocyIcon>"
+    },
+    "componentName": "DocyIcon"
   }
 }

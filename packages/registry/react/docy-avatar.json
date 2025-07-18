@@ -1,0 +1,138 @@
+{
+  "name": "docy-avatar",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "docy-avatar/utils.ts",
+      "content": "import type { User, AvatarSize } from \"./types\"\nimport { AVATAR_COLORS } from \"./types\"\n\nexport function getInitials(user: User | string): string {\n  if (typeof user === \"string\") {\n    const names = user.trim().split(/\\s+/)\n    if (names.length === 1) {\n      return names[0].charAt(0).toUpperCase()\n    }\n    return names[0].charAt(0).toUpperCase() + names[names.length - 1].charAt(0).toUpperCase()\n  }\n\n  const firstname = user.firstname?.trim() || \"\"\n  const lastname = user.lastname?.trim() || \"\"\n  const name = user.name?.trim() || \"\"\n  const fullname = user.fullname?.trim() || \"\"\n\n  if (firstname && lastname) {\n    return firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase()\n  }\n\n  if (name) {\n    const nameParts = name.split(/\\s+/)\n    if (nameParts.length >= 2) {\n      return nameParts[0].charAt(0).toUpperCase() + nameParts[nameParts.length - 1].charAt(0).toUpperCase()\n    }\n    return nameParts[0].charAt(0).toUpperCase()\n  }\n\n  if (fullname) {\n    const fullnameParts = fullname.split(/\\s+/)\n    if (fullnameParts.length >= 2) {\n      return fullnameParts[0].charAt(0).toUpperCase() + fullnameParts[fullnameParts.length - 1].charAt(0).toUpperCase()\n    }\n    return fullnameParts[0].charAt(0).toUpperCase()\n  }\n\n  return \"?\"\n}\n\nexport function getFullName(user: User): string {\n  if (user.fullname) return user.fullname\n  if (user.name) return user.name\n  if (user.firstname && user.lastname) return `${user.firstname} ${user.lastname}`\n  if (user.firstname) return user.firstname\n  if (user.lastname) return user.lastname\n  return \"\"\n}\n\nexport function getUserColor(user: User, index?: number): string {\n  if (user.color) {\n    // If color is provided with bg- prefix, use it as is\n    if (user.color.startsWith(\"bg-\")) {\n      return user.color\n    }\n    // If color is just the color name, add bg- prefix\n    return `bg-${user.color}`\n  }\n\n  // Generate deterministic color based on user ID or index\n  const userId = user.userId || index || 0\n  const colorIndex = typeof userId === \"string\" \n    ? userId.length % AVATAR_COLORS.length\n    : Number(userId) % AVATAR_COLORS.length\n  \n  return AVATAR_COLORS[colorIndex]\n}\n\nexport function resolveUser(\n  userId: string | number, \n  users: User[] = []\n): User | null {\n  return users.find(user => user.userId === userId) || null\n}\n\nexport function resolveUsers(\n  userIds: (string | number)[], \n  users: User[] = []\n): User[] {\n  return userIds\n    .map(id => resolveUser(id, users))\n    .filter((user): user is User => user !== null)\n}\n\nexport function validateImageUrl(url: string): boolean {\n  try {\n    const parsedUrl = new URL(url)\n    return parsedUrl.protocol === \"https:\" || parsedUrl.protocol === \"data:\"\n  } catch {\n    return false\n  }\n}\n\n\nexport function getAvatarSizeClasses(size: AvatarSize): string {\n  const sizeMap = {\n    xs: \"h-4 w-4 text-xs\",\n    sm: \"h-5 w-5 text-xs\", \n    md: \"h-6 w-6 text-sm\",\n    lg: \"h-7 w-7 text-sm\",\n    xl: \"h-8 w-8 text-sm\",\n    \"2xl\": \"h-9 w-9 text-base\",\n    \"3xl\": \"h-10 w-10 text-base\",\n    \"4xl\": \"h-12 w-12 text-lg\",\n    \"5xl\": \"h-16 w-16 text-xl\",\n    max: \"h-20 w-20 text-2xl\"\n  }\n  return sizeMap[size]\n}\n\nexport function getStatusIndicatorSize(size: AvatarSize): string {\n  const statusSizeMap = {\n    xs: \"h-1 w-1\",\n    sm: \"h-1.5 w-1.5\",\n    md: \"h-2 w-2\", \n    lg: \"h-2 w-2\",\n    xl: \"h-2.5 w-2.5\",\n    \"2xl\": \"h-3 w-3\",\n    \"3xl\": \"h-3 w-3\", \n    \"4xl\": \"h-4 w-4\",\n    \"5xl\": \"h-5 w-5\",\n    max: \"h-6 w-6\"\n  }\n  return statusSizeMap[size]\n}"
+    },
+    {
+      "name": "docy-avatar/types.ts",
+      "content": "export type AvatarSize = \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" | \"3xl\" | \"4xl\" | \"5xl\" | \"max\"\nexport type UserStatus = \"online\" | \"offline\" | \"away\"\n\nexport interface User {\n  userId: string | number\n  firstname: string\n  lastname: string\n  name?: string\n  photo?: string\n  color?: string\n  status?: UserStatus\n  fullname?: string\n}\n\n\nexport const DEFAULT_AVATAR_SIZE = \"sm\" as const\nexport const DEFAULT_MAX_ITEMS = 5 as const\n\n\nexport const STATUS_COLORS = {\n  online: \"bg-green-400\",\n  offline: \"bg-red-400\", \n  away: \"bg-amber-400\"\n} as const\n\nexport const AVATAR_COLORS = [\n  \"bg-red-500\",\n  \"bg-orange-500\", \n  \"bg-amber-500\",\n  \"bg-yellow-500\",\n  \"bg-lime-500\",\n  \"bg-green-500\",\n  \"bg-emerald-500\",\n  \"bg-teal-500\",\n  \"bg-cyan-500\",\n  \"bg-sky-500\",\n  \"bg-blue-500\",\n  \"bg-indigo-500\",\n  \"bg-violet-500\",\n  \"bg-purple-500\",\n  \"bg-fuchsia-500\",\n  \"bg-pink-500\",\n  \"bg-rose-500\",\n  \"bg-slate-500/80\"\n] as const"
+    },
+    {
+      "name": "docy-avatar/index.ts",
+      "content": "export * from \"./docy-avatar\"\nexport * from \"./types\"\nexport * from \"./utils\"\nexport * from \"./avatar\"\nexport * from \"./error-boundary\"\nexport { default } from \"./docy-avatar\""
+    },
+    {
+      "name": "docy-avatar/error-boundary.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\nimport { Avatar, AvatarFallback } from \"./avatar\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport { type AvatarSize } from \"./types\"\nimport { getAvatarSizeClasses } from \"./utils\"\n\ninterface AvatarErrorBoundaryProps {\n  children: React.ReactNode\n  size?: AvatarSize\n  className?: string\n}\n\ninterface AvatarErrorBoundaryState {\n  hasError: boolean\n}\n\nexport class AvatarErrorBoundary extends React.Component<AvatarErrorBoundaryProps, AvatarErrorBoundaryState> {\n  constructor(props: AvatarErrorBoundaryProps) {\n    super(props)\n    this.state = { hasError: false }\n  }\n\n  static getDerivedStateFromError(): AvatarErrorBoundaryState {\n    return { hasError: true }\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.warn(\"DocyAvatar Error:\", error, errorInfo)\n  }\n\n  render() {\n    if (this.state.hasError) {\n      const { size = \"sm\", className } = this.props\n      \n      return (\n        <Avatar className={cn(\"bg-red-100\", className)}>\n          <AvatarFallback className={cn(\"bg-red-100 text-red-600\", getAvatarSizeClasses(size))}>\n            <DocyIcon \n              name=\"alert-circle\" \n              size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n              className=\"text-red-600\"\n            />\n          </AvatarFallback>\n        </Avatar>\n      )\n    }\n\n    return this.props.children\n  }\n}"
+    },
+    {
+      "name": "docy-avatar/docy-avatar.tsx",
+      "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport { Avatar, AvatarImage, AvatarFallback } from \"./avatar\"\nimport DocyIcon from \"@/components/docy-icon\"\nimport type { User, AvatarSize, UserStatus } from \"./types\"\nimport { DEFAULT_AVATAR_SIZE, DEFAULT_MAX_ITEMS } from \"./types\"\nimport { \n  getInitials, \n  getFullName, \n  getUserColor, \n  resolveUser, \n  resolveUsers, \n  validateImageUrl, \n  getAvatarSizeClasses,\n  getStatusIndicatorSize \n} from \"./utils\"\nimport { STATUS_COLORS } from \"./types\"\nimport { AvatarErrorBoundary } from \"./error-boundary\"\n\nconst avatarVariants = cva(\n  \"relative inline-flex shrink-0 overflow-hidden rounded-full\",\n  {\n    variants: {\n      size: {\n        xs: \"h-4 w-4\",\n        sm: \"h-5 w-5\", \n        md: \"h-6 w-6\",\n        lg: \"h-7 w-7\",\n        xl: \"h-8 w-8\",\n        \"2xl\": \"h-9 w-9\",\n        \"3xl\": \"h-10 w-10\",\n        \"4xl\": \"h-12 w-12\",\n        \"5xl\": \"h-16 w-16\",\n        max: \"h-20 w-20\"\n      }\n    },\n    defaultVariants: {\n      size: \"sm\"\n    }\n  }\n)\n\nconst avatarGroupVariants = cva(\n  \"flex items-center\",\n  {\n    variants: {\n      spacing: {\n        default: \"-space-x-2\",\n        tight: \"-space-x-1\",\n        loose: \"-space-x-3\"\n      }\n    },\n    defaultVariants: {\n      spacing: \"default\"\n    }\n  }\n)\n\nexport interface DocyAvatarProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"size\">,\n    VariantProps<typeof avatarVariants> {\n  src?: string\n  userId?: string | number | (string | number)[]\n  user?: User\n  users?: User[]\n  size?: AvatarSize\n  maxItems?: number\n  showUserStatus?: boolean\n  status?: UserStatus\n  fallbackSrc?: string\n}\n\nfunction SingleAvatar({\n  user,\n  src,\n  size = DEFAULT_AVATAR_SIZE,\n  showUserStatus = false,\n  status,\n  fallbackSrc,\n  className\n}: {\n  user?: User\n  src?: string\n  size: AvatarSize\n  showUserStatus: boolean\n  status?: UserStatus\n  fallbackSrc?: string\n  className?: string\n}) {\n  const [imageError, setImageError] = React.useState(false)\n  const [fallbackError, setFallbackError] = React.useState(false)\n\n  const avatarClasses = cn(avatarVariants({ size }), className)\n  const sizeClasses = getAvatarSizeClasses(size)\n  \n  const displayStatus = status || user?.status\n  const initials = user ? getInitials(user) : \"?\"\n  const bgColor = user ? getUserColor(user) : \"bg-gray-500\"\n  const fullName = user ? getFullName(user) : \"\"\n\n  const primarySrc = src || user?.photo\n  const shouldShowImage = primarySrc && !imageError && validateImageUrl(primarySrc)\n  const shouldShowFallback = fallbackSrc && !fallbackError && !shouldShowImage && validateImageUrl(fallbackSrc)\n\n  return (\n    <div className=\"relative\">\n      <Avatar className={avatarClasses}>\n        {shouldShowImage && (\n          <AvatarImage\n            src={primarySrc}\n            alt={fullName || \"User avatar\"}\n            onError={() => setImageError(true)}\n            className=\"object-cover\"\n          />\n        )}\n        \n        {shouldShowFallback && (\n          <AvatarImage\n            src={fallbackSrc}\n            alt={fullName || \"User avatar\"}\n            onError={() => setFallbackError(true)}\n            className=\"object-cover\"\n          />\n        )}\n        \n        <AvatarFallback className={cn(bgColor, \"text-white\", sizeClasses)}>\n          {user ? (\n            <span className=\"font-medium\">{initials}</span>\n          ) : (\n            <DocyIcon \n              name=\"user\" \n              size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n              className=\"text-white\"\n            />\n          )}\n        </AvatarFallback>\n      </Avatar>\n      \n      {showUserStatus && displayStatus && (\n        <span\n          className={cn(\n            \"absolute -bottom-0.5 -right-0.5 block rounded-full ring-2 ring-white z-10\",\n            STATUS_COLORS[displayStatus],\n            getStatusIndicatorSize(size)\n          )}\n          aria-label={`User is ${displayStatus}`}\n        />\n      )}\n    </div>\n  )\n}\n\nfunction MultipleAvatars({\n  users,\n  size = DEFAULT_AVATAR_SIZE,\n  maxItems = DEFAULT_MAX_ITEMS,\n  showUserStatus = false,\n  className\n}: {\n  users: User[]\n  size: AvatarSize\n  maxItems: number\n  showUserStatus: boolean\n  className?: string\n}) {\n  const visibleUsers = users.slice(0, maxItems)\n  const remainingCount = users.length - maxItems\n  const sizeClasses = getAvatarSizeClasses(size)\n\n  return (\n    <div className={cn(avatarGroupVariants(), className)}>\n      {visibleUsers.map((user, index) => (\n        <div \n          key={user.userId || index}\n          className=\"relative hover:z-10 hover:scale-105 transition-transform duration-150 origin-center\"\n        >\n          <SingleAvatar\n            user={user}\n            size={size}\n            showUserStatus={showUserStatus}\n            className=\"ring-2 ring-white\"\n          />\n        </div>\n      ))}\n      \n      {remainingCount > 0 && (\n        <Avatar className={cn(avatarVariants({ size }), \"ring-2 ring-white bg-gray-100\")}>\n          <AvatarFallback className={cn(\"bg-gray-100 text-gray-600\", sizeClasses)}>\n            <span className=\"font-medium\">+{remainingCount}</span>\n          </AvatarFallback>\n        </Avatar>\n      )}\n    </div>\n  )\n}\n\nconst DocyAvatar = React.forwardRef<HTMLDivElement, DocyAvatarProps>(\n  ({ \n    src,\n    userId,\n    user,\n    users = [],\n    size = DEFAULT_AVATAR_SIZE,\n    maxItems = DEFAULT_MAX_ITEMS,\n    showUserStatus = false,\n    status,\n    className,\n    fallbackSrc,\n    ...props \n  }, ref) => {\n    \n    const renderContent = () => {\n      // Handle multiple user IDs\n      if (Array.isArray(userId)) {\n        const resolvedUsers = resolveUsers(userId, users)\n        \n        if (resolvedUsers.length === 0) {\n          // Show placeholder for empty group\n          return (\n            <Avatar className={avatarVariants({ size })}>\n              <AvatarFallback className={getAvatarSizeClasses(size)}>\n                <DocyIcon \n                  name=\"users\" \n                  size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n                  className=\"text-gray-400\"\n                />\n              </AvatarFallback>\n            </Avatar>\n          )\n        }\n        \n        if (resolvedUsers.length === 1) {\n          return (\n            <SingleAvatar\n              user={resolvedUsers[0]}\n              size={size}\n              showUserStatus={showUserStatus}\n              status={status}\n              fallbackSrc={fallbackSrc}\n            />\n          )\n        }\n        \n        return (\n          <MultipleAvatars\n            users={resolvedUsers}\n            size={size}\n            maxItems={maxItems}\n            showUserStatus={showUserStatus}\n          />\n        )\n      }\n      \n      // Handle single user ID\n      if (userId) {\n        const resolvedUser = resolveUser(userId, users)\n        \n        if (!resolvedUser) {\n          // Show placeholder when user not found\n          return (\n            <Avatar className={avatarVariants({ size })}>\n              <AvatarFallback className={getAvatarSizeClasses(size)}>\n                <DocyIcon \n                  name=\"user\" \n                  size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n                  className=\"text-gray-400\"\n                />\n              </AvatarFallback>\n            </Avatar>\n          )\n        }\n        \n        return (\n          <SingleAvatar\n            user={resolvedUser}\n            size={size}\n            showUserStatus={showUserStatus}\n            status={status}\n            fallbackSrc={fallbackSrc}\n          />\n        )\n      }\n      \n      // Handle direct user prop or src\n      if (user || src) {\n        return (\n          <SingleAvatar\n            user={user}\n            src={src}\n            size={size}\n            showUserStatus={showUserStatus}\n            status={status}\n            fallbackSrc={fallbackSrc}\n          />\n        )\n      }\n      \n      // Default placeholder\n      return (\n        <Avatar className={avatarVariants({ size })}>\n          <AvatarFallback className={getAvatarSizeClasses(size)}>\n            <DocyIcon \n              name=\"image\" \n              size={size === \"xs\" || size === \"sm\" ? \"xs\" : size === \"md\" ? \"sm\" : \"md\"} \n              className=\"text-gray-400\"\n            />\n          </AvatarFallback>\n        </Avatar>\n      )\n    }\n    \n    return (\n      <div ref={ref} {...props} className={className}>\n        <AvatarErrorBoundary size={size}>\n          {renderContent()}\n        </AvatarErrorBoundary>\n      </div>\n    )\n  }\n)\n\nDocyAvatar.displayName = \"DocyAvatar\"\n\nexport { DocyAvatar, avatarVariants }\nexport default DocyAvatar"
+    },
+    {
+      "name": "docy-avatar/avatar.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\nconst Avatar = React.forwardRef<\n  HTMLSpanElement,\n  React.HTMLAttributes<HTMLSpanElement>\n>(({ className, ...props }, ref) => (\n  <span\n    ref={ref}\n    className={cn(\n      \"relative flex shrink-0 overflow-hidden rounded-full\",\n      className\n    )}\n    {...props}\n  />\n))\nAvatar.displayName = \"Avatar\"\n\nconst AvatarImage = React.forwardRef<\n  HTMLImageElement,\n  React.ImgHTMLAttributes<HTMLImageElement>\n>(({ className, ...props }, ref) => (\n  <img\n    ref={ref}\n    className={cn(\"aspect-square h-full w-full object-cover\", className)}\n    {...props}\n  />\n))\nAvatarImage.displayName = \"AvatarImage\"\n\nconst AvatarFallback = React.forwardRef<\n  HTMLSpanElement,\n  React.HTMLAttributes<HTMLSpanElement>\n>(({ className, ...props }, ref) => (\n  <span\n    ref={ref}\n    className={cn(\n      \"flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground font-medium\",\n      className\n    )}\n    {...props}\n  />\n))\nAvatarFallback.displayName = \"AvatarFallback\"\n\nexport { Avatar, AvatarImage, AvatarFallback }"
+    }
+  ],
+  "type": "components:ui",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "userId",
+      "type": "string | number | (string | number)[]",
+      "optional": true
+    },
+    {
+      "name": "user",
+      "type": "User",
+      "optional": true
+    },
+    {
+      "name": "users",
+      "type": "User[]",
+      "optional": true
+    },
+    {
+      "name": "size",
+      "type": "AvatarSize",
+      "optional": true,
+      "default": "sm"
+    },
+    {
+      "name": "maxItems",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "showUserStatus",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "status",
+      "type": "UserStatus",
+      "optional": true
+    },
+    {
+      "name": "fallbackSrc",
+      "type": "string",
+      "optional": true
+    }
+  ],
+  "variants": {
+    "size": [
+      {
+        "key": "xs",
+        "value": "h-4 w-4"
+      },
+      {
+        "key": "sm",
+        "value": "h-5 w-5"
+      },
+      {
+        "key": "md",
+        "value": "h-6 w-6"
+      },
+      {
+        "key": "lg",
+        "value": "h-7 w-7"
+      },
+      {
+        "key": "xl",
+        "value": "h-8 w-8"
+      },
+      {
+        "key": "2xl",
+        "value": "h-9 w-9"
+      },
+      {
+        "key": "3xl",
+        "value": "h-10 w-10"
+      },
+      {
+        "key": "4xl",
+        "value": "h-12 w-12"
+      },
+      {
+        "key": "5xl",
+        "value": "h-16 w-16"
+      },
+      {
+        "key": "max",
+        "value": "h-20 w-20"
+      }
+    ]
+  },
+  "examples": {},
+  "description": "Docy-avatar component",
+  "usage": {
+    "import": "import { DocyAvatar } from \"@/components/ui/docy-avatar\"",
+    "basic": "<DocyAvatar>DocyAvatar</DocyAvatar>",
+    "withProps": "<DocyAvatar size=\"xs\">DocyAvatar</DocyAvatar>"
+  },
+  "componentName": "DocyAvatar",
+  "internalDependencies": [
+    "docy-icon"
+  ]
+}

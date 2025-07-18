@@ -26,7 +26,7 @@ DocyUI is a component library monorepo built with TypeScript, React, and Tailwin
 
 ## Color System
 - Use ShadCN color patterns from https://ui.shadcn.com/colors
-- Supported color palettes: slate, zinc, stone, gray, neutral, blue, green, orange, red, rose, violet
+- Supported color palettes: slate, zinc, stone, gray, neutral, blue, green, orange, red, rose, violet, opaque
 - Components must use CSS variables for theming (--background, --foreground, --primary, etc.)
 - Color selection during init with dynamic CSS generation
 - Both light and dark mode support required

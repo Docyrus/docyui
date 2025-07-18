@@ -1,0 +1,116 @@
+{
+  "name": "docy-icon",
+  "dependencies": [
+    "lucide-react",
+    "class-variance-authority"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "docy-icon/utils.ts",
+      "content": "import * as React from \"react\"\nimport * as LucideIcons from \"lucide-react\"\nimport type { IconLibrary } from \"./types\"\nimport { SIZE_VALIDATION_RANGE } from \"./types\"\n\n// Module-level constant to prevent ReDoS attacks\nconst EMOJI_REGEX = /^(\\p{Emoji}|\\p{Emoji_Modifier}|\\p{Emoji_Component})+$/u\n\n// Check if running in development mode\nconst IS_DEV = process.env.NODE_ENV === \"development\"\n\nexport function isEmoji(str: string): boolean {\n  return EMOJI_REGEX.test(str.trim())\n}\n\nexport function isDotCharacter(str: string): boolean {\n  return str.trim() === \"dot\" || str.trim() === \"•\"\n}\n\nexport function normalizeIconName(name: string): string {\n  return name\n    .split(/[-_\\s]/)\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())\n    .join(\"\")\n}\n\nexport function validateNumericSize(size: number): number {\n  if (size < SIZE_VALIDATION_RANGE.min || size > SIZE_VALIDATION_RANGE.max) {\n    if (IS_DEV) {\n      console.warn(`DocyIcon: size must be between ${SIZE_VALIDATION_RANGE.min}-${SIZE_VALIDATION_RANGE.max}px`)\n    }\n    return 20 // Default fallback\n  }\n  return size\n}\n\nexport function getLucideIcon(name: string): React.ComponentType<LucideIcons.LucideProps> | null {\n  try {\n    const icon = (LucideIcons as Record<string, unknown>)[name]\n    if (icon && React.isValidElement(React.createElement(icon as React.ComponentType))) {\n      return icon as React.ComponentType<LucideIcons.LucideProps>\n    }\n    \n    const normalizedName = normalizeIconName(name)\n    const normalizedIcon = (LucideIcons as Record<string, unknown>)[normalizedName]\n    if (normalizedIcon && React.isValidElement(React.createElement(normalizedIcon as React.ComponentType))) {\n      return normalizedIcon as React.ComponentType<LucideIcons.LucideProps>\n    }\n    \n    return null\n  } catch {\n    return null\n  }\n}\n\nexport function getIconComponent(\n  name: string, \n  lib: IconLibrary\n): React.ComponentType<LucideIcons.LucideProps> | null {\n  switch (lib) {\n    case \"lucide\":\n      return getLucideIcon(name)\n      \n    case \"heroicons\":\n    case \"tabler\": \n    case \"phosphor\":\n    case \"custom\":\n      if (IS_DEV) {\n        console.warn(`DocyIcon: ${lib} library not yet implemented`)\n      }\n      return getLucideIcon(name)\n      \n    default:\n      return getLucideIcon(name)\n  }\n}\n\nexport function getDefaultIcon(): React.ComponentType<LucideIcons.LucideProps> {\n  return LucideIcons.HelpCircle\n}\n\nexport function validateIconProps(name: string, lib: IconLibrary): boolean {\n  if (!name || typeof name !== \"string\") {\n    if (IS_DEV) {\n      console.warn(\"DocyIcon: name prop required\")\n    }\n    return false\n  }\n  \n  if (lib && ![\"lucide\", \"heroicons\", \"tabler\", \"phosphor\", \"custom\"].includes(lib)) {\n    if (IS_DEV) {\n      console.warn(`DocyIcon: unsupported library \"${lib}\"`)\n    }\n    return false\n  }\n  \n  return true\n}"
+    },
+    {
+      "name": "docy-icon/types.ts",
+      "content": "export type IconSize = \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\"\nexport type IconLibrary = \"lucide\" | \"heroicons\" | \"tabler\" | \"phosphor\" | \"custom\"  \nexport type IconAnimation = \"spin\" | \"pulse\" | \"bounce\"\n\n// Constants for better maintainability\nexport const DEFAULT_ICON_SIZE = \"md\" as const\nexport const DEFAULT_ICON_LIB = \"lucide\" as const\nexport const DEFAULT_STROKE_WIDTH = 1.5 as const\nexport const SIZE_VALIDATION_RANGE = { min: 4, max: 200 } as const\n\nexport interface IconSizeMap {\n  xs: 12\n  sm: 14\n  md: 20\n  lg: 24\n  xl: 28\n  \"2xl\": 32\n}\n\nexport interface IconLibraryConfig {\n  name: IconLibrary\n  displayName: string\n  packageName?: string\n  importPath?: string\n  isInstalled: boolean\n}\n\nexport const SUPPORTED_LIBRARIES: IconLibraryConfig[] = [\n  {\n    name: \"lucide\",\n    displayName: \"Lucide\",\n    packageName: \"lucide-react\",\n    importPath: \"lucide-react\",\n    isInstalled: true\n  },\n  {\n    name: \"heroicons\", \n    displayName: \"Heroicons\",\n    packageName: \"@heroicons/react\",\n    importPath: \"@heroicons/react\",\n    isInstalled: false\n  },\n  {\n    name: \"tabler\",\n    displayName: \"Tabler Icons\", \n    packageName: \"@tabler/icons-react\",\n    importPath: \"@tabler/icons-react\",\n    isInstalled: false\n  },\n  {\n    name: \"phosphor\",\n    displayName: \"Phosphor Icons\",\n    packageName: \"phosphor-react\", \n    importPath: \"phosphor-react\",\n    isInstalled: false\n  },\n  {\n    name: \"custom\",\n    displayName: \"Custom Icons\",\n    isInstalled: true\n  }\n]"
+    },
+    {
+      "name": "docy-icon/index.ts",
+      "content": "export * from \"./docy-icon\"\nexport * from \"./types\"\nexport * from \"./utils\"\nexport { default } from \"./docy-icon\""
+    },
+    {
+      "name": "docy-icon/docy-icon.tsx",
+      "content": "import * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport type { IconSize, IconLibrary, IconAnimation } from \"./types\"\nimport { DEFAULT_ICON_SIZE, DEFAULT_ICON_LIB, DEFAULT_STROKE_WIDTH } from \"./types\"\nimport { \n  isEmoji, \n  isDotCharacter, \n  getIconComponent, \n  getDefaultIcon, \n  validateIconProps,\n  validateNumericSize\n} from \"./utils\"\n\nconst iconVariants = cva(\n  \"inline-flex items-center justify-center shrink-0\",\n  {\n    variants: {\n      size: {\n        xs: \"w-3 h-3\",\n        sm: \"w-3.5 h-3.5\", \n        md: \"w-4 h-4\",\n        lg: \"w-5 h-5\",\n        xl: \"w-6 h-6\",\n        \"2xl\": \"w-8 h-8\",\n      },\n      animation: {\n        none: \"\",\n        spin: \"animate-spin\",\n        pulse: \"animate-pulse\",\n        bounce: \"animate-bounce\",\n      },\n    },\n    defaultVariants: {\n      size: \"md\",\n      animation: \"none\",\n    },\n  }\n)\n\nconst sizeMap = {\n  xs: 12,\n  sm: 14,\n  md: 20,\n  lg: 24,\n  xl: 28,\n  \"2xl\": 32,\n} as const\n\nexport interface DocyIconProps\n  extends Omit<React.HTMLAttributes<HTMLElement>, \"size\"> {\n  name: string\n  lib?: IconLibrary\n  size?: IconSize | number\n  color?: string\n  animation?: IconAnimation\n  decorative?: boolean\n}\n\n// Helper functions for style optimization\nfunction createDotStyle(size: number, color: string) {\n  return { \n    width: size, \n    height: size, \n    color,\n    fontSize: size * 0.4,\n    lineHeight: 1\n  }\n}\n\nfunction createEmojiStyle(size: number, color: string) {\n  return { \n    fontSize: size * 0.8,\n    lineHeight: 1,\n    color,\n    width: size,\n    height: size\n  }\n}\n\nfunction createIconStyle(color: string) {\n  return { color }\n}\n\nfunction renderIcon(\n  name: string,\n  lib: IconLibrary,\n  size: number,\n  color: string,\n  className: string,\n  decorative: boolean = false\n): React.ReactNode {\n  if (!validateIconProps(name, lib)) {\n    const DefaultIcon = getDefaultIcon()\n    return (\n      <DefaultIcon\n        size={size}\n        className={className}\n        style={createIconStyle(color)}\n        strokeWidth={DEFAULT_STROKE_WIDTH}\n        aria-hidden={decorative}\n      />\n    )\n  }\n\n  if (isDotCharacter(name)) {\n    return (\n      <span \n        className={cn(\"flex items-center justify-center\", className)}\n        style={createDotStyle(size, color)}\n        role=\"img\"\n        aria-label={decorative ? undefined : \"dot\"}\n        aria-hidden={decorative}\n      >\n        •\n      </span>\n    )\n  }\n\n  if (isEmoji(name)) {\n    return (\n      <span \n        className={cn(\"flex items-center justify-center\", className)}\n        style={createEmojiStyle(size, color)}\n        role=\"img\"\n        aria-label={decorative ? undefined : `${name} emoji`}\n        aria-hidden={decorative}\n      >\n        {name}\n      </span>\n    )\n  }\n\n  const IconComponent = getIconComponent(name, lib)\n  if (IconComponent) {\n    return (\n      <IconComponent\n        size={size}\n        className={className}\n        style={createIconStyle(color)}\n        strokeWidth={DEFAULT_STROKE_WIDTH}\n        aria-hidden={decorative}\n      />\n    )\n  }\n\n  const DefaultIcon = getDefaultIcon()\n  return (\n    <DefaultIcon\n      size={size}\n      className={className}\n      style={createIconStyle(color)}\n      strokeWidth={DEFAULT_STROKE_WIDTH}\n      aria-hidden={decorative}\n    />\n  )\n}\n\nconst DocyIcon = React.forwardRef<HTMLElement, DocyIconProps>(\n  ({ \n    name, \n    lib = DEFAULT_ICON_LIB, \n    size = DEFAULT_ICON_SIZE, \n    color = \"currentColor\", \n    animation, \n    className, \n    decorative = false,\n    ...props \n  }, ref) => {\n    const validatedSize = typeof size === \"number\" ? validateNumericSize(size) : sizeMap[size]\n    const iconClasses = cn(\n      iconVariants({ \n        size: typeof size === \"number\" ? DEFAULT_ICON_SIZE : size, \n        animation \n      }),\n      className\n    )\n\n    const iconElement = renderIcon(name, lib, validatedSize, color, iconClasses, decorative)\n\n    // Add error boundary around React.cloneElement\n    try {\n      if (React.isValidElement(iconElement)) {\n        return React.cloneElement(iconElement, { ...props })\n      }\n    } catch {\n      // Fallback if cloneElement fails\n      return (\n        <span ref={ref as React.RefObject<HTMLSpanElement>} {...props}>\n          {iconElement}\n        </span>\n      )\n    }\n\n    return (\n      <span ref={ref as React.RefObject<HTMLSpanElement>} {...props}>\n        {iconElement}\n      </span>\n    )\n  }\n)\n\nDocyIcon.displayName = \"DocyIcon\"\n\nexport { DocyIcon, iconVariants }\nexport default DocyIcon"
+    }
+  ],
+  "type": "components:ui",
+  "props": [
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "lib",
+      "type": "IconLibrary",
+      "optional": true
+    },
+    {
+      "name": "size",
+      "type": "IconSize | number",
+      "optional": true,
+      "default": "md"
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "animation",
+      "type": "IconAnimation",
+      "optional": true,
+      "default": "none"
+    },
+    {
+      "name": "decorative",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
+  "variants": {
+    "size": [
+      {
+        "key": "xs",
+        "value": "w-3 h-3"
+      },
+      {
+        "key": "sm",
+        "value": "w-3.5 h-3.5"
+      },
+      {
+        "key": "md",
+        "value": "w-4 h-4"
+      },
+      {
+        "key": "lg",
+        "value": "w-5 h-5"
+      },
+      {
+        "key": "xl",
+        "value": "w-6 h-6"
+      },
+      {
+        "key": "2xl",
+        "value": "w-8 h-8"
+      }
+    ],
+    "animation": [
+      {
+        "key": "none",
+        "value": ""
+      },
+      {
+        "key": "spin",
+        "value": "animate-spin"
+      },
+      {
+        "key": "pulse",
+        "value": "animate-pulse"
+      },
+      {
+        "key": "bounce",
+        "value": "animate-bounce"
+      }
+    ]
+  },
+  "examples": {},
+  "description": "Docy-icon component",
+  "usage": {
+    "import": "import { DocyIcon } from \"@/components/ui/docy-icon\"",
+    "basic": "<DocyIcon>DocyIcon</DocyIcon>",
+    "withProps": "<DocyIcon size=\"xs\" animation=\"none\">DocyIcon</DocyIcon>"
+  },
+  "componentName": "DocyIcon"
+}

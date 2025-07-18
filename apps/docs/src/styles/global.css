@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
-@source '**/*.{html,js,ts,jsx,tsx,vue,astro}';
-@source '../../../../**/*.{html,js,ts,jsx,tsx,vue,astro}';
+@plugin "@tailwindcss/typography";
+
+@source '**/*.{html,js,ts,jsx,tsx,vue,mdx,md,astro}';
+@source '../../../../**/*.{html,js,ts,jsx,tsx,vue,mdx,md,astro}';
+
+@variant dark (.dark &);
 
 
 
@@ -67,6 +71,21 @@ code {
 }
 
 /* Enhanced focus states */
+
+/* Shiki dark mode override - Use CSS custom properties for theming */
+.dark .astro-code {
+  background-color: transparent !important;
+  color: var(--shiki-dark) !important;
+}
+
+.light .astro-code {
+  background-color: transparent !important;
+  color: var(--shiki-light) !important;
+}
+
+.dark .astro-code span[style*="color:"] {
+  color: var(--shiki-dark) !important;
+}
 
 @theme {
   --color-border: hsl(var(--border));

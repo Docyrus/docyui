@@ -16,48 +16,99 @@ const { name, variant = 'default', description, className = '' } = Astro.props;
 const reactComponent = getComponent(name, 'react');
 const vueComponent = getComponent(name, 'vue');
 
-if (!reactComponent && !vueComponent) {
-  console.warn(`Component not found in registry: ${name}`);
-}
+// Component availability check - silently handle missing components
 
-// Get examples from registry or use single variant
-let componentExamples: Array<{name: string; variant: string; description: string; size?: string}> = [];
+// Get examples from registry dynamically
+const component = reactComponent || vueComponent;
+
+let componentExamples: Array<{name: string; variants: Record<string, string>; description: string}> = [];
+
 if (variant !== 'default') {
-  // Single variant mode
-  componentExamples = [{ name: variant, variant, description: `${variant} variant` }];
+  // Single variant mode - create example with specified variant
+  const variantValues: Record<string, string> = {};
+  
+  // Find the variant in any available variant type
+  if (component?.variants) {
+    Object.keys(component.variants).forEach(variantType => {
+      const variantOption = component.variants[variantType]?.find((v: any) => v.key === variant);
+      if (variantOption) {
+        variantValues[variantType] = variant;
+      }
+    });
+  }
+  
+  componentExamples = [{ 
+    name: variant, 
+    variants: variantValues, 
+    description: `${variant} variant` 
+  }];
 } else {
-  // All variants mode - get from registry
-  const variants = reactComponent?.variants?.variant || vueComponent?.variants?.variant || [];
-  componentExamples = variants.map((v: any) => ({
-    name: v.key,
-    variant: v.key,
-    description: `${v.key} variant`,
-    size: v.size
-  }));
+  // All variants mode - show default variants from registry
+  const defaultVariants: Record<string, string> = {};
+  
+  // Get default variants from component definition
+  if (component?.variants) {
+    Object.keys(component.variants).forEach(variantType => {
+      const variants = component.variants[variantType];
+      if (variants && variants.length > 0) {
+        // Find default variant or use first one
+        const defaultVariant = variants.find((v: any) => v.key === 'default') || variants[0];
+        if (defaultVariant) {
+          defaultVariants[variantType] = defaultVariant.key;
+        }
+      }
+    });
+  }
+  
+  componentExamples = [{ 
+    name: 'default', 
+    variants: defaultVariants, 
+    description: 'Default' 
+  }];
 }
 
-// Get code examples from registry
-const reactImport = reactComponent?.usage?.import || `import { ${name.charAt(0).toUpperCase() + name.slice(1)} } from "@/components/ui/${name}"`;
-const vueImport = vueComponent?.usage?.import || `import ${name.charAt(0).toUpperCase() + name.slice(1)} from "@/components/ui/${name}.vue"`;
-
-const reactUsage = reactComponent?.examples?.[variant]?.code || reactComponent?.usage?.basic || `<${name.charAt(0).toUpperCase() + name.slice(1)} />`;
-const vueUsage = vueComponent?.examples?.[variant]?.code || vueComponent?.usage?.basic || `<${name.charAt(0).toUpperCase() + name.slice(1)} />`;
-
-const reactCode = `${reactImport}
+// Generate code examples dynamically
+const generateCodeExamples = () => {
+  const componentName = component?.componentName || name.charAt(0).toUpperCase() + name.slice(1);
+  
+  // Create example code based on first example
+  const firstExample = componentExamples[0];
+  let propsString = '';
+  
+  if (firstExample && Object.keys(firstExample.variants).length > 0) {
+    const propPairs = Object.entries(firstExample.variants)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(' ');
+    propsString = ` ${propPairs}`;
+  }
+  
+  const reactImport = reactComponent?.usage?.import || `import { ${componentName} } from "@/components/ui/${name}"`;
+  const vueImport = vueComponent?.usage?.import || `import ${componentName} from "@/components/ui/${name}.vue"`;
+  
+  const reactUsage = `<${componentName}${propsString}>${componentName}</${componentName}>`;
+  const vueUsage = `<${componentName}${propsString}>${componentName}</${componentName}>`;
+  
+  return {
+    react: `${reactImport}
 
 export default function Component() {
   return (
-    ${reactUsage.split('\n').map((line: string) => line ? `    ${line}` : line).join('\n')}
+    ${reactUsage}
   )
-}`;
-
-const vueCode = `<template>
-  ${vueUsage.split('\n').map((line: string) => line ? `  ${line}` : line).join('\n')}
+}`,
+    vue: `<template>
+  ${vueUsage}
 </template>
 
 <script setup>
 ${vueImport}
-</script>`;
+</script>`
+  };
+};
+
+const codeExamples = generateCodeExamples();
+const reactCode = codeExamples.react;
+const vueCode = codeExamples.vue;
 
 // HTML escape function
 const escapeHtml = (text: string) => {
@@ -92,30 +143,40 @@ const escapeHtml = (text: string) => {
         <div class="preview-area h-[200px] flex items-center justify-center p-8 bg-gradient-to-br from-background to-muted/20">
           <!-- React Preview -->
           <div class="preview-content" data-framework="react">
-            <div id={`react-preview-${name}`} class="flex items-center justify-center gap-4">
-              {componentExamples.map((example) => (
-                <DynamicComponent 
-                  name={name}
-                  framework="react"
-                  variant={example.variant}
-                  size={example.size}
-                />
-              ))}
-            </div>
+            {reactComponent ? (
+              <div id={`react-preview-${name}`} class="flex items-center justify-center gap-4">
+                {componentExamples.map((example) => (
+                  <DynamicComponent 
+                    name={name}
+                    framework="react"
+                    {...example.variants}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div class="text-muted-foreground text-sm">
+                This component is not available for React
+              </div>
+            )}
           </div>
           
           <!-- Vue Preview -->
           <div class="preview-content hidden" data-framework="vue">
-            <div id={`vue-preview-${name}`} class="flex items-center justify-center gap-4">
-              {componentExamples.map((example) => (
-                <DynamicComponent 
-                  name={name}
-                  framework="vue"
-                  variant={example.variant}
-                  size={example.size}
-                />
-              ))}
-            </div>
+            {vueComponent ? (
+              <div id={`vue-preview-${name}`} class="flex items-center justify-center gap-4">
+                {componentExamples.map((example) => (
+                  <DynamicComponent 
+                    name={name}
+                    framework="vue"
+                    {...example.variants}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div class="text-muted-foreground text-sm">
+                This component is not available for Vue
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -123,30 +184,46 @@ const escapeHtml = (text: string) => {
       <!-- Code Content -->
       <div class="preview-content-area hidden" data-tab="code">
         <div class="framework-content" data-framework="react">
-          <div class="relative h-[200px]">
-            <div class="bg-muted p-4 h-full overflow-y-auto">
-              <pre class="text-sm overflow-x-auto"><code set:html={escapeHtml(reactCode)}></code></pre>
+          {reactComponent ? (
+            <div class="relative h-[200px]">
+              <div class="bg-muted p-4 h-full overflow-y-auto">
+                <pre class="text-sm overflow-x-auto"><code set:html={escapeHtml(reactCode)}></code></pre>
+              </div>
+              <button class="copy-button absolute top-2 right-2 p-2 text-xs bg-background border rounded hover:bg-muted transition-colors">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+              </button>
             </div>
-            <button class="copy-button absolute top-2 right-2 p-2 text-xs bg-background border rounded hover:bg-muted transition-colors">
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-              </svg>
-            </button>
-          </div>
+          ) : (
+            <div class="h-[200px] flex items-center justify-center">
+              <div class="text-muted-foreground text-sm">
+                This component is not available for React
+              </div>
+            </div>
+          )}
         </div>
         <div class="framework-content hidden" data-framework="vue">
-          <div class="relative h-[200px]">
-            <div class="bg-muted p-4 h-full overflow-y-auto">
-              <pre class="text-sm overflow-x-auto"><code set:html={escapeHtml(vueCode)}></code></pre>
+          {vueComponent ? (
+            <div class="relative h-[200px]">
+              <div class="bg-muted p-4 h-full overflow-y-auto">
+                <pre class="text-sm overflow-x-auto"><code set:html={escapeHtml(vueCode)}></code></pre>
+              </div>
+              <button class="copy-button absolute top-2 right-2 p-2 text-xs bg-background border rounded hover:bg-muted transition-colors">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+              </button>
             </div>
-            <button class="copy-button absolute top-2 right-2 p-2 text-xs bg-background border rounded hover:bg-muted transition-colors">
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-              </svg>
-            </button>
-          </div>
+          ) : (
+            <div class="h-[200px] flex items-center justify-center">
+              <div class="text-muted-foreground text-sm">
+                This component is not available for Vue
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
