@@ -1,0 +1,277 @@
+---
+title: DocyButton
+description: Docy-button component
+---
+
+<div class="not-prose my-8">
+  <ComponentPreview name="docy-button" />
+</div>
+
+## Installation
+
+
+<div class="not-prose mb-6">
+  <div class="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 p-4">
+    <div class="flex items-start gap-3">
+      <div class="mt-0.5">
+        <svg class="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <div class="flex-1">
+        <h4 class="text-sm font-semibold text-amber-900 dark:text-amber-100">Required Components</h4>
+        <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">
+          This component depends on the following DocyUI components:
+        </p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <a href="/docs/components/docy-icon" class="inline-flex items-center gap-1 rounded-md bg-amber-100 dark:bg-amber-900/50 px-2 py-1 text-xs font-medium text-amber-800 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-900/70 transition-colors">
+              <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              docy-icon
+            </a>
+          <a href="/docs/components/docy-spinner" class="inline-flex items-center gap-1 rounded-md bg-amber-100 dark:bg-amber-900/50 px-2 py-1 text-xs font-medium text-amber-800 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-900/70 transition-colors">
+              <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              docy-spinner
+            </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<InstallTabs component="docy-button" dependencies="docy-icon docy-spinner" />
+
+## Usage
+
+<div class="not-prose">
+  <div class="rounded-lg border bg-muted shadow-sm p-3 my-3">    
+    ```tsx
+    import { DocyButton } from "@/components/ui/docy-button"
+
+    export default function Component() {
+      return (
+        <DocyButton>DocyButton</DocyButton>
+      )
+    }
+    ```
+  </div>
+</div>
+
+## Examples
+
+<div class="not-prose grid gap-6 my-8">
+### Default
+
+<ComponentPreview name="docy-button" variant="default" />
+
+### Destructive
+
+<ComponentPreview name="docy-button" variant="destructive" />
+
+### Outline
+
+<ComponentPreview name="docy-button" variant="outline" />
+
+### Secondary
+
+<ComponentPreview name="docy-button" variant="secondary" />
+
+### Ghost
+
+<ComponentPreview name="docy-button" variant="ghost" />
+
+### Link
+
+<ComponentPreview name="docy-button" variant="link" />
+
+</div>
+
+## API Reference
+
+### Props
+
+<div class="not-prose overflow-x-auto my-6">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b">
+        <th class="text-left p-3 font-medium">Prop</th>
+        <th class="text-left p-3 font-medium">Type</th>
+        <th class="text-left p-3 font-medium">Default</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y">
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>asChild</code></td><td class="p-3"><code>boolean</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>loading</code></td><td class="p-3"><code>boolean</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>loadingText</code></td><td class="p-3"><code>string</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>icon</code></td><td class="p-3"><code>string</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>iconPosition</code></td><td class="p-3"><code>IconPosition</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>destructive</code></td><td class="p-3"><code>boolean</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>confirmText</code></td><td class="p-3"><code>string</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>confirmTimeout</code></td><td class="p-3"><code>number</code></td><td class="p-3"></td></tr>
+      <tr class="hover:bg-muted/50"><td class="p-3"><code>fullWidth</code></td><td class="p-3"><code>boolean</code></td><td class="p-3"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+### Variants
+
+<div class="not-prose space-y-8 my-8">
+  <div class="variant-group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <h4 class="text-lg font-semibold text-foreground capitalize">variant</h4>
+          <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            6 variants
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">default</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">bg-primary text-primary-foreground hover:bg-primary/90</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">destructive</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">bg-destructive text-destructive-foreground hover:bg-destructive/90</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">outline</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">border border-input bg-background hover:bg-accent hover:text-accent-foreground</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">secondary</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">bg-secondary text-secondary-foreground hover:bg-secondary/80</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">ghost</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">hover:bg-accent hover:text-accent-foreground</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">link</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">text-primary underline-offset-4 hover:underline</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="variant-group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <h4 class="text-lg font-semibold text-foreground capitalize">size</h4>
+          <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            4 variants
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">default</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">h-10 px-4 py-2</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">sm</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">h-9 rounded-md px-3</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">lg</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">h-11 rounded-md px-8</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">icon</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">h-10 w-10</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="variant-group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <h4 class="text-lg font-semibold text-foreground capitalize">fullWidth</h4>
+          <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            2 variants
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">true</code>
+              <div class="mt-2 text-xs text-muted-foreground font-mono opacity-75">w-full</div>
+            </div>
+          </div>
+        </div>
+        <div class="variant-item">
+          <div class="variant-card relative overflow-hidden rounded-lg border border-border bg-card p-4">
+            
+            <div class="">
+              <code class="text-sm font-mono font-medium text-foreground">false</code>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
