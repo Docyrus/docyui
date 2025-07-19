@@ -1,8 +1,8 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "../../lib/utils"
-import DocyIcon from "../docy-icon"
+import { cn } from "@/lib/utils"
+import DocyIcon from "@/components/docy-icon"
 import DocySpinner from "../docy-spinner"
 import type { 
   ButtonVariant, 
@@ -68,7 +68,6 @@ const ProgressBar = React.memo(({
   percentage 
 }: { 
   percentage: number
-  variant?: ButtonVariant 
 }) => (
   <div
     className="absolute bottom-0 left-0 h-1 bg-white/30 transition-all duration-75 ease-linear"
@@ -182,7 +181,7 @@ const DocyButton = React.forwardRef<HTMLButtonElement, DocyButtonProps>(
           cleanup()
           setConfirmationState(prev => ({ ...prev, isConfirming: false }))
         }
-      }, 50)
+      }, 100)
 
       timeoutRef.current = setTimeout(() => {
         cleanup()
@@ -242,7 +241,7 @@ const DocyButton = React.forwardRef<HTMLButtonElement, DocyButtonProps>(
           <ConfirmationContent
             confirmText={displayConfirmText}
             onCancel={cancelConfirmation}
-            onConfirm={() => confirmAction({} as React.MouseEvent<HTMLButtonElement>)}
+            onConfirm={() => confirmAction(new MouseEvent('click') as any as React.MouseEvent<HTMLButtonElement>)}
           />
         )
       }
@@ -299,7 +298,6 @@ const DocyButton = React.forwardRef<HTMLButtonElement, DocyButtonProps>(
         {confirmationState.isConfirming && (
           <ProgressBar
             percentage={confirmationState.progressPercentage}
-            variant={variant || undefined}
           />
         )}
       </Comp>
